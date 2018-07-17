@@ -17,18 +17,19 @@ import requests
 #    client_secret = 'client_secret'
 #)
 
-url = 'https://virtualracingschool.appspot.com/#/Home'
+url = 'https://virtualracingschool.appspot.com/#/DataPacks'
 
 # Get cookie from file
-with open("./vrs-cookie", "r") as cookie:
-    for line in cookie:
-        if "jsessionid" in line.lower():
-            cookie_vrs = dict(JSESSIONID=line.split("=")[1])
+#with open("./cookie", "r") as cookie:
+#    for line in cookie:
+#        if "jsessionid" in line.lower():
+#            cookie_vrs = dict(JSESSIONID=line.split("=")[1])
 
-print(cookie_vrs)
+#print(cookie_vrs)
 
 
-r = requests.get(url, cookies=cookie_vrs)
+#r = requests.get(url, cookies={"host":"virtualracingschool.appspot.com","domain":True,"secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
+r = requests.get(url)
 print(r.text)
 
 for line in r.text:

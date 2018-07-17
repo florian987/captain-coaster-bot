@@ -45,15 +45,16 @@ driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
 driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
 
-html = driver.page_source
+#html = driver.page_source
+html = driver.execute_script('return document.documentElement.outerHTML')
 
 #soup = BeautifulSoup(html, 'lxml')
 
 print(html)
 
-for line in html:
-    if "25590001" in line:
-        print('SAMARCHE')
+#for line in html:
+#    if "25590001" in line:
+#        print('SAMARCHE')
 
 #try:
 #    element = WebDriverWait(driver, 10).until(
@@ -66,10 +67,13 @@ for line in html:
 #driver.implicitly_wait(1) # seconds
 #elem = driver.find_element_by_css_selector('a').click()
 card_content = driver.find_elements_by_class_name("card-content")
+body = driver.find_element_by_tag_name('body')
 
-elem = card_content.get_attribute('innerHTML')
+print(body)
 
-print(elem)
+#elem = card_content.get_attribute('innerHTML')
+#
+#print(elem)
 
 #for row in data_pack_rows:
 #    print(row)

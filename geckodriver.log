@@ -751,3 +751,35 @@ IPDL protocol error: Handler returned error code!
 1531833877403	Marionette	INFO	Listening on port 33705
 1531833877487	Marionette	WARN	TLS certificate errors will be ignored for this session
 [Parent 32050, Gecko_IOThread] WARNING: pipe error (69): Connexion ré-initialisée par le correspondant: file /build/firefox-x_t4I3/firefox-61.0.1+build1/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 353
+1531834828357	geckodriver	INFO	geckodriver 0.21.0
+1531834828366	geckodriver	INFO	Listening on 127.0.0.1:57127
+1531834829368	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.VZJ6DURu7Kph"
+1531834833971	Marionette	INFO	Listening on port 36427
+1531834834001	Marionette	WARN	TLS certificate errors will be ignored for this session
+1531834940802	geckodriver	INFO	geckodriver 0.21.0
+1531834940817	geckodriver	INFO	Listening on 127.0.0.1:32895
+1531834941806	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.cAHeP5079hnZ"
+1531834946354	Marionette	INFO	Listening on port 45753
+1531834946450	Marionette	WARN	TLS certificate errors will be ignored for this session
+1531835018896	geckodriver	INFO	geckodriver 0.21.0
+1531835018916	geckodriver	INFO	Listening on 127.0.0.1:36167
+1531835019905	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.eGRTFSF40roq"
+1531835024642	Marionette	INFO	Listening on port 42447
+1531835024738	Marionette	WARN	TLS certificate errors will be ignored for this session
+1531835163059	geckodriver	INFO	geckodriver 0.21.0
+1531835163071	geckodriver	INFO	Listening on 127.0.0.1:48851
+1531835164055	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.ScSajk6uZ2BY"
+1531835169668	Marionette	INFO	Listening on port 43405
+1531835169696	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Parent 2897, Gecko_IOThread] WARNING: pipe error (69): Connexion ré-initialisée par le correspondant: file /build/firefox-x_t4I3/firefox-61.0.1+build1/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 353
+*** UTM:SVC TimerManager:registerTimer called after profile-before-change notification. Ignoring timer registration for id: telemetry_modules_ping
+1531835206956	geckodriver	INFO	geckodriver 0.21.0
+1531835206973	geckodriver	INFO	Listening on 127.0.0.1:41429
+1531835208018	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.DkKljbsPPWnL"
+1531835213707	Marionette	INFO	Listening on port 36973
+1531835213766	Marionette	WARN	TLS certificate errors will be ignored for this session
+1531835259707	geckodriver	INFO	geckodriver 0.21.0
+1531835259718	geckodriver	INFO	Listening on 127.0.0.1:39047
+1531835260715	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.KC5macCvj3vr"
+1531835268098	Marionette	INFO	Listening on port 35243
+1531835268163	Marionette	WARN	TLS certificate errors will be ignored for this session

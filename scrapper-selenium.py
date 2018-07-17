@@ -69,7 +69,7 @@ print(html)
 card_content = driver.find_elements_by_class_name("card-content")
 body = driver.find_element_by_tag_name('body')
 
-print(body)
+print(body.text)
 
 #elem = card_content.get_attribute('innerHTML')
 #

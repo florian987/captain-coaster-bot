@@ -783,3 +783,9 @@ IPDL protocol error: Handler returned error code!
 1531835260715	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.KC5macCvj3vr"
 1531835268098	Marionette	INFO	Listening on port 35243
 1531835268163	Marionette	WARN	TLS certificate errors will be ignored for this session
+[Parent 3390, Gecko_IOThread] WARNING: pipe error (59): Connexion ré-initialisée par le correspondant: file /build/firefox-x_t4I3/firefox-61.0.1+build1/ipc/chromium/src/chrome/common/ipc_channel_posix.cc, line 353
+1531836545964	geckodriver	INFO	geckodriver 0.21.0
+1531836545974	geckodriver	INFO	Listening on 127.0.0.1:55345
+1531836547001	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile.uP29JhCVBkQr"
+1531836552681	Marionette	INFO	Listening on port 38893
+1531836552744	Marionette	WARN	TLS certificate errors will be ignored for this session

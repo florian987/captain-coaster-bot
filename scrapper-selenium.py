@@ -9,6 +9,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.proxy import *
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 # Proxy Settings
 PROXY = "fw_in.bnf.fr:8080"
@@ -39,13 +40,18 @@ proxy = Proxy({
 #            print(cookie)
 
 
-driver = webdriver.Firefox(proxy=proxy)
+driver = webdriver.Firefox()
+#driver = webdriver.Firefox(proxy=proxy)
 #driver.implicitly_wait(10) # seconds
 driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
 driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
 
 #html = driver.page_source
+
+#wait = WebDriverWait(driver, 15)
+#element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'card-content')))
+
 html = driver.execute_script('return document.documentElement.outerHTML')
 
 #soup = BeautifulSoup(html, 'lxml')
@@ -66,10 +72,13 @@ print(html)
 #assert "Python" in driver.title
 #driver.implicitly_wait(1) # seconds
 #elem = driver.find_element_by_css_selector('a').click()
+elem = driver.find_elements_by_id("contentBody")
+print(elem.get_attribute("innerHTML"))
+
 card_content = driver.find_elements_by_class_name("card-content")
 body = driver.find_element_by_tag_name('body')
 
-print(body.text)
+#print(body.text)
 
 #elem = card_content.get_attribute('innerHTML')
 #

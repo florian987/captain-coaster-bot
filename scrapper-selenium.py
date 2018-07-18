@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
+import json
 
 from bs4 import BeautifulSoup
 
@@ -40,23 +42,58 @@ proxy = Proxy({
 #            print(cookie)
 
 
-driver = webdriver.Firefox()
+driver = webdriver.Chrome()
 #driver = webdriver.Firefox(proxy=proxy)
 #driver.implicitly_wait(10) # seconds
-driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
-driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
+#driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
+#driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
+
+time.sleep(10)
+
+row_nodes = driver.find_elements_by_xpath("//table[@data-vrs-widget='tableWrapper']/tbody/tr")
+
+#print(row_nodes)
+
+iracing_series = []
+
+for row in row_nodes:
+    #print(row.find_element_by_css_selector('td:nth-of-type(1)'))
+    #print(row.find_element_by_css_selector('td:nth-of-type(3)').text)
+    
+    node_serie = row.find_element_by_css_selector('td:nth-of-type(1) img').get_attribute('title')
+    node_car = row.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
+    node_season = row.find_element_by_css_selector('td:nth-of-type(3)').text
+    node_author = row.find_element_by_css_selector('td:nth-of-type(4) img').get_attribute('title')
+    #print(serie_node)
+
+    print(row.find_element_by_xpath("//span[@data-vrs-widget-field='packIdElement']").get_attribute("innerHTML"))
+    print(row.find_element_by_css_selector("p:nth-of-type(1)").get_attribute("innerHTML"))
+
+    #iracing_series.append(serie_node)
+
+    datapack = {}
+    datapack['serie'] = node_serie
+    datapack['car'] = node_car
+    datapack['season'] = node_season
+    datapack['author'] = node_author
+
+    print(json.dumps(datapack, indent=4))
+
+    #print(img_node.get_attribute('src'), img_node.get_attribute('title'), img_node.get_attribute('alt'))
+
+#print(json.dumps(datapack, indent=4))
 
 #html = driver.page_source
 
 #wait = WebDriverWait(driver, 15)
 #element = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'card-content')))
 
-html = driver.execute_script('return document.documentElement.outerHTML')
+#html = driver.execute_script('return document.documentElement.outerHTML')
 
 #soup = BeautifulSoup(html, 'lxml')
 
-print(html)
+#print(html)
 
 #for line in html:
 #    if "25590001" in line:
@@ -69,38 +106,7 @@ print(html)
 #finally:
 #    driver.quit()
 
-#assert "Python" in driver.title
-#driver.implicitly_wait(1) # seconds
-#elem = driver.find_element_by_css_selector('a').click()
-elem = driver.find_elements_by_id("contentBody")
-print(elem.get_attribute("innerHTML"))
 
-card_content = driver.find_elements_by_class_name("card-content")
-body = driver.find_element_by_tag_name('body')
-
-#print(body.text)
-
-#elem = card_content.get_attribute('innerHTML')
-#
-#print(elem)
-
-#for row in data_pack_rows:
-#    print(row)
-#elem.clear()
-#elem.send_keys("pycon")
-#elem.send_keys(Keys.RETURN)
-#assert "No results found." not in driver.page_source
-#driver.close()
+driver.close()
 
 
-
-
-#print(cookie_vrs)
-
-#
-#r = requests.get(url, cookies=cookie_vrs)
-#print(r.text)
-#
-#for line in r.text:
-#    if "pack" in line.lower():
-#        print(line)

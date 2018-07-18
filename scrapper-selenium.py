@@ -130,6 +130,13 @@ for car in cars_list:
             datapack = {}
             datapack['track'] = row.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
 
+
+            #laptime_span = row.find_element_by_css_selector("td:nth-of-type(3)").get_attribute("innerHTML")
+            #soup = BeautifulSoup(node_span, "html.parser")
+            #for span in soup.findAll("span", attrs={"data-vrs-widget-field":"packIdElement"}):
+            #    node_id = span.text
+            # lap-time-widget
+
             datapacks.append(datapack)
             
         print(datapacks)

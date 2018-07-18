@@ -124,6 +124,16 @@ for car in cars_list:
         # Retrieve cars table
         row_nodes = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
+        datapacks = []
+
+        for row in row_nodes:
+            datapack = {}
+            datapack['track'] = row.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
+
+            datapacks.append(datapack)
+            
+        print(datapacks)
+
 # Implicit selenium wait test
 #try:
 #    element = WebDriverWait(driver, 10).until(

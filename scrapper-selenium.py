@@ -146,6 +146,7 @@ for car in cars_list:
 
                 #print(datapack)
 
+
             except:
                 continue
 
@@ -153,7 +154,7 @@ for car in cars_list:
                 car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
                 time.sleep(3)
 
-                datapack_files = []
+                datapack['files'] = []
                 for line in driver.find_elements_by_css_selector("form.session-file-name"):
                     for file in line.find_elements_by_css_selector("a.gwt-Anchor"):
 
@@ -161,13 +162,15 @@ for car in cars_list:
                         file.click
 
                         # Build filename_list
-                        filename = str(file.text).replace(' ','_').lower()
+                        filename = str(file.text).rstrip().replace(' ','_').lower()
+
+                        print(filename)
 
                         datapack_file = {}
                         datapack_file['name'] = filename
-                        datapack_files.append(datapack_files)
+                        datapack['files'].append(datapack_file)
                 
-                print(datapack_files)
+                #print(datapack_files)
 
 
             # GoTo DataPack Page

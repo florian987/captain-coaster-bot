@@ -92,22 +92,22 @@ def build_cars_list():
         #iracing_series.append(serie_node)
 
         # Create car dict
-        datapack = {}
-        datapack['serie'] = node_serie
-        datapack['car'] = node_car
-        datapack['season'] = node_season
-        datapack['author'] = node_author
-        datapack['id'] = node_id
-        datapack['premium'] = node_premium
+        car = {}
+        car['serie'] = node_serie
+        car['car'] = node_car
+        car['season'] = node_season
+        car['author'] = node_author
+        car['id'] = node_id
+        car['premium'] = node_premium
 
-        iracing_cars.append(datapack)
+        iracing_cars.append(car)
 
         #print(json.dumps(datapack, indent=4))
 
         #print(img_node.get_attribute('src'), img_node.get_attribute('title'), img_node.get_attribute('alt'))
 
     # debug cars list
-    print(json.dumps(iracing_cars, indent=4))
+    #print(json.dumps(iracing_cars, indent=4))
 
     # Return cars list
     return iracing_cars
@@ -115,6 +115,11 @@ def build_cars_list():
 cars_list = build_cars_list()
 
 for car in cars_list:
+
+    # Initialize datapacks list
+    car['datapacks'] = []
+
+    # Only iterate over free cars
     if car['premium'] == False:
         driver.get("https://virtualracingschool.appspot.com/#/DataPacks/" + car['id'])
 
@@ -128,8 +133,32 @@ for car in cars_list:
 
         for row in row_nodes:
             datapack = {}
-            datapack['track'] = row.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
+            try:
+                # Build fom tracks lists
+                datapack['track'] = row.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
+                datapack['fastest_laptime'] = row.find_element_by_css_selector('td:nth-of-type(3) span:nth-of-type(1) span:nth-of-type(1)').get_attribute('title')
+                datapack['time_of_day'] = row.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(1) span').get_attribute('title')
+                datapack['track_state'] = row.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(2) span').get_attribute('title')
 
+
+                goto_datapack = row.find_element_by_css_selector('td:nth-of-type(7) a').click()
+
+                goto_datapack
+
+                session_files = driver.find_elements_by_xpath("//div[@data-vrs-widget='Listview']/ul")
+                
+                for session_row in session_files:
+                    hotlap = session_row.find_elements_by_css_selector("form.session-file-name").get_attribute('innerHTML')
+                    print(hotlap)
+                driver.back()
+            except:
+                continue
+
+
+            #goto_datapack = row.find_element_by_css_selector('td:nth-of-type(7) a').click()
+
+
+            #datapack['track'] = row.find_element_by_xpath("//td[2]/div/span[1]").get_attribute("innerHTML")
 
             #laptime_span = row.find_element_by_css_selector("td:nth-of-type(3)").get_attribute("innerHTML")
             #soup = BeautifulSoup(node_span, "html.parser")
@@ -137,9 +166,11 @@ for car in cars_list:
             #    node_id = span.text
             # lap-time-widget
 
-            datapacks.append(datapack)
+            car['datapacks'].append(datapack)
             
-        print(datapacks)
+        print(json.dumps(car, indent=4))
+
+#print(json.dumps(cars_list, indent=4))
 
 # Implicit selenium wait test
 #try:

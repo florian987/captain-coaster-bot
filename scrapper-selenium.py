@@ -33,13 +33,6 @@ proxy = Proxy({
 #        cookie = line
 
 
-    
-## Get cookie from file
-#with open("./cookie", "r") as cookie_file:
-#    for line in cookie_file:
-#        if "jsessionid" in line.lower():
-#            cookie = dict(JSESSIONID=line.split("=")[1])
-#            print(cookie)
 
 # Initialize selenium driver
 driver = webdriver.Chrome()
@@ -129,10 +122,12 @@ for car in cars_list:
         # Retrieve cars table
         row_nodes = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
-        datapacks = []
-
         for row in row_nodes:
+
+            # Create datapacks list
             datapack = {}
+
+
             try:
                 # Build fom tracks lists
                 datapack['track'] = row.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
@@ -140,20 +135,35 @@ for car in cars_list:
                 datapack['time_of_day'] = row.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(1) span').get_attribute('title')
                 datapack['track_state'] = row.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(2) span').get_attribute('title')
 
+                car['datapacks'].append(datapack)
 
+                #print(datapack)
+
+                # GoTo DataPack Page
                 goto_datapack = row.find_element_by_css_selector('td:nth-of-type(7) a').click()
 
                 goto_datapack
 
-                session_files = driver.find_elements_by_xpath("//div[@data-vrs-widget='Listview']/ul")
-                
+                time.sleep(3)
+
+                session_files = driver.find_elements_by_css_selector("div.vrs-list-view")
+                print(len(session_files))
+                print(session_files.get_attribute("innerHTML"))
+
                 for session_row in session_files:
-                    hotlap = session_row.find_elements_by_css_selector("form.session-file-name").get_attribute('innerHTML')
-                    print(hotlap)
+                    file_name = session_row.find_elements_by_css_selector("form.session-file-name div a ").text()
+                    file_grab = session_row.find_elements_by_css_selector("form.session-file-name div a").click()
+
+                    print(file_name)
                 driver.back()
+
+
+                car['datapacks'].append(datapack)
+
             except:
                 continue
 
+            
 
             #goto_datapack = row.find_element_by_css_selector('td:nth-of-type(7) a').click()
 
@@ -166,7 +176,7 @@ for car in cars_list:
             #    node_id = span.text
             # lap-time-widget
 
-            car['datapacks'].append(datapack)
+            
             
         print(json.dumps(car, indent=4))
 

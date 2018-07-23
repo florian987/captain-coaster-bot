@@ -113,87 +113,120 @@ def build_cars_list():
 
 cars_list = build_cars_list()
 
-for car in cars_list:
+#def get_source(self):
+#    src_page = None
+#    try:
+#        src_page = self.browser.execute_script("return document.documentelement.outerHTML")
+#    except:
+#        pass
+#    try:
+#        if src_page == None:
+#            src_page = self.browser.page_source
+#    except:
+#        raise BrowserGetSourceException()
+#    return src_page
 
-    # Initialize datapacks list
-    car['datapacks'] = []
+def build_datapacks_infos(cars_list):
+    for car in cars_list:
 
-    # Only iterate over free cars
-    if car['premium'] == False:
-        driver.get("https://virtualracingschool.appspot.com/#/DataPacks/" + car['id'])
+        # Initialize datapacks list
+        car['datapacks'] = []
 
-        # Wait dégueulasse pour load le JS
-        time.sleep(3)
+        # Only iterate over free cars
+        if car['premium'] == False:
+            driver.get("https://virtualracingschool.appspot.com/#/DataPacks/" + car['id'])
 
-        # Retrieve cars table
-        cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
+            # Wait dégueulasse pour load le JS
+            time.sleep(3)
 
-        for car_element in cars_summary:
+            # Retrieve cars table
+            cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
-            # Create datapacks list
-            datapack = {}
+            for car_element in cars_summary:
 
-            # Build datapack (only one registered atm)
+                # Create datapacks list
+                datapack = {}
 
-            try:
-                # Build fom tracks lists
-                datapack['track'] = car_element.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
-                datapack['fastest_laptime'] = car_element.find_element_by_css_selector('td:nth-of-type(3) span:nth-of-type(1) span:nth-of-type(1)').get_attribute('title')
-                datapack['time_of_day'] = car_element.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(1) span').get_attribute('title')
-                datapack['track_state'] = car_element.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(2) span').get_attribute('title')
+                # Build datapack (only one registered atm)
 
-                car['datapacks'].append(datapack)
+                try:
+                    # Build fom tracks lists
+                    datapack['track'] = car_element.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
+                    datapack['fastest_laptime'] = car_element.find_element_by_css_selector('td:nth-of-type(3) span:nth-of-type(1) span:nth-of-type(1)').get_attribute('title')
+                    datapack['time_of_day'] = car_element.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(1) span').get_attribute('title')
+                    datapack['track_state'] = car_element.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(2) span').get_attribute('title')
 
-                #print(datapack)
+                    car['datapacks'].append(datapack)
+
+                    #print(datapack)
+
+                except Exception as e:
+                    print('ERR', e)
+                    continue
+
+                if datapack['fastest_laptime'] != "":
+                    car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
+                    time.sleep(3)
+
+                    datapack['files'] = []
+                    for line in driver.find_elements_by_css_selector("form.session-file-name"):
+                        for file in line.find_elements_by_css_selector("a.gwt-Anchor"):
+
+                            # Download file
+                            file.click
+
+                            # Build filename_list
+                            filename = str(file.text).replace(' .','.').replace(' ','_').lower()
+
+                            print(filename)
+
+                            # Add filename to list
+                            datapack_file = {}
+                            datapack_file['name'] = filename
+
+                            # Set filetype
+                            file_extension = filename.split('.')[-1]
+                            if file_extension == "olap":
+                                datapack_file['type'] = "hotlap"
+                            elif file_extension == "blap":
+                                datapack_file['type'] = "bestlap"
+                            elif file_extension == "rpy":
+                                datapack_file['type'] = "replay"
+                            elif file_extension == "sto":
+                                datapack_file['type'] = "setup"
+                            else:
+                                datapack_file['type'] = "unknown"
 
 
-            except:
-                continue
+                            # Append file to datapac
+                            datapack['files'].append(datapack_file)
 
-            if datapack['fastest_laptime'] != "":
-                car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
+                    
+                    
+                    #print(datapack_files)
+
+
+                # GoTo DataPack Page
+                # if datapck not empty ?
+                #goto_datapack = car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
+    #
+                #goto_datapack
+    #
+                #time.sleep(3)
+    #
+                #session_files = driver.find_elements_by_css_selector("div.vrs-list-view")
+                #print(len(session_files))
+                #print(session_files)
+                #for session_row in session_files:
+                #    print(dir(session_row.find_elements_by_css_selector("form.session-file-name div a ")))
+                #    #file_name = session_row.find_elements_by_css_selector("form.session-file-name div a ").text
+                #    #file_grab = session_row.find_elements_by_css_selector("form.session-file-name div a").click()
+    ##
+                #    #print(file_name)
+                #    
+                driver.back()
                 time.sleep(3)
-
-                datapack['files'] = []
-                for line in driver.find_elements_by_css_selector("form.session-file-name"):
-                    for file in line.find_elements_by_css_selector("a.gwt-Anchor"):
-
-                        # Download file
-                        file.click
-
-                        # Build filename_list
-                        filename = str(file.text).rstrip().replace(' ','_').lower()
-
-                        print(filename)
-
-                        datapack_file = {}
-                        datapack_file['name'] = filename
-                        datapack['files'].append(datapack_file)
                 
-                #print(datapack_files)
-
-
-            # GoTo DataPack Page
-            # if datapck not empty ?
-            #goto_datapack = car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
-#
-            #goto_datapack
-#
-            #time.sleep(3)
-#
-            #session_files = driver.find_elements_by_css_selector("div.vrs-list-view")
-            #print(len(session_files))
-            #print(session_files)
-            #for session_row in session_files:
-            #    print(dir(session_row.find_elements_by_css_selector("form.session-file-name div a ")))
-            #    #file_name = session_row.find_elements_by_css_selector("form.session-file-name div a ").text
-            #    #file_grab = session_row.find_elements_by_css_selector("form.session-file-name div a").click()
-##
-            #    #print(file_name)
-            #    
-            #driver.back()
-            #time.sleep(3)
-            
 
             #goto_datapack = car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
 
@@ -208,7 +241,7 @@ for car in cars_list:
 
             
             
-        print(json.dumps(car, indent=4))
+            print(json.dumps(car, indent=4))
 
 #print(json.dumps(cars_list, indent=4))
 

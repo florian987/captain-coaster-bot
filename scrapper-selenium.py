@@ -52,6 +52,10 @@ def iter_dom(driver, xpath):
     def get_next_element(elems, idx, d, p):
       for i, element in enumerate(elems):
         if i == idx:
+<<<<<<< HEAD
+=======
+            
+>>>>>>> a79c7f4c122397da54927f851cc41841d52b4466
             return element
         
     current_idx = 0

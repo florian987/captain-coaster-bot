@@ -48,6 +48,21 @@ driver = webdriver.Firefox(profile)
 #driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 
+def iter_dom(driver, xapth):
+    def get_next_element(elems, d, p):
+      for i, element in enumerate(elems):
+        if i == current_idx:
+            current_idx += 1
+            return element
+        
+    current_idx = 0
+    elements = driver.find_elements_by_xpath(xpath)
+    try:
+        yield get_next_element(elements, driver, xpath)
+    except Exception:
+        elements = driver.find_elements_by_xpath(xpath)
+        yield get_next_element(elements, driver, xpath)
+
 def build_cars_list():
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
 
@@ -140,9 +155,9 @@ def build_datapacks_infos(cars_list):
             time.sleep(3)
 
             # Retrieve cars table
-            cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
+            # cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
-            for car_element in cars_summary:
+            for car_element in iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr"):
 
                 # Create datapacks list
                 datapack = {}

@@ -152,16 +152,25 @@ def build_datapacks_infos(cars_list):
             # Retrieve cars table
             # cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
+            # Iterate over DataPacks Lines
             for car_element in iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr"):
 
-                cars_count = 1
+                # Start from 2nd lin if "Previous weeks" line exists
+                try:
+                    if driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").text == "Show previous weeks":
+                        cars_count = 2
+                except AttributeError:
+                    cars_count = 1
+
+
 
                 # Create datapacks list
                 datapack = {}
 
                 # Build datapack (only one registered atm)
-
                 try:
+                    print("table", driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']"))
+
                     # Build fom tracks lists
                     print(driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/div/img"))
 
@@ -227,6 +236,10 @@ def build_datapacks_infos(cars_list):
 
                             # Append file to datapac
                             datapack['files'].append(datapack_file)
+                    
+                    driver.back()
+                    time.sleep(3)
+                
 
                     
                     

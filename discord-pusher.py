@@ -25,7 +25,7 @@ class MyClient(discord.Client):
         # Define listening commands
         if str(message.content) == "!get_channels_list":
             for channel in client.get_all_channels():
-                print(channel, channel.category_id)
+                print(channel, channel.category_id, channel.category)
 
         
 

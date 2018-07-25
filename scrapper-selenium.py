@@ -48,20 +48,26 @@ driver = webdriver.Firefox(profile)
 #driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 
-def iter_dom(driver, xapth):
-    def get_next_element(elems, d, p):
+def iter_dom(driver, xpath):
+    def get_next_element(elems, idx, d, p):
       for i, element in enumerate(elems):
-        if i == current_idx:
-            current_idx += 1
+        if i == idx:
+            
             return element
         
     current_idx = 0
     elements = driver.find_elements_by_xpath(xpath)
     try:
-        yield get_next_element(elements, driver, xpath)
+        elem = get_next_element(elements, current_idx, driver, xpath)
+        if elem:
+            current_idx += 1
+            yield elem
     except Exception:
         elements = driver.find_elements_by_xpath(xpath)
-        yield get_next_element(elements, driver, xpath)
+        elem = get_next_element(elements, current_idx, driver, xpath)
+        if elem:
+            current_idx += 1
+            yield elem
 
 def build_cars_list():
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")

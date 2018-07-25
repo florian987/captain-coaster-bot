@@ -41,27 +41,32 @@ profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/zi
 
 
 # Initialize selenium driver
-driver = webdriver.Firefox(profile)
-#driver = webdriver.Firefox(proxy=proxy) # Ajout du proxy
+#driver = webdriver.Firefox(profile)
+driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
 
 #driver.implicitly_wait(10) # seconds
 #driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 
-def iter_dom(driver, xapth):
-    def get_next_element(elems, d, p):
+def iter_dom(driver, xpath):
+    def get_next_element(elems, idx, d, p):
       for i, element in enumerate(elems):
-        if i == current_idx:
-            current_idx += 1
+        if i == idx:
             return element
         
     current_idx = 0
     elements = driver.find_elements_by_xpath(xpath)
     try:
-        yield get_next_element(elements, driver, xpath)
+        elem = get_next_element(elements, current_idx, driver, xpath)
+        if elem:
+            current_idx += 1
+            yield elem
     except Exception:
         elements = driver.find_elements_by_xpath(xpath)
-        yield get_next_element(elements, driver, xpath)
+        elem = get_next_element(elements, current_idx, driver, xpath)
+        if elem:
+            current_idx += 1
+            yield elem
 
 def build_cars_list():
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
@@ -116,7 +121,7 @@ def build_cars_list():
 
         iracing_cars.append(car)
 
-        #print(json.dumps(datapack, indent=4))
+        print(json.dumps(car, indent=4))
 
         #print(img_node.get_attribute('src'), img_node.get_attribute('title'), img_node.get_attribute('alt'))
 
@@ -159,6 +164,8 @@ def build_datapacks_infos(cars_list):
 
             for car_element in iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr"):
 
+                cars_count = 1
+
                 # Create datapacks list
                 datapack = {}
 
@@ -166,14 +173,28 @@ def build_datapacks_infos(cars_list):
 
                 try:
                     # Build fom tracks lists
-                    datapack['track'] = car_element.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
-                    datapack['fastest_laptime'] = car_element.find_element_by_css_selector('td:nth-of-type(3) span:nth-of-type(1) span:nth-of-type(1)').get_attribute('title')
-                    datapack['time_of_day'] = car_element.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(1) span').get_attribute('title')
-                    datapack['track_state'] = car_element.find_element_by_css_selector('td:nth-of-type(4) span:nth-of-type(2) span').get_attribute('title')
+                    print(dir(driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/img")))
+
+                    datapack['track'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/img"
+                        ).get_attribute('title')
+
+                    datapack['fastest_laptime'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[3]/span[1]/span[1]"
+                        ).get_attribute('title')
+
+                    datapack['time_of_day'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/span[1]/span"
+                        ).get_attribute('title')
+                        
+                    datapack['track_state'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/span[2]/span"
+                        ).get_attribute('title')
+
 
                     car['datapacks'].append(datapack)
 
-                    #print(datapack)
+                    print(datapack)
 
                 except Exception as e:
                     print('ERR', e)
@@ -220,6 +241,7 @@ def build_datapacks_infos(cars_list):
                     
                     #print(datapack_files)
 
+                cars_count += 1
 
                 # GoTo DataPack Page
                 # if datapck not empty ?
@@ -257,6 +279,8 @@ def build_datapacks_infos(cars_list):
             
             
             print(json.dumps(car, indent=4))
+
+build_datapacks_infos(cars_list)
 
 #print(json.dumps(cars_list, indent=4))
 

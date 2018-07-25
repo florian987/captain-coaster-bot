@@ -118,6 +118,7 @@ def build_cars_list():
         car['season'] = node_season
         car['author'] = node_author
         car['id'] = node_id
+        car['url'] = "https://virtualracingschool.appspot.com/#/DataPacks/" + node_id
         car['premium'] = node_premium
 
         iracing_cars.append(car)
@@ -138,11 +139,12 @@ def build_datapacks_infos(cars_list):
     for car in cars_list:
 
         # Initialize datapacks list
+
         car['datapacks'] = []
 
         # Only iterate over free cars
         if car['premium'] == False:
-            driver.get("https://virtualracingschool.appspot.com/#/DataPacks/" + car['id'])
+            driver.get(car['url'])
 
             # Wait dégueulasse pour load le JS
             time.sleep(3)
@@ -159,35 +161,35 @@ def build_datapacks_infos(cars_list):
 
                 # Build datapack (only one registered atm)
 
-                #try:
-                # Build fom tracks lists
-                print(driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/div/img"))
+                try:
+                    # Build fom tracks lists
+                    print(driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/div/img"))
 
-                datapack['track'] = driver.find_elements_by_xpath(
-                    "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/div/img"
-                    ).get_attribute('title')
+                    datapack['track'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/div/img"
+                        )[0].get_attribute('title')
 
-                datapack['fastest_laptime'] = driver.find_elements_by_xpath(
-                    "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[3]/div/span[1]/span"
-                    ).get_attribute('title')
+                    datapack['fastest_laptime'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[3]/div/span[1]/span"
+                        )[0].get_attribute('title')
 
-                datapack['time_of_day'] = driver.find_elements_by_xpath(
-                    "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/div/span[1]/span"
-                    ).get_attribute('title')
-                    
-                datapack['track_state'] = driver.find_elements_by_xpath(
-                    "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/div/span[2]/span"
-                    ).get_attribute('title')
+                    datapack['time_of_day'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/div/span[1]/span"
+                        )[0].get_attribute('title')
+                        
+                    datapack['track_state'] = driver.find_elements_by_xpath(
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/div/span[2]/span"
+                        )[0].get_attribute('title')
 
 
-                car['datapacks'].append(datapack)
+                    car['datapacks'].append(datapack)
 
-                print('datapack: ', datapack)
+                    print('datapack: ', datapack)
 
-                #except Exception as e:
-                #    print('ERR', e)
-                #    traceback.print_stack()
-                #    continue
+                except Exception as e:
+                    print('ERR', e)
+                    #traceback.print_stack()
+                    continue
 
                 if datapack['fastest_laptime'] != "":
                     car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()

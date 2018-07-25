@@ -155,12 +155,16 @@ def build_datapacks_infos(cars_list):
             # Iterate over DataPacks Lines
             for car_element in iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr"):
 
-                # Start from 2nd lin if "Previous weeks" line exists
+                # Set car counter
+                cars_count = 1
+
+                # Start from 2nd line if "Previous weeks" line exists
                 try:
                     if driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").text == "Show previous weeks":
                         cars_count = 2
-                except AttributeError:
-                    cars_count = 1
+                except:
+                    continue
+                    
 
 
 

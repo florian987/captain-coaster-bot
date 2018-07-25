@@ -3,6 +3,10 @@ import discord
 import configparser
 import logging
 
+# Add commands
+# https://discordpy.readthedocs.io/en/rewrite/ext/commands/commands.html
+
+
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')

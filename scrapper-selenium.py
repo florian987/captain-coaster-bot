@@ -41,8 +41,8 @@ profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/zi
 
 
 # Initialize selenium driver
-#driver = webdriver.Firefox(profile)
-driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
+driver = webdriver.Firefox(profile)
+#driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
 
 #driver.implicitly_wait(10) # seconds
 #driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
@@ -52,10 +52,6 @@ def iter_dom(driver, xpath):
     def get_next_element(elems, idx, d, p):
       for i, element in enumerate(elems):
         if i == idx:
-<<<<<<< HEAD
-=======
-            
->>>>>>> a79c7f4c122397da54927f851cc41841d52b4466
             return element
         
     current_idx = 0
@@ -137,19 +133,6 @@ def build_cars_list():
 
 cars_list = build_cars_list()
 
-#def get_source(self):
-#    src_page = None
-#    try:
-#        src_page = self.browser.execute_script("return document.documentelement.outerHTML")
-#    except:
-#        pass
-#    try:
-#        if src_page == None:
-#            src_page = self.browser.page_source
-#    except:
-#        raise BrowserGetSourceException()
-#    return src_page
-
 def build_datapacks_infos(cars_list):
     for car in cars_list:
 
@@ -198,7 +181,7 @@ def build_datapacks_infos(cars_list):
 
                     car['datapacks'].append(datapack)
 
-                    print(datapack)
+                    print('datapack: ', datapack)
 
                 except Exception as e:
                     print('ERR', e)

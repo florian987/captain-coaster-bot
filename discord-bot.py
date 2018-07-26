@@ -27,7 +27,7 @@ def get_prefix(bot, message):
 
     # Notice how you can use spaces in prefixes.
     # Try to keep them simple though.
-    prefixes = ['/', "!"]
+    prefixes = ['/']
 
     # If we are in a guild, we allow for the user to mention
     # us or use any of the prefixes in our list.
@@ -42,7 +42,9 @@ initial_extensions = ['cogs.owner',
 
 bot = commands.Bot(
     command_prefix=get_prefix,
-    description='Sharps Bot')
+    description='Socquette Bot')
+
+bot.proxy = "http://fw_in.bnf.fr:8080"
 
 # Here we load our extensions(cogs) listed above in [initial_extensions].
 if __name__ == '__main__':
@@ -68,7 +70,7 @@ async def on_ready():
 
     # Changes our bots Playing Status. t
     # ype=1(streaming) for a standard game you could remove type and url.
-    #await bot.change_presence(game=discord.Game(name='/start - COME PLAY'))
+    #await bot.activity(game=discord.Game(name='/start - COME PLAY'))
 
     print('Successfully logged in and booted...!')
 

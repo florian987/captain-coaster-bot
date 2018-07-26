@@ -33,13 +33,6 @@ profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/oc
 profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/zip')
 
 
-# Get cookie from file
-#with open("./cookie", "r") as cookie_file:
-#    for line in cookie_file:
-#        print(line)
-#        cookie = line
-
-
 
 # Initialize selenium driver
 driver = webdriver.Firefox(profile)
@@ -69,11 +62,23 @@ def iter_dom(driver, xpath):
             current_idx += 1
             yield elem
 
+def wait_by_xpath(xpath):
+    try:
+        element = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, xpath)))
+    except:
+        print("Unable to find element {} in page".format(xpath))
+
 def build_cars_list():
+    """Build cars list from datapacks page"""
+
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
 
     # Wait dégueulasse pour load le JS
-    time.sleep(3)
+    #time.sleep(3)
+
+    # ait JavaScript to load cars table
+    wait_by_xpath("//table[@data-vrs-widget='tableWrapper']/tbody/tr")
 
     # Retrieve cars table
     cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='tableWrapper']/tbody/tr")
@@ -147,7 +152,10 @@ def build_datapacks_infos(cars_list):
             driver.get(car['url'])
 
             # Wait dégueulasse pour load le JS
-            time.sleep(3)
+            #time.sleep(3)
+
+            # Clean wait pour
+            wait_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
             # Retrieve cars table
             # cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")

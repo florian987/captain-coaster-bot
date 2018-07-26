@@ -300,15 +300,8 @@ build_datapacks_infos(cars_list)
 
 #print(json.dumps(cars_list, indent=4))
 
-# Implicit selenium wait test
-#try:
-#    element = WebDriverWait(driver, 10).until(
-#        EC.presence_of_element_located((By.ID, "myDynamicElement"))
-#    )
-#finally:
-#    driver.quit()
 
-
+# Finaly close the browser
 driver.close()
 
 

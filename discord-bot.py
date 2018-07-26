@@ -42,7 +42,7 @@ initial_extensions = ['cogs.owner',
 
 bot = commands.Bot(
     command_prefix=get_prefix,
-    description='Sharps Bot')
+    description='Socquette Bot')
 
 # Here we load our extensions(cogs) listed above in [initial_extensions].
 if __name__ == '__main__':
@@ -76,4 +76,5 @@ async def on_ready():
 bot.run(
     secret,
     bot=True,
-reconnect=True)
+    reconnect=True,
+    proxy="http://fw_in.bnf.fr:8080")

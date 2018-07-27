@@ -35,11 +35,9 @@ profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/zi
 
 
 # Initialize selenium driver
-driver = webdriver.Firefox(profile)
-#driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
+#driver = webdriver.Firefox(profile)
+driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
 
-#driver.implicitly_wait(10) # seconds
-#driver.get("http://virtualracingschool.appspot.com/#/DataPacks")
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 
 def iter_dom(driver, xpath):
@@ -62,51 +60,52 @@ def iter_dom(driver, xpath):
             current_idx += 1
             yield elem
 
-def wait_by_xpath(xpath):
+
+
+def wait_by_xpath(xpath, retries=20):
+    """Wait for xpath element to load"""
     try:
-        element = WebDriverWait(driver, 20).until(
+        element = WebDriverWait(driver, retries).until(
             EC.presence_of_element_located((By.XPATH, xpath)))
     except:
         print("Unable to find element {} in page".format(xpath))
 
+
+
+
 def build_cars_list():
     """Build cars list from datapacks page"""
 
+    print("Start cars list building ...")
+
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
 
-    # Wait dégueulasse pour load le JS
-    #time.sleep(3)
-
-    # ait JavaScript to load cars table
+    # Wait JavaScript to load cars table
     wait_by_xpath("//table[@data-vrs-widget='tableWrapper']/tbody/tr")
 
     # Retrieve cars table
-    cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='tableWrapper']/tbody/tr")
+    car_row = driver.find_elements_by_xpath("//table[@data-vrs-widget='tableWrapper']/tbody/tr")
 
-    #print(cars_summary)
+
 
     # Initialize cars array
     iracing_cars = []
 
     # Iterate over table car_elements
-    for car_element in cars_summary:
-        #print(row.find_element_by_css_selector('td:nth-of-type(1)'))
-        #print(row.find_element_by_css_selector('td:nth-of-type(3)').text)
+    for car_element in car_row:
         
         # Retrieve cars infos
-        node_serie = car_element.find_element_by_css_selector('td:nth-of-type(1) img').get_attribute('title')
-        node_car = car_element.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
-        node_season = car_element.find_element_by_css_selector('td:nth-of-type(3)').text
-        node_author = car_element.find_element_by_css_selector('td:nth-of-type(4) img').get_attribute('title')
+        car_serie = car_element.find_element_by_css_selector('td:nth-of-type(1) img').get_attribute('title')
+        car_car = car_element.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
+        car_season = car_element.find_element_by_css_selector('td:nth-of-type(3)').text
+        car_author = car_element.find_element_by_css_selector('td:nth-of-type(4) img').get_attribute('title')
         #print(serie_node)
 
         # Set premium status depending of style display
         if "visible" in car_element.find_element_by_class_name('blue').get_attribute('style'):
-            node_premium = True
+            car_premium = True
         else:
-            node_premium = False
-
-        #print(row.find_element_by_xpath("//span[@data-vrs-widget-field='packIdElement']").get_attribute("innerHTML"))
+            car_premium = False
 
         # Get car ID
         node_span = car_element.find_element_by_css_selector("p:nth-of-type(1)").get_attribute("innerHTML")
@@ -118,19 +117,18 @@ def build_cars_list():
 
         # Create car dict
         car = {}
-        car['serie'] = node_serie
-        car['car'] = node_car
-        car['season'] = node_season
-        car['author'] = node_author
+        car['serie'] = car_serie
+        car['car'] = car_car
+        car['season'] = car_season
+        car['author'] = car_author
         car['id'] = node_id
         car['url'] = "https://virtualracingschool.appspot.com/#/DataPacks/" + node_id
-        car['premium'] = node_premium
+        car['premium'] = car_premium
 
         iracing_cars.append(car)
 
-        print(json.dumps(car, indent=4))
+        #print(json.dumps(car, indent=4))
 
-        #print(img_node.get_attribute('src'), img_node.get_attribute('title'), img_node.get_attribute('alt'))
 
     # debug cars list
     #print(json.dumps(iracing_cars, indent=4))
@@ -149,57 +147,66 @@ def build_datapacks_infos(cars_list):
 
         # Only iterate over free cars
         if car['premium'] == False:
+            
+            # Load car URL
             driver.get(car['url'])
 
-            # Wait dégueulasse pour load le JS
-            #time.sleep(3)
-
-            # Clean wait pour
+            # Wait JS load
             wait_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
-            # Retrieve cars table
-            # cars_summary = driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
+            #print('HTML', driver.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody").get_attribute('innerHTML'))
+            #print('dir HTML', dir(driver.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody").get_attribute('inneerHTML')))
 
             # Iterate over DataPacks Lines
             for car_element in iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr"):
 
-                # Set car counter
-                cars_count = 1
+                print("Start building datapack for {}".format(car['car']))
+
+                # Set tracks counter
+                row_count = 1
+
+                
 
                 # Start from 2nd line if "Previous weeks" line exists
                 try:
-                    if driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").text == "Show previous weeks":
-                        cars_count = 2
-                except:
+                    if driver.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").text.lower().strip() == "show previous weeks":
+                       row_count = 2
+                    else:
+                        test = driver.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").get_attribute('innerHTML')
+                        print(driver.current_url)
+                        print('test: ', '_' + test + '_')
+                except Exception as e:
+                    print('ERR', e)
                     continue
                     
 
 
-
+                print('row_count', row_count)
+ 
                 # Create datapacks list
                 datapack = {}
 
                 # Build datapack (only one registered atm)
                 try:
-                    print("table", driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']"))
+                    #print("table", driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']"))
 
                     # Build fom tracks lists
-                    print(driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/div/img"))
+                    #print(driver.find_elements_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(row_count) + "]/td[2]/div/img"))
 
                     datapack['track'] = driver.find_elements_by_xpath(
-                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[2]/div/img"
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(row_count) + "]/td[2]/div/img"
                         )[0].get_attribute('title')
 
                     datapack['fastest_laptime'] = driver.find_elements_by_xpath(
-                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[3]/div/span[1]/span"
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(row_count) + "]/td[3]/div/span[1]/span"
                         )[0].get_attribute('title')
 
                     datapack['time_of_day'] = driver.find_elements_by_xpath(
-                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/div/span[1]/span"
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(row_count) + "]/td[4]/div/span[1]/span"
                         )[0].get_attribute('title')
                         
                     datapack['track_state'] = driver.find_elements_by_xpath(
-                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(cars_count) + "]/td[4]/div/span[2]/span"
+                        "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(row_count) + "]/td[4]/div/span[2]/span"
                         )[0].get_attribute('title')
 
 
@@ -213,7 +220,7 @@ def build_datapacks_infos(cars_list):
                     continue
 
                 if datapack['fastest_laptime'] != "":
-                    car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
+                    car_element.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[" + str(row_count) + "]/td[7]/a").click()
                     time.sleep(3)
 
                     datapack['files'] = []
@@ -222,6 +229,12 @@ def build_datapacks_infos(cars_list):
 
                             # Download file
                             file.click
+                            # Try block to catch download popup
+                            try:
+                                driver.find_element_by_xpath("/html/body/div[7]/div/div/div[3]/a[2]").click
+                            except:
+                                continue
+                            
 
                             # Build filename_list
                             filename = str(file.text).replace(' .','.').replace(' ','_').lower()
@@ -257,7 +270,7 @@ def build_datapacks_infos(cars_list):
                     
                     #print(datapack_files)
 
-                cars_count += 1
+                row_count += 1
 
                 # GoTo DataPack Page
                 # if datapck not empty ?

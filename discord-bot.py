@@ -3,8 +3,11 @@ from discord.ext import commands
 
 import sys
 import traceback
+import logging
 
 from secret import secret
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 """This is a multi file example showcasing many features of the command
@@ -40,11 +43,15 @@ def get_prefix(bot, message):
 initial_extensions = ['cogs.owner',
                       'cogs.default']
 
+# Proxy settings
+proxy='http://fw_in.bnf.fr:8080'
+
 bot = commands.Bot(
+    proxy=proxy, 
     command_prefix=get_prefix,
     description='Socquette Bot')
 
-bot.proxy = "http://fw_in.bnf.fr:8080"
+#bot.proxy = "fw_in.bnf.fr:8080"
 
 # Here we load our extensions(cogs) listed above in [initial_extensions].
 if __name__ == '__main__':

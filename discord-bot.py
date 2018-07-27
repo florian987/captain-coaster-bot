@@ -47,7 +47,6 @@ initial_extensions = ['cogs.owner',
 proxy='http://fw_in.bnf.fr:8080'
 
 bot = commands.Bot(
-    proxy=proxy, 
     command_prefix=get_prefix,
     description='Socquette Bot')
 

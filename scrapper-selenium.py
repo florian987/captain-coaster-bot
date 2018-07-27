@@ -13,6 +13,7 @@ from selenium.webdriver.common.proxy import *
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException        
 
 # Proxy Settings
 PROXY = "fw_in.bnf.fr:8080"
@@ -70,6 +71,13 @@ def wait_by_xpath(xpath, retries=20):
     except:
         print("Unable to find element {} in page".format(xpath))
 
+
+def check_exists_by_xpath(xpath):
+    try:
+        driver.find_element_by_xpath(xpath)
+    except NoSuchElementException:
+        return False
+    return True
 
 
 
@@ -135,14 +143,19 @@ def build_cars_list():
 
     # Return cars list
     return iracing_cars
+    
 
+
+# Create cars list
 cars_list = build_cars_list()
+
+
+
 
 def build_datapacks_infos(cars_list):
     for car in cars_list:
 
         # Initialize datapacks list
-
         car['datapacks'] = []
 
         # Only iterate over free cars
@@ -165,7 +178,8 @@ def build_datapacks_infos(cars_list):
                 # Set tracks counter
                 row_count = 1
 
-                
+                print('car_element: ',car_element.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").get_attribute('innerHTML'))
+
 
                 # Start from 2nd line if "Previous weeks" line exists
                 try:

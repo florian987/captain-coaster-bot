@@ -28,6 +28,8 @@ class Default_Commands:
         if operator == "**":
             total = first ** second
 
+        # embed doc
+        # https://cdn.discordapp.com/attachments/84319995256905728/252292324967710721/embed.png
         embed = discord.Embed(
             title="Answer = **{}**".format(total),
             description="Do another calc with `/help calc`!",

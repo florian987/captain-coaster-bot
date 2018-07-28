@@ -41,7 +41,8 @@ def get_prefix(bot, message):
 # Following is the file name. So 'meme.py' in cogs, would be cogs.meme
 # Think of it like a dot path import
 initial_extensions = ['cogs.owner',
-                      'cogs.default']
+                      'cogs.default',
+                      'cogs.vrs']
 
 # Proxy settings
 proxy='http://fw_in.bnf.fr:8080'
@@ -76,7 +77,7 @@ async def on_ready():
 
     # Changes our bots Playing Status. t
     # ype=1(streaming) for a standard game you could remove type and url.
-    #await bot.activity(game=discord.Game(name='/start - COME PLAY'))
+    await bot.change_presence(activity=discord.Game(name='enfiler des petits enfants ...'))
 
     print('Successfully logged in and booted...!')
 

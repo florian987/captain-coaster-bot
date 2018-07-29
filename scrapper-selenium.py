@@ -175,20 +175,6 @@ def build_datapacks_infos(cars_list):
                 # Set tracks counter
                 row_count = 1
 
-<<<<<<< HEAD
-                # Start from 2nd line if "Previous weeks" line exists
-                try:
-                    if row_count == 1 and driver.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").get_attribute('innerHTML').lower().strip() == "show previous weeks":
-                       row_count += 1
-                    else:
-                        test = driver.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").get_attribute('innerHTML')
-                        print(driver.current_url)
-                        print('test: ', '_' + test + '_')
-                except Exception as e:
-                    print('ERR', e)
-                    continue
-                    
-=======
                 #print('car_element: ',car_element.find_element_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div").get_attribute('innerHTML'))
 
 
@@ -206,7 +192,6 @@ def build_datapacks_infos(cars_list):
 
                 if check_exists_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div"):
                     row_count += 1 
->>>>>>> 04d4c603faba7f8d0ffb9896167511a97a5e5dc9
 
 
                 print('row_count', row_count)
@@ -322,11 +307,8 @@ def build_datapacks_infos(cars_list):
     ##
                 #    #print(file_name)
                 #    
-<<<<<<< HEAD
         #        driver.back()
         #        time.sleep(3)
-=======
->>>>>>> 04d4c603faba7f8d0ffb9896167511a97a5e5dc9
                 
 
             #goto_datapack = car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()

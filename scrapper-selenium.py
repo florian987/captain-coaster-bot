@@ -41,27 +41,25 @@ driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
 
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 
-def iter_dom(driver, xpath):
+def iter_dom(driver, xpath, current_idx=0):
     def get_next_element(elems, idx, d, p):
       for i, element in enumerate(elems):
         if i == idx:
             return element
-        
-    current_idx = 0
+
     elements = driver.find_elements_by_xpath(xpath)
     try:
         elem = get_next_element(elements, current_idx, driver, xpath)
         if elem:
-            current_idx += 1
             yield elem
     except Exception:
         elements = driver.find_elements_by_xpath(xpath)
         elem = get_next_element(elements, current_idx, driver, xpath)
         if elem:
-            current_idx += 1
             yield elem
 
-
+    if elem:
+        iter_dom(driver, xpath, current_idx + 1)
 
 def wait_by_xpath(xpath, retries=20):
     """Wait for xpath element to load"""

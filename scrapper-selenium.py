@@ -168,6 +168,8 @@ def build_datapacks_infos(cars_list):
             # Iterate over DataPacks tables TR 
             for car_element in iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr"):
 
+                wait_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
+
                 print(car_element.get_attribute('innerHTML'))
 
                 print("Start building datapack for {}".format(car['car']))

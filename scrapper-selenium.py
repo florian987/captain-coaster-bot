@@ -198,7 +198,8 @@ def build_datapacks_infos(cars_list):
                 #    print('ERR', e)
                 #    continue
 
-                if check_exists_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div"):
+                # Jump to second row if first iteration
+                if row_count == 1 and check_exists_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[1]/td/div/div"):
                     row_count += 1 
 
 
@@ -235,13 +236,15 @@ def build_datapacks_infos(cars_list):
 
                     print('datapack: ', datapack)
 
+                    row_count += 1
+
                 except Exception as e:
                     print('ERR', e)
                     #traceback.print_stack()
                     continue
 
 
-            row_count += 1
+                row_count += 1
 
             
             #    if datapack['fastest_laptime'] != "":

@@ -59,7 +59,7 @@ def iter_dom(driver, xpath, current_idx=0):
             yield elem
 
     if elem:
-        iter_dom(driver, xpath, current_idx + 1)
+        return iter_dom(driver, xpath, current_idx + 1)
 
 def wait_by_xpath(xpath, retries=20):
     """Wait for xpath element to load"""

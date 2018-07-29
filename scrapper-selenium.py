@@ -41,25 +41,33 @@ driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
 
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 
-def iter_dom(driver, xpath, current_idx=0):
-    def get_next_element(elems, idx, d, p):
+def iter_dom(driver, xpath):
+    def get_next_element(elems, idx):
       for i, element in enumerate(elems):
+        print("get elem : %s / %s" % (i, idx, element))
         if i == idx:
             return element
-
-    elements = driver.find_elements_by_xpath(xpath)
-    try:
-        elem = get_next_element(elements, current_idx, driver, xpath)
-        if elem:
-            yield elem
-    except Exception:
+    
+    current_idx = 0
+    has_elements = True
+    while has_elements:
         elements = driver.find_elements_by_xpath(xpath)
-        elem = get_next_element(elements, current_idx, driver, xpath)
-        if elem:
-            yield elem
+        try:
+            elem = get_next_element(elements, current_idx)
+            print("Try1: %s / %s" % (current_idx, elem))
+            if elem:
+                yield elem
+        except Exception as e:
+            elements = driver.find_elements_by_xpath(xpath)
+            elem = get_next_element(elements, current_idx)
+            print("Try2: %s / %s / %s" % (current_idx, elem, e))
+            if elem:
+                yield elem
 
-    if elem:
-        return iter_dom(driver, xpath, current_idx + 1)
+        if elem:
+            current_idx += 1
+        else:
+            has_elements = False 
 
 def wait_by_xpath(xpath, retries=20):
     """Wait for xpath element to load"""

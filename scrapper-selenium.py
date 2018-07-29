@@ -235,8 +235,7 @@ def build_datapacks_infos(cars_list):
                     car['datapacks'].append(datapack)
 
                     print('datapack: ', datapack)
-
-                    row_count += 1
+                    
 
                 except Exception as e:
                     print('ERR', e)

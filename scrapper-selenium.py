@@ -44,7 +44,7 @@ driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
 def iter_dom(driver, xpath):
     def get_next_element(elems, idx):
       for i, element in enumerate(elems):
-        print("get elem : %s / %s" % (i, idx, element))
+        #print("get elem : %s / %s / %s" % (i, idx, element))
         if i == idx:
             return element
     
@@ -54,13 +54,13 @@ def iter_dom(driver, xpath):
         elements = driver.find_elements_by_xpath(xpath)
         try:
             elem = get_next_element(elements, current_idx)
-            print("Try1: %s / %s" % (current_idx, elem))
+            #print("Try1: %s / %s" % (current_idx, elem))
             if elem:
                 yield elem
         except Exception as e:
             elements = driver.find_elements_by_xpath(xpath)
             elem = get_next_element(elements, current_idx)
-            print("Try2: %s / %s / %s" % (current_idx, elem, e))
+            #print("Try2: %s / %s / %s" % (current_idx, elem, e))
             if elem:
                 yield elem
 
@@ -176,7 +176,7 @@ def build_datapacks_infos(cars_list):
 
                 wait_by_xpath("//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
 
-                print(car_element.get_attribute('innerHTML'))
+                #print(car_element.get_attribute('innerHTML'))
 
                 print("Start building datapack for {}".format(car['car']))
 

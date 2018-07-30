@@ -195,8 +195,7 @@ def build_datapacks_infos(cars_list):
             driver.get(car['url'])
             wait_by_xpath("//p[@class='base-info' and text()=\"" + car['name'] +"\"]")
 
-            # Iterate over DataPacks tables TR 
-            #for car_element in iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr[@class='KM1CN4-W-f']"):
+            # Iterate over DataPacks tables TR
             car_elements = iter_dom(driver, "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr")
             for car_element in car_elements:
 
@@ -205,7 +204,6 @@ def build_datapacks_infos(cars_list):
 
                 # Build datapack
                 try:
-                    #print(car_element.get_attribute('innerHTML'))
 
                     datapack['track'] = car_element.find_elements_by_css_selector(
                         "td:nth-of-type(2) img"

@@ -30,8 +30,8 @@ profile = webdriver.FirefoxProfile()
 profile.set_preference('browser.download.folderList', 2) # custom location
 profile.set_preference('browser.download.manager.showWhenStarting', False)
 profile.set_preference('browser.download.dir', './downloads/')
-profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/octet-stream')
-profile.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/zip')
+profile.set_preference('browser.helperApps.neverAsk.saveToDisk','application/zip')
+profile.set_preference('browser.helperApps.neverAsk.saveToDisk','application/octet-stream')
 
 
 
@@ -78,15 +78,21 @@ def iter_dom(driver, xpath):
 
 
 
-def wait_by_xpath(xpath, retries=20, additional=0):
+def wait_by_xpath(xpath, retries=20):
     """Wait for xpath element to load"""
     try:
         element = WebDriverWait(driver, retries).until(
             EC.presence_of_element_located((By.XPATH, xpath)))
-        #if additional != 0:
-        #    time.sleep(additional)
     except:
         print("Unable to find element {} in page".format(xpath))
+
+def wait_by_css(css, retries=20):
+    """Wait for css element to load"""
+    try:
+        element = WebDriverWait(driver, retries).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, css)))
+    except:
+        print("Unable to find element {} in page".format(css))
 
 
 
@@ -249,6 +255,7 @@ def build_datapacks_infos(cars_list):
                     print('before')
                     # TODO Fix XPATH
                     wait_by_xpath("/html/body/div[1]/div/div/main/div[2]/div/div[3]/div/div/div/div/div/div[2]/div[1]/div[1]/div/div/ul/li[1]/div/div/form/div/a")
+                    #wait_by_css("li[data-vrs-widget=LIWrapper]")
                     print('after')
 
                     #time.sleep(3)
@@ -261,9 +268,11 @@ def build_datapacks_infos(cars_list):
                         for file_element in file_elements:
                             file = {}
                             
-                            print(dir(file_element))
+                            #print(dir(file_element))
+                            #print(file_element.get_attribute('innerHTML'))
+                            #print(file_element.get_attribute('text'))
 
-                            file['name'] = file_element.get_attribute('value')
+                            file['name'] = file_element.get_attribute('text')
 
                             # Set filetype
                             file_extension = file['name'].split('.')[-1]
@@ -282,7 +291,21 @@ def build_datapacks_infos(cars_list):
                             datapack['files'].append(file)
                         
                             time.sleep(5)
-                            file_element.click()
+                            #file_element.click()
+
+                            try:
+                                file_element.click()
+                                #wait_by_css(".KM1CN4-a-i", 3)
+                                #wait_by_css(".KM1CN4-a-k", 3)
+                            #    wait_by_xpath(".KM1CN4-a-k", 3)
+                            #    driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
+                            #except selenium.common.exceptions.ElementClickInterecptedException as e:
+                            #    print(e)
+                            except Exception as e:
+                                driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
+                                print('ERR', e)
+                                #continue
+
                             time.sleep(5)
                                 
 
@@ -391,7 +414,7 @@ build_datapacks_infos(cars_list)
 #with open ('data.json', 'w') as tempfile:
 #    json.dump(cars_list, tempfile)
 
-print(json.dumps(cars_list, indent=4))
+#print(json.dumps(cars_list, indent=4))
 
 
 # Finaly close the browser

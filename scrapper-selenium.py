@@ -15,8 +15,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException        
 
-# Proxy Settings
+# Settings
 PROXY = "fw_in.bnf.fr:8080"
+script_dir = os.path.dirname(os.path.realpath(__file__))
+download_dir = script_dir + "/downloads"
+
+print(download_dir)
 
 proxy = Proxy({
     'proxyType': ProxyType.MANUAL,
@@ -29,7 +33,8 @@ proxy = Proxy({
 profile = webdriver.FirefoxProfile()
 profile.set_preference('browser.download.folderList', 2) # custom location
 profile.set_preference('browser.download.manager.showWhenStarting', False)
-profile.set_preference('browser.download.dir', './downloads/')
+profile.set_preference('browser.download.dir', download_dir)
+profile.set_preference('browser.download.downloadDir', download_dir)
 profile.set_preference('browser.helperApps.neverAsk.saveToDisk','application/zip')
 profile.set_preference('browser.helperApps.neverAsk.saveToDisk','application/octet-stream')
 
@@ -72,8 +77,6 @@ def iter_dom(driver, xpath):
             current_idx += 1
         else:
             has_elements = False 
-
-
 
 
 
@@ -260,150 +263,63 @@ def build_datapacks_infos(cars_list):
 
                     #time.sleep(3)
 
-                    for datapack_line in driver.find_elements_by_class_name('session-file'):
-                        print('inline')
+                    #for datapack_line in driver.find_elements_by_class_name('session-file'):
                         
                         #print(dir(datapack_line))
-                        file_elements = datapack_line.find_elements_by_class_name('gwt-Anchor')
-                        for file_element in file_elements:
-                            file = {}
-                            
-                            #print(dir(file_element))
-                            #print(file_element.get_attribute('innerHTML'))
-                            #print(file_element.get_attribute('text'))
+                        #file_elements = datapack_line.find_elements_by_class_name('gwt-Anchor')
+                    file_elements = iter_dom(driver, "//li[@data-vrs-widget='LIWrapper']/div/div/form/div/a")
+                    for file_element in file_elements:
+                        file = {}
 
-                            file['name'] = file_element.get_attribute('text')
+                        file['name'] = file_element.get_attribute('text')
 
-                            # Set filetype
-                            file_extension = file['name'].split('.')[-1]
-                            if file_extension == "olap":
-                                file['type'] = "hotlap"
-                            elif file_extension == "blap":
-                                file['type'] = "bestlap"
-                            elif file_extension == "rpy":
-                                file['type'] = "replay"
-                            elif file_extension == "sto":
-                                file['type'] = "setup"
-                            else:
-                                file['type'] = "unknown"
+                        # Set filetype
+                        file_extension = file['name'].split('.')[-1]
+                        if file_extension == "olap":
+                            file['type'] = "hotlap"
+                        elif file_extension == "blap":
+                            file['type'] = "bestlap"
+                        elif file_extension == "rpy":
+                            file['type'] = "replay"
+                        elif file_extension == "sto":
+                            file['type'] = "setup"
+                        else:
+                            file['type'] = "unknown"
 
 
-                            datapack['files'].append(file)
-                        
-                            time.sleep(5)
-                            #file_element.click()
+                        datapack['files'].append(file)
+                    
+                        # Download file if not there
+                        print(os.path.isfile(os.path.join(download_dir, file['name'])))
+                        print(os.path.join(download_dir, file['name']))
+                        if not os.path.isfile(os.path.join(download_dir, file['name'])):
+                            print('before click')
+                            time.sleep(4)
+                            file_element.click()
+                            print('after click')
+                            time.sleep(4)
 
                             try:
-                                file_element.click()
-                                #wait_by_css(".KM1CN4-a-i", 3)
                                 #wait_by_css(".KM1CN4-a-k", 3)
-                            #    wait_by_xpath(".KM1CN4-a-k", 3)
-                            #    driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
+                                #driver.find_element_by_xpath('/html/body/div[7]/div/div/div[3]/a[2]').click()
+                                ok_button = driver.find_element_by_xpath('/html/body/div[7]/div/div/div[3]/a[2]')
+                                ok_button.click()
+                                #print(ok_button.get_attribute('innerHTML'))
+                                time.sleep(4)
                             #except selenium.common.exceptions.ElementClickInterecptedException as e:
                             #    print(e)
                             except Exception as e:
-                                driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
+                            #    driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
                                 print('ERR', e)
-                                #continue
-
-                            time.sleep(5)
-                                
-
-                #    # Load datapack page
-                #    car_element.find_element_by_css_selector("td:nth-of-type(7) a").click()
-                #    # Wait page load
-                #    wait_by_xpath("//div[@data-vrs-widget='ListView']/ul")
-#
-                #    datapack['files'] = []
-                #    for line in driver.find_elements_by_css_selector("form.session-file-name"):
-                #        print(line.get_attribute('innerHTML'))
-            #            for file in line.find_elements_by_css_selector("a.gwt-Anchor"):
-#
-            #                # Download file
-            #                file.click
-            #                # Try block to catch download popup
-            #                try:
-            #                    driver.find_element_by_xpath("/html/body/div[7]/div/div/div[3]/a[2]").click
-            #                except:
-            #                    continue
-            #                
-#
-            #                # Build filename_list
-            #                filename = str(file.text).replace(' .','.').replace(' ','_')
-#
-            #                print(filename)
-#
-            #                # Add filename to list
-            #                datapack_file = {}
-            #                datapack_file['name'] = filename
-#
-            #                # Set filetype
-            #                file_extension = filename.split('.')[-1]
-            #                if file_extension == "olap":
-            #                    datapack_file['type'] = "hotlap"
-            #                elif file_extension == "blap":
-            #                    datapack_file['type'] = "bestlap"
-            #                elif file_extension == "rpy":
-            #                    datapack_file['type'] = "replay"
-            #                elif file_extension == "sto":
-            #                    datapack_file['type'] = "setup"
-            #                else:
-            #                    datapack_file['type'] = "unknown"
-#
-#
-            #                # Append file to datapac
-            #                datapack['files'].append(datapack_file)
-            #        
-            #        driver.back()
-            #        time.sleep(3)
-                
-
-                    
-                    
-                    #print(datapack_files)
-
-                #row_count += 1
-
-                # GoTo DataPack Page
-                # if datapck not empty ?
-                #goto_datapack = car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
+                            #    #continue
     #
-                #goto_datapack
-    #
-                #time.sleep(3)
-    #
-                #session_files = driver.find_elements_by_css_selector("div.vrs-list-view")
-                #print(len(session_files))
-                #print(session_files)
-                #for session_row in session_files:
-                #    print(dir(session_row.find_elements_by_css_selector("form.session-file-name div a ")))
-                #    #file_name = session_row.find_elements_by_css_selector("form.session-file-name div a ").text
-                #    #file_grab = session_row.find_elements_by_css_selector("form.session-file-name div a").click()
-    ##
-                #    #print(file_name)
-                #    
-        #        driver.back()
-        #        time.sleep(3)
-                
+                                #time.sleep(5)
+                            
 
-            #goto_datapack = car_element.find_element_by_css_selector('td:nth-of-type(7) a').click()
-
-
-            #datapack['track'] = car_element.find_element_by_xpath("//td[2]/div/span[1]").get_attribute("innerHTML")
-
-            #laptime_span = car_element.find_element_by_css_selector("td:nth-of-type(3)").get_attribute("innerHTML")
-            #soup = BeautifulSoup(node_span, "html.parser")
-            #for span in soup.findAll("span", attrs={"data-vrs-widget-field":"packIdElement"}):
-            #    node_id = span.text
-            # lap-time-widget
-
-            
             
             #print(json.dumps(car, indent=4))
     return cars_list
 
-#def get_datapacks_files(cars_list):
-    
 
 # Create cars list
 cars_list = build_cars_list()

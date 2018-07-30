@@ -1,4 +1,5 @@
-geckodriver.log
 *__pycache__*
-settings.jon
 data.json
+downloads/*
+geckodriver.log
+settings.jon

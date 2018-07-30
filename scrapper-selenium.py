@@ -18,7 +18,8 @@ from selenium.common.exceptions import NoSuchElementException
 # Settings
 PROXY = "fw_in.bnf.fr:8080"
 script_dir = os.path.dirname(os.path.realpath(__file__))
-download_dir = script_dir + "/downloads"
+download_dir = os.path.join(script_dir, "downloads")
+gecko_log_path = os.path.join(script_dir, "logs", "geckodriver.log")
 
 print(download_dir)
 
@@ -42,7 +43,7 @@ profile.set_preference('browser.helperApps.neverAsk.saveToDisk','application/oct
 
 # Initialize selenium driver
 #driver = webdriver.Firefox(profile)
-driver = webdriver.Firefox(profile, proxy=proxy) # Ajout du proxy
+driver = webdriver.Firefox(profile, proxy=proxy, log_path=gecko_log_path) # Ajout du proxy
 
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 

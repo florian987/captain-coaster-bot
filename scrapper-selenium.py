@@ -4,6 +4,8 @@ import os
 import time
 import json
 import traceback
+import shutil
+import urllib
 
 from bs4 import BeautifulSoup
 
@@ -18,10 +20,16 @@ from selenium.common.exceptions import NoSuchElementException
 # Settings
 PROXY = "fw_in.bnf.fr:8080"
 script_dir = os.path.dirname(os.path.realpath(__file__))
-download_dir = os.path.join(script_dir, "downloads")
-gecko_log_path = os.path.join(script_dir, "logs", "geckodriver.log")
 
-print(download_dir)
+download_dir = os.path.join(script_dir, "downloads")
+log_dir = os.path.join(script_dir, "logs")
+
+needed_dirs = [
+    download_dir,
+    log_dir
+]
+
+gecko_log_path = os.path.join(log_dir, "geckodriver.log")
 
 proxy = Proxy({
     'proxyType': ProxyType.MANUAL,
@@ -110,11 +118,40 @@ def check_exists_by_xpath(xpath):
     return True
 
 
+def create_dirs(directory):
+    if not os.path.exists(directory):
+        #print("|__ Creating unexisting directory: " + directory)
+        os.makedirs(directory)
+
+def download_img(url, dest=None):
+    # Set filename from url
+    url_filename = url.split('/')[-1]
+
+    if dest is None:
+        urllib.request.urlretrieve(url, url_filename)
+    else:
+        # If filename not in dest
+        if not "." in dest.split('/')[-1]:
+            file_dest = os.path.join(dest, url_filename)
+
+        # If filename in dest    
+        else:
+            file_dest = dest
+
+        # Download if not exists    
+        if not os.path.isfile(file_dest):
+            urllib.request.urlretrieve(url, file_dest)
+
+
 
 def build_cars_list():
     """Build cars list from datapacks page"""
 
-    print("-- Gathering cars ...")
+    # Create needed directories if not existing
+    for directory in needed_dirs:
+        create_dirs(directory)
+
+    print("- Retrieving cars list ...")
 
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
 
@@ -135,8 +172,10 @@ def build_cars_list():
         # Retrieve cars infos
         car_serie = car_element.find_element_by_css_selector('td:nth-of-type(1) img').get_attribute('title')
         car_name = car_element.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('title')
+        car_image = car_element.find_element_by_css_selector('td:nth-of-type(2) img').get_attribute('src')
         car_season = car_element.find_element_by_css_selector('td:nth-of-type(3)').text
         car_author = car_element.find_element_by_css_selector('td:nth-of-type(4) img').get_attribute('title')
+        serie_image = car_element.find_element_by_css_selector('td:nth-of-type(1) img').get_attribute('src')
         #print(serie_node)
 
         # Set premium status depending of style display
@@ -156,6 +195,10 @@ def build_cars_list():
         # Create car dict
         car = {}
         car['serie'] = car_serie
+        car['serie_img_url'] = serie_image
+        car['serie_img_name'] = serie_image.split('/')[-1]
+        car['img_url'] = car_image
+        car['img_name'] = car_image.split('/')[-1]
         car['name'] = car_name
         car['season'] = car_season
         car['author'] = car_author
@@ -163,13 +206,11 @@ def build_cars_list():
         car['url'] = "https://virtualracingschool.appspot.com/#/DataPacks/" + node_id
         car['premium'] = car_premium
 
+        car['season_path'] = os.path.join(download_dir, car['season'])
+        car['serie_path'] = os.path.join(car['season_path'], car['serie'])
+        car['car_path'] = os.path.join(car['serie_path'], car['name'])
+
         iracing_cars.append(car)
-
-        #print(json.dumps(car, indent=4))
-
-
-    # debug cars list
-    #print(json.dumps(iracing_cars, indent=4))
 
     # Return cars list
     return iracing_cars
@@ -181,7 +222,19 @@ def build_cars_list():
 
 
 
-def build_datapacks_infos(cars_list):
+def build_datapacks_infos(cars_list, premium=False):
+    
+    # Auth
+
+
+    # Define list to iterate over
+    if not premium:
+        cars_list = [item for item in cars_list if not item['premium']]
+    
+    print(json.dumps(cars_list, indent=4))
+    quit()
+
+    # Build datapacks
     for car in cars_list:
 
         # Initialize datapacks list
@@ -223,10 +276,18 @@ def build_datapacks_infos(cars_list):
                         )[0].get_attribute('title')
 
                     if datapack['fastest_laptime'] != "":
+                        
+                        # Build desired paths
+                        datapack_path = os.path.join(car['car_path'], datapack['track'])                        
+                        # Create paths if needed
+                        create_dirs(datapack_path)
+
+                        # Open permalink box
                         car_element.find_element_by_css_selector(
                         "td:nth-of-type(6) a:nth-of-type(3)"
                         ).click()
 
+                        # Get datapack permalink
                         datapack['url'] = driver.find_element_by_css_selector(
                             ".gwt-TextBox"
                             ).get_attribute('value')
@@ -236,14 +297,14 @@ def build_datapacks_infos(cars_list):
                                 ".KM1CN4-a-h a"
                                 ).click()
 
-                    print(datapack)
+                    #print(datapack)
 
                     car['datapacks'].append(datapack)
 
                 except Exception as e:
                     #print('ERR', e)
                     #traceback.print_stack()
-                    continue
+                    pass
 
 
             for datapack in car['datapacks']:
@@ -251,66 +312,74 @@ def build_datapacks_infos(cars_list):
                 
                 # Load car URL and wait Js load
                 if "url" in datapack:
-                    print('-' * 22)
+                    
+                    # Load datapack url
                     driver.get(datapack['url'])
-                    #wait_by_xpath("//li[@data-vrs-widget='LIWrapper']")
-                    print('before')
-                    # TODO Fix XPATH
-                    wait_by_xpath("/html/body/div[1]/div/div/main/div[2]/div/div[3]/div/div/div/div/div/div[2]/div[1]/div[1]/div/div/ul/li[1]/div/div/form/div/a")
-                    #wait_by_css("li[data-vrs-widget=LIWrapper]")
-                    print('after')
+                    
+                    # Wait page to be loaded
+                    wait_by_xpath("//span[text()=\"" + datapack['track'] +"\"]")
 
-                    #time.sleep(3)
-
-                    #for datapack_line in driver.find_elements_by_class_name('session-file'):
-                        
-                        #print(dir(datapack_line))
-                        #file_elements = datapack_line.find_elements_by_class_name('gwt-Anchor')
+                    # Iterate over files
                     file_elements = iter_dom(driver, "//li[@data-vrs-widget='LIWrapper']/div/div/form/div/a")
                     for file_element in file_elements:
+                        
+                        # Define extensions dict
+                        filetype = {
+                            "olap": "hotlap",
+                            "blap": "bestlap",
+                            "rpy": "replay",
+                            "zip": "replay",
+                            "sto": "setup"
+                        }
+                        
+                        # Create file dict
                         file = {}
 
+                        # Set filename
                         file['name'] = file_element.get_attribute('text')
 
                         # Set filetype
                         file_extension = file['name'].split('.')[-1]
-                        if file_extension == "olap":
-                            file['type'] = "hotlap"
-                        elif file_extension == "blap":
-                            file['type'] = "bestlap"
-                        elif file_extension == "rpy":
-                            file['type'] = "replay"
-                        elif file_extension == "sto":
-                            file['type'] = "setup"
-                        elif file_extension == "zip":
-                            file['type'] = "archive"
-                        else:
-                            file['type'] = "unknown"
-
-
-                        datapack['files'].append(file)
-                    
-                # Almost working, disabled pour debug
-                #        # Download file if not there
-                #        if not os.path.isfile(os.path.join(download_dir, file['name'])):
-                #            time.sleep(1)
-                #            file_element.click()
-                #            time.sleep(1)
+                        file["type"] = filetype.get(file_extension, "unknown")
 #
-                #            try:
-                #                ok_button = driver.find_element_by_xpath('/html/body/div[7]/div/div/div[3]/a[2]')
-                #                ok_button.click()
-                #                time.sleep(1)
-                #            #except selenium.common.exceptions.ElementClickInterecptedException as e:
-                #            #    print(e)
-                #            except Exception as e:
-                #            #    driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
-                #                print('ERR', e)
-                #            #    #continue
-    #
+                        filepath_temp = os.path.join(download_dir, file['name'])
+                        file['path'] = os.path.join(datapack_path, file['name'])
+
+                        # Download Car image if needed
+                        download_img(car['img_url'], car['car_path'])
+
+                        # Download Serie image if needed
+                        download_img(car['serie_img_url'], car['serie_path'])
+                    
+                        # Download datapack file if not present
+                        if not os.path.isfile(file['path']):
+                            time.sleep(1)
+                            file_element.click()
+                            time.sleep(1)
+
+                            # Close modal License box if opened
+                            try:
+                                ok_button = driver.find_element_by_xpath('/html/body/div[7]/div/div/div[3]/a[2]')
+                                ok_button.click()
+                                time.sleep(1)
+                            except Exception as e:
+                                pass
+
+                            
+                            # Wait file to be downloaded
+                            sleep_count = 0
+                            while os.path.isfile(filepath_temp + '.part') and sleep_count < 10:
+                                time.sleep(1)
+                                sleep_count += 1
+
+                            # Move file
+                            if os.path.isfile(filepath_temp):
+                                shutil.move(filepath_temp, file['path'])
+                            
                                 #time.sleep(5)
                             
-
+                        # Add file to datapck list
+                        datapack['files'].append(file)
             
             #print(json.dumps(car, indent=4))
     return cars_list

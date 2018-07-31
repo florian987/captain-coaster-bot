@@ -231,8 +231,6 @@ def build_datapacks_infos(cars_list, premium=False):
     if not premium:
         cars_list = [item for item in cars_list if not item['premium']]
     
-    print(json.dumps(cars_list, indent=4))
-    quit()
 
     # Build datapacks
     for car in cars_list:

@@ -51,7 +51,6 @@ bot = commands.Bot(
     command_prefix=get_prefix,
     description='Socquette Bot')
 
-#bot.proxy = "fw_in.bnf.fr:8080"
 
 # Here we load our extensions(cogs) listed above in [initial_extensions].
 if __name__ == '__main__':

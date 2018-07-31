@@ -42,7 +42,8 @@ def get_prefix(bot, message):
 # Think of it like a dot path import
 initial_extensions = ['cogs.owner',
                       'cogs.default',
-                      'cogs.vrs']
+                      'cogs.vrs',
+                      'cogs.embed']
 
 # Proxy settings
 proxy='http://fw_in.bnf.fr:8080'

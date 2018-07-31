@@ -282,35 +282,31 @@ def build_datapacks_infos(cars_list):
                             file['type'] = "replay"
                         elif file_extension == "sto":
                             file['type'] = "setup"
+                        elif file_extension == "zip":
+                            file['type'] = "archive"
                         else:
                             file['type'] = "unknown"
 
 
                         datapack['files'].append(file)
                     
-                        # Download file if not there
-                        print(os.path.isfile(os.path.join(download_dir, file['name'])))
-                        print(os.path.join(download_dir, file['name']))
-                        if not os.path.isfile(os.path.join(download_dir, file['name'])):
-                            print('before click')
-                            time.sleep(4)
-                            file_element.click()
-                            print('after click')
-                            time.sleep(4)
-
-                            try:
-                                #wait_by_css(".KM1CN4-a-k", 3)
-                                #driver.find_element_by_xpath('/html/body/div[7]/div/div/div[3]/a[2]').click()
-                                ok_button = driver.find_element_by_xpath('/html/body/div[7]/div/div/div[3]/a[2]')
-                                ok_button.click()
-                                #print(ok_button.get_attribute('innerHTML'))
-                                time.sleep(4)
-                            #except selenium.common.exceptions.ElementClickInterecptedException as e:
-                            #    print(e)
-                            except Exception as e:
-                            #    driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
-                                print('ERR', e)
-                            #    #continue
+                # Almost working, disabled pour debug
+                #        # Download file if not there
+                #        if not os.path.isfile(os.path.join(download_dir, file['name'])):
+                #            time.sleep(1)
+                #            file_element.click()
+                #            time.sleep(1)
+#
+                #            try:
+                #                ok_button = driver.find_element_by_xpath('/html/body/div[7]/div/div/div[3]/a[2]')
+                #                ok_button.click()
+                #                time.sleep(1)
+                #            #except selenium.common.exceptions.ElementClickInterecptedException as e:
+                #            #    print(e)
+                #            except Exception as e:
+                #            #    driver.find_element_by_css_selector('.KM1CN4-a-h a:nth-of-type(2)').click
+                #                print('ERR', e)
+                #            #    #continue
     #
                                 #time.sleep(5)
                             
@@ -326,8 +322,8 @@ cars_list = build_cars_list()
 # Build cars datapacks
 build_datapacks_infos(cars_list)
 
-#with open ('data.json', 'w') as tempfile:
-#    json.dump(cars_list, tempfile)
+with open ('data.json', 'w') as tempfile:
+    json.dump(cars_list, tempfile)
 
 #print(json.dumps(cars_list, indent=4))
 

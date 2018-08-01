@@ -19,6 +19,8 @@ class Embed_Commands:
             - author_name (str)
             - author_url (url)
             - print_dict (bool)
+            - footer_test (str)
+            - footer_icon (url)
         Examples:
         /embd title="titre";descr="description"
         /embed title="titre";descr="description";print_dict=True
@@ -44,6 +46,8 @@ class Embed_Commands:
             author_name = kwargs.pop('author_icon', ctx.author.name)
             author_url = kwargs.pop('author_url', ctx.author.avatar_url)
             print_dict = kwargs.pop('print_dict', False)
+            footer_text = kwargs.pop('footer_text', None)
+            footer_icon = kwargs.pop('footer_icon', None)
             content = ''
 
             embed = discord.Embed(
@@ -61,7 +65,8 @@ class Embed_Commands:
             if img:
                 embed.set_image(url=img)
 
-
+            if footer_text or footer_icon:
+                embed.set_footer(text=footer_text,icon_url=footer_icon)
 
             for key, value in kwargs.items():
                 embed.add_field(name=key, value=value, inline=True)

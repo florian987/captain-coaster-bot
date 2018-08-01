@@ -1,7 +1,8 @@
 from discord.ext import commands
 import discord
 import aiohttp
-
+from ..scrapper import scrapper-selenium
+import ...scrapper.settings
 
 class VRS_Commands:
     def __init__(self, bot):

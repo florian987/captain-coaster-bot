@@ -15,7 +15,10 @@ from selenium.webdriver.common.proxy import *
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException        
+from selenium.common.exceptions import NoSuchElementException      
+from selenium.webdriver.chrome.options import Options
+  
+import settings
 
 # Settings
 PROXY = "fw_in.bnf.fr:8080"
@@ -48,11 +51,21 @@ profile.set_preference('browser.helperApps.neverAsk.saveToDisk','application/zip
 profile.set_preference('browser.helperApps.neverAsk.saveToDisk','application/octet-stream')
 
 
+options = webdriver.ChromeOptions()
+options.add_experimental_option("prefs", {
+  "download.default_directory": download_dir,
+  "download.prompt_for_download": False,
+  "download.directory_upgrade": True,
+  "safebrowsing.enabled": True
+})
 
 # Initialize selenium driver
 #driver = webdriver.Firefox(profile)
-driver = webdriver.Firefox(profile, proxy=proxy, log_path=gecko_log_path) # Ajout du proxy
+#driver = webdriver.Firefox(profile, proxy=proxy, log_path=gecko_log_path) # Ajout du proxy
+driver = webdriver.Chrome(chrome_options=options) # Ajout du proxy
 
+#driver.implicitly_wait(60)
+driver.set_page_load_timeout(90)
 #driver.add_cookie({"host":"virtualracingschool.appspot.com","domain":"virtualracingschool.appspot.com","secure":False,"expire":1533023830,"name":"vrs","value":"zkXqnElNVioRWuUK1JgojA"})
 
 
@@ -316,10 +329,13 @@ def build_datapacks_infos(cars_list, premium=False):
                     
                     # Wait page to be loaded
                     wait_by_xpath("//span[text()=\"" + datapack['track'] +"\"]")
+                    #print('page: ' + driver.current_url)
 
                     # Iterate over files
                     file_elements = iter_dom(driver, "//li[@data-vrs-widget='LIWrapper']/div/div/form/div/a")
                     for file_element in file_elements:
+                       
+                        #print(file_element.get_attribute('innerHTML'))
                         
                         # Define extensions dict
                         filetype = {
@@ -363,18 +379,29 @@ def build_datapacks_infos(cars_list, premium=False):
                             except Exception as e:
                                 pass
 
-                            
-                            # Wait file to be downloaded
                             sleep_count = 0
-                            while os.path.isfile(filepath_temp + '.part') and sleep_count < 10:
+                            # Wait file to be downloaded (Chrome)
+                            while not os.path.isfile(filepath_temp) and sleep_count < 180:
+                                #print('wait because part', sleep_count)
                                 time.sleep(1)
                                 sleep_count += 1
 
-                            # Move file
-                            if os.path.isfile(filepath_temp):
-                                shutil.move(filepath_temp, file['path'])
+                            shutil.move(filepath_temp, file['path'])
                             
-                                #time.sleep(5)
+                            # Wait file to be downloaded (Firefox)
+                            #sleep_count = 0
+                            #while os.path.isfile(filepath_temp + '.part') and sleep_count < 90:
+                            #    print('wait because part', sleep_count)
+                            #    time.sleep(1)
+                            #    sleep_count += 1
+
+                            #print('download OK', 'Temp_path: ' + filepath_temp)
+
+                            # Move file
+                            #if not os.path.isfile(filepath_temp + '.part') and os.path.isfile(filepath_temp):
+                            #    shutil.move(filepath_temp, file['path'])
+                            #
+                            #    #time.sleep(5)
                             
                         # Add file to datapck list
                         datapack['files'].append(file)
@@ -383,19 +410,20 @@ def build_datapacks_infos(cars_list, premium=False):
     return cars_list
 
 
-# Create cars list
-cars_list = build_cars_list()
+if __name__ == '__main__':
 
-# Build cars datapacks
-build_datapacks_infos(cars_list)
+    # Create cars list
+    cars_list = build_cars_list()
+    # Build cars datapacks
+    build_datapacks_infos(cars_list)
 
-with open ('data.json', 'w') as tempfile:
-    json.dump(cars_list, tempfile)
+    #with open ('data.json', 'w') as tempfile:
+    #    json.dump(cars_list, tempfile)
 
-#print(json.dumps(cars_list, indent=4))
+    #print(json.dumps(cars_list, indent=4))
 
 
-# Finaly close the browser
-driver.close()
+    # Finaly close the browser
+    driver.close()
 
 

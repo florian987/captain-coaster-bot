@@ -7,6 +7,8 @@ import logging
 
 from secret import secret
 
+import cogs.scrapper.settings
+
 logging.basicConfig(level=logging.DEBUG)
 
 

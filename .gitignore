@@ -4,3 +4,5 @@ data.json
 downloads/*
 logs/*
 settings.json
+cogs/scrapper/downloads/
+cogs/scrapper/logs/

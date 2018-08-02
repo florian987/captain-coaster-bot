@@ -79,7 +79,7 @@ async def on_ready():
 
     # Changes our bots Playing Status. t
     # ype=1(streaming) for a standard game you could remove type and url.
-    await bot.change_presence(activity=discord.Game(name='enfiler des petits enfants ...'))
+    #await bot.change_presence(activity=discord.Game(name='enfiler des petits enfants ...'))
 
     print('Successfully logged in and booted...!')
 

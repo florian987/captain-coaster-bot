@@ -80,41 +80,48 @@ class VRS_Commands:
             #for channel in setup_channels:
             #    print(channel.name)
 
-            driver = scrapper.build_driver()
+            driver = scrapper.build_driver(headless=False)
 
             # Change Bot Status    
-            await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
+            #await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
 
             # Scrap VRS
             iracing_cars = scrapper.build_cars_list(driver)
 
+
+            # Placeholder
+            # bot.loop.run_in_executor(None, method, parameter1, parameter2)
+            
             # Change Bot Status    
-            await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
+            #await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
             cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
 
             for car in cars_list:
 
                 # Check if channel exists and create it
                 serie_channel = None
+                upload_channel = None
                 for channel in setup_channels:
-
                     # Check if serie channel exists
                     if channel.name == car['serie'].replace(' ','-'):
                         serie_channel = channel
                         return serie_channel
-                    else:
-                        serie_channel = await ctx.guild.create_text_channel(
-                            car['serie'].replace(' ','-'), category=setups_category)
-                        return serie_channel
-                    
+
                     # Check if setup channel exists
                     if channel.name == upload_channel_name:
                         upload_channel = channel
                         return upload_channel
-                    else:
-                        upload_channel = await ctx.quild.create_text_channel(
-                            upload_channel_name, category=setups_category_name)
-                        return upload_channel
+
+                if not serie_channel:
+                    serie_channel = await ctx.guild.create_text_channel(
+                        car['serie'].replace(' ','-'), category=setups_category)
+                    return serie_channel
+                    
+                    
+                if not upload_channel:
+                    upload_channel = await ctx.quild.create_text_channel(
+                        upload_channel_name, category=setups_category_name)
+                    return upload_channel
  
 
 
@@ -174,7 +181,7 @@ class VRS_Commands:
             await ctx.send(content='', embed=embed)
 
         # Change Bot Status    
-        await self.bot.change_presence(activity=discord.Game(name='Enfiler des petits enfants'))
+        #await self.bot.change_presence(activity=discord.Game(name='Enfiler des petits enfants'))
             
 
 

@@ -3,7 +3,8 @@ import discord
 
 
 def build_embed(ctx, **kwargs):
-
+    """A function that build embeds"""
+    # Set default parameters
     parameters = {
         'author_avatar_url': ctx.author.avatar_url,
         'author_name': ctx.author.name,
@@ -17,47 +18,40 @@ def build_embed(ctx, **kwargs):
         'content': ''
     }
 
+    # Replace defaults parameters with args
     for parameter in parameters.items():
         if parameter in kwargs:
             parameters[parameter] = kwargs.pop(parameter)
             
+
+    # Create embed with basics parameters
     embed = discord.Embed(
         title = parameters['title'],
         description = parameters['description'],
         colour = parameters['colour']
     )
+
+    # set author
+    if parameters['author_avatar_url'] or parameters['author_name'] or parameters['author_url']:
+        embed.set_author(
+            icon_url=parameters['author_avatar_url'],
+            name=parameters['author_name'],
+            url=parameters['author_url']
+        )
     
+    # Set remaining args as fields
     if kwargs:
         for k, v in kwargs:
-            embed.add_field(name=k, value=v, inline=True)
+            embed.add_field(name=k, value=v, inline=True) 
 
+    # Set img if set
+    if parameters['img_url']:
+        embed.set_image(url=parameters['img_url'])
 
-    if icon_url is None:
-        icon_url=ctx.author.avatar_url
+    # Define footer if set
+    if parameters['footer_text'] or parameters['footer_icon']:
+        embed.set_footer(
+            text=parameters['footer_text'], icon_url=parameters['footer_icon']
+        )
 
-    embed = discord.Embed(
-        title=title,
-        description=descr,
-        colour=colour
-    )
-
-    embed.set_author(
-        icon_url=ctx.author.avatar_url,
-        name=author_name,
-        url=author_url
-    )
-
-    if img:
-        embed.set_image(url=img)
-
-    if footer_text or footer_icon:
-        embed.set_footer(text=footer_text,icon_url=footer_icon)
-
-    for key, value in kwargs.items():
-        embed.add_field(name=key, value=value, inline=True)
-
-
-    if print_dict:
-        content = embed.to_dict()
-
-    return content, embed
+    return parameters['content'], embed

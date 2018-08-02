@@ -43,7 +43,7 @@ class Embed_Commands:
             colour = kwargs.pop('colour', ctx.author.color)
             img = kwargs.pop('img', None)
             author_icon = kwargs.pop('author_icon', ctx.author.avatar_url)
-            author_name = kwargs.pop('author_icon', ctx.author.name)
+            author_name = kwargs.pop('author_name', ctx.author.name)
             author_url = kwargs.pop('author_url', ctx.author.avatar_url)
             print_dict = kwargs.pop('print_dict', False)
             footer_text = kwargs.pop('footer_text', None)

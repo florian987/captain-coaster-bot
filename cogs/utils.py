@@ -4,6 +4,7 @@ import discord
 
 def build_embed(ctx, **kwargs):
     """A function that build embeds"""
+    
     # Set default parameters
     parameters = {
         'author_avatar_url': ctx.author.avatar_url,

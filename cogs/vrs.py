@@ -80,7 +80,7 @@ class VRS_Commands:
             #for channel in setup_channels:
             #    print(channel.name)
 
-            driver = scrapper.build_driver(headless=False)
+            driver = scrapper.build_driver(headless=True)
 
             # Change Bot Status    
             #await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
@@ -90,11 +90,15 @@ class VRS_Commands:
 
 
             # Placeholder
+            # await run_in_executor(None, func, *args)
             # bot.loop.run_in_executor(None, method, parameter1, parameter2)
+            cars_list = await self.bot.loop.run_in_executor(None, scrapper.build_datapacks_infos, driver, iracing_cars)
+
+            print('End of datapacks building')
             
             # Change Bot Status    
             #await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
-            cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
+            #cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
 
             for car in cars_list:
 

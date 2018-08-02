@@ -6,3 +6,7 @@ logs/*
 settings.json
 cogs/scrapper/downloads/
 cogs/scrapper/logs/
+bin/
+lib
+lib64
+include

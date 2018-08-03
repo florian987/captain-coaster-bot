@@ -122,20 +122,12 @@ class VRS_Commands:
 
                 # Ensure serie channel exists
                 #if car['serie'].replace(' ','-') not in setup_channels:
-                if not any(channel.name == upload_channel_name for channel in setup_channels):
+                if any(channel.name == upload_channel_name for channel in setup_channels):
+                    upload_channel = channel
+                else:
                     print(serie_channel_name, 'not in channel, creating')
-                    await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
+                    upload_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
 
-                #if not serie_channel:
-                #    serie_channel = await ctx.guild.create_text_channel(
-                #        car['serie'].replace(' ','-'), category=setups_category)
-                #    return serie_channel
-                #    
-                #    
-                #if not upload_channel:
-                #    upload_channel = await ctx.quild.create_text_channel(
-                #        upload_channel_name, category=setups_category_name)
-                #    return upload_channel
  
 
 

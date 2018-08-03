@@ -256,21 +256,21 @@ def build_cars_list(driver):
 
 def build_datapacks_infos(driver, cars_list, premium=False):
     
-    # Auth
-    wait_by_xpath(driver, "//span[text()='Login / Logout']]")
-    driver.find_element_by_xpath("//a[@data-vrs-widget='MenuLink'][4]").click()
-
-    wait_by_id(driver, By.ID, "gwt-debug-googleLogin")
-    driver.find_element_by_id("gwt-debug-googleLogin").click
-
-    try:
-        wait_by_css(driver, "//a[@class='KM1CN4-a-v']", 5)
-        driver.find_element_by_class_name('KM1CN4-a-v').click
-    except:
-        pass
-    
-
-
+   # # Auth
+   # wait_by_xpath(driver, "//span[text()='Login / Logout']]")
+   # driver.find_element_by_xpath("//a[@data-vrs-widget='MenuLink'][4]").click()
+#
+   # wait_by_id(driver, By.ID, "gwt-debug-googleLogin")
+   # driver.find_element_by_id("gwt-debug-googleLogin").click
+#
+   # try:
+   #     wait_by_css(driver, "//a[@class='KM1CN4-a-v']", 5)
+   #     driver.find_element_by_class_name('KM1CN4-a-v').click
+   # except:
+   #     pass
+   # 
+#
+#
     # Define list to iterate over
     if not premium:
         cars_list = [item for item in cars_list if not item['premium']]

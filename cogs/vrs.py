@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import aiohttp
 import os
+import json
 
 try:
     import scrapper.settings
@@ -95,21 +96,30 @@ class VRS_Commands:
             cars_list = await self.bot.loop.run_in_executor(None, scrapper.build_datapacks_infos, driver, iracing_cars)
 
             print('End of datapacks building')
+            print(cars_list)
             
             # Change Bot Status    
             #await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
             #cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
 
+            if upload_channel_name not in setup_channels:
+                if not any(setup_channels.name == upload_channel_name for channel in setup_channels)
+                print(car['serie'].replace(' ','-'), 'not in channel')
+                await ctx.guild.create_text_channel(car['serie'].replace(' ','-'), category=setups_category)
+
+
             for car in cars_list:
+                
+                print(json.dumps(car, indent=4))
+                print(setup_channels)
 
                 # Check if channel exists and create it
                 serie_channel = None
                 upload_channel = None
-                for channel in setup_channels:
-                    # Check if serie channel exists
-                    if channel.name == car['serie'].replace(' ','-'):
-                        serie_channel = channel
-                        return serie_channel
+
+                if car['serie'].replace(' ','-') not in setup_channels:
+                    print(car['serie'].replace(' ','-'), 'not in channel')
+                    await ctx.guild.create_text_channel(car['serie'].replace(' ','-'), category=setups_category)
 
                     # Check if setup channel exists
                     if channel.name == upload_channel_name:

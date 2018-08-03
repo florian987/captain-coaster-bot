@@ -81,7 +81,7 @@ class VRS_Commands:
             #for channel in setup_channels:
             #    print(channel.name)
 
-            driver = scrapper.build_driver(headless=True)
+            driver = scrapper.build_driver(headless=False)
 
             # Change Bot Status    
             #await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
@@ -102,40 +102,40 @@ class VRS_Commands:
             #await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
             #cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
 
-            if upload_channel_name not in setup_channels:
-                if not any(setup_channels.name == upload_channel_name for channel in setup_channels)
-                print(car['serie'].replace(' ','-'), 'not in channel')
-                await ctx.guild.create_text_channel(car['serie'].replace(' ','-'), category=setups_category)
+            # Ensure upload channel exists
+            if not any(channel.name == upload_channel_name for channel in setup_channels):
+                print(upload_channel_name, 'not in setup_channels')
+                await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
+            else:
+                print(upload_channel_name, 'exists')
 
 
             for car in cars_list:
-                
+
                 print(json.dumps(car, indent=4))
-                print(setup_channels)
 
                 # Check if channel exists and create it
                 serie_channel = None
                 upload_channel = None
 
-                if car['serie'].replace(' ','-') not in setup_channels:
-                    print(car['serie'].replace(' ','-'), 'not in channel')
-                    await ctx.guild.create_text_channel(car['serie'].replace(' ','-'), category=setups_category)
+                serie_channel_name = car['serie'].replace(' ','-')
 
-                    # Check if setup channel exists
-                    if channel.name == upload_channel_name:
-                        upload_channel = channel
-                        return upload_channel
+                # Ensure serie channel exists
+                #if car['serie'].replace(' ','-') not in setup_channels:
+                if not any(channel.name == upload_channel_name for channel in setup_channels):
+                    print(serie_channel_name, 'not in channel, creating')
+                    await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
 
-                if not serie_channel:
-                    serie_channel = await ctx.guild.create_text_channel(
-                        car['serie'].replace(' ','-'), category=setups_category)
-                    return serie_channel
-                    
-                    
-                if not upload_channel:
-                    upload_channel = await ctx.quild.create_text_channel(
-                        upload_channel_name, category=setups_category_name)
-                    return upload_channel
+                #if not serie_channel:
+                #    serie_channel = await ctx.guild.create_text_channel(
+                #        car['serie'].replace(' ','-'), category=setups_category)
+                #    return serie_channel
+                #    
+                #    
+                #if not upload_channel:
+                #    upload_channel = await ctx.quild.create_text_channel(
+                #        upload_channel_name, category=setups_category_name)
+                #    return upload_channel
  
 
 

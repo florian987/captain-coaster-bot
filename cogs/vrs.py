@@ -58,6 +58,17 @@ class VRS_Commands:
                 else:
                     online = False
 
+        async def is_file_uploaded(filename_on_discord):
+            async for message in upload_channel.history():
+                if message.content == filename_on_discord:
+                    return True
+            return False
+
+        async def get_upload_message(filename_on_discord):
+            async for message in upload_channel.history():
+                if message.content == filename_on_discord:
+                    return message
+
         # Build channels list
         channels_setups = []
         for channel in self.bot.get_all_channels():
@@ -137,17 +148,23 @@ class VRS_Commands:
                         filename_on_discord = car['serie'].replace(' ','-') + '_' + car['name'].replace(' ','-') + '_' + file['name']
 
                         # Search for uploaded file in upload channel        
-                        file_exists = await upload_channel.history().find(content=filename_on_discord)
+                        #upload_history = await upload_channel.history()
+                        #file_uploaded = discord.utils.find(lambda message: message.content == filename_on_discord, upload_history)
+                        #async for message in upload_channel.history():
+                        #    if message.content == filename_on_discord:
+                        #        return True
                         
 
                         # upload file if not exists
-                        if not file_exists:
+                        #if not file_uploaded:
+                        if not await is_file_uploaded(filename_on_discord):
                             file_upload_msg = await channel.send(content=filename_on_discord, file=file['path'])
                             uploaded_file = file_upload_msg.attachments[0]
                             return uploaded_file
-                        else:
-                            uploaded_file = await upload_channel.history().get(content=filename_on_discord)[0]
-                            return uploaded_file
+                        # TODO retrieve file url if already uploaded
+                        #else:
+                        #    uploaded_file = await upload_channel.history().get(content=filename_on_discord)[0]
+                        #    return uploaded_file
 
 
                             # Get attachment

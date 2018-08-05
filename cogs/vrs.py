@@ -113,10 +113,13 @@ class VRS_Commands:
             # Ensure upload channel exists
             #if car['serie'].replace(' ','-') not in setup_channels:
             if any(channel.name == upload_channel_name.lower() for channel in setup_channels):
-                upload_channel = channel
+                upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
+                #upload_channel = channel
             else:
                 print(upload_channel_name, 'not in channel, creating')
                 upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
+
+            print(upload_channel)
 
             async def is_file_uploaded(filename_on_discord):
                 if upload_channel.history():
@@ -136,14 +139,15 @@ class VRS_Commands:
                 print(json.dumps(car, indent=4))
 
                 # Check if channel exists and create it
-                serie_channel = None
-                upload_channel = None
+                #serie_channel = None
+                #upload_channel = None
 
                 serie_channel_name = car['serie'].replace(' ','-')
 
                 # Ensure serie channel exists
                 if any(channel.name == serie_channel_name.lower() for channel in setup_channels):
-                    serie_channel = channel
+                    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
+                    #serie_channel = channel
                 else:
                     print(serie_channel_name, 'not in channel, creating')
                     serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
@@ -170,6 +174,8 @@ class VRS_Commands:
                             uploaded_file = file_upload_msg.attachments[0]
                             print(uploaded_file) 
                             return uploaded_file
+                        else:
+
 
                         embed = utils.build_embed(
                                 ctx, 
@@ -180,6 +186,8 @@ class VRS_Commands:
                                 img_url=car['img_url'],
                                 setup="[Download](https://www.google.com)")
                             
+                        print(embed)
+
                         await ctx.send(content='', embed=embed)
                         # TODO retrieve file url if already uploaded
                         #else:

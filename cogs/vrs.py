@@ -3,6 +3,7 @@ import discord
 import aiohttp
 import os
 import json
+import utils
 
 try:
     import scrapper.settings
@@ -113,13 +114,20 @@ class VRS_Commands:
             #await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
             #cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
 
-            # Ensure upload channel exists
-            if not any(channel.name == upload_channel_name for channel in setup_channels):
-                print(upload_channel_name, 'not in setup_channels')
-                await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
-            else:
-                print(upload_channel_name, 'exists')
+            ## Ensure upload channel exists
+            #if not any(channel.name == upload_channel_name for channel in setup_channels):
+            #    print(upload_channel_name, 'not in setup_channels')
+            #    await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
+            #else:
+            #    print(upload_channel_name, 'exists')
 
+            # Ensure upload channel exists
+            #if car['serie'].replace(' ','-') not in setup_channels:
+            if any(channel.name == upload_channel_name for channel in setup_channels):
+                upload_channel = channel
+            else:
+                print(upload_channel_name, 'not in channel, creating')
+                upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
 
             for car in cars_list:
 
@@ -133,19 +141,17 @@ class VRS_Commands:
 
                 # Ensure serie channel exists
                 #if car['serie'].replace(' ','-') not in setup_channels:
-                if any(channel.name == upload_channel_name for channel in setup_channels):
-                    upload_channel = channel
+                if any(channel.name == serie_channel_name for channel in setup_channels):
+                    serie_channel = channel
                 else:
                     print(serie_channel_name, 'not in channel, creating')
-                    upload_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
-
- 
+                    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
 
 
 
                 for datapack in car['datapacks']:
                     for file in datapack['files']:
-                        filename_on_discord = car['serie'].replace(' ','-') + '_' + car['name'].replace(' ','-') + '_' + file['name']
+                        filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
 
                         # Search for uploaded file in upload channel        
                         #upload_history = await upload_channel.history()
@@ -158,9 +164,22 @@ class VRS_Commands:
                         # upload file if not exists
                         #if not file_uploaded:
                         if not await is_file_uploaded(filename_on_discord):
-                            file_upload_msg = await channel.send(content=filename_on_discord, file=file['path'])
+                            file_upload_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
+                            print(file_upload_msg)
                             uploaded_file = file_upload_msg.attachments[0]
+                            print(uploaded_file) 
                             return uploaded_file
+
+                        embed = utils.build_embed(
+                                ctx, 
+                                author_name=car['author'], 
+                                author_avatar_url=car['img_author'],
+                                title=car['serie'] + ' - ' + car['name'],
+                                description=datapack['track'],
+                                img_url=car['img_url'],
+                                setup="[Download](https://www.google.com)")
+                            
+                         await ctx.send(content='', embed=embed)
                         # TODO retrieve file url if already uploaded
                         #else:
                         #    uploaded_file = await upload_channel.history().get(content=filename_on_discord)[0]

@@ -55,6 +55,13 @@ class VRS_Commands:
         setups_category_name = "Setups"
         upload_channel_name = "__uploads__"
 
+        #def retrieve_channel(channel_name, channel_category='Setups'):
+        #    if any(channel.name == channel_name.lower() for channel in setup_channels):
+        #            return channel
+        #        else:
+        #            print(serie_channel_name, 'not in channel, creating')
+        #            serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
+
         # Check if VRS is online
         async with aiohttp.ClientSession() as session:
             async with session.get('https://virtualracingschool.appspot.com/#/DataPacks') as r:
@@ -103,16 +110,9 @@ class VRS_Commands:
             #await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
             #cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
 
-            ## Ensure upload channel exists
-            #if not any(channel.name == upload_channel_name for channel in setup_channels):
-            #    print(upload_channel_name, 'not in setup_channels')
-            #    await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
-            #else:
-            #    print(upload_channel_name, 'exists')
-
             # Ensure upload channel exists
             #if car['serie'].replace(' ','-') not in setup_channels:
-            if any(channel.name == upload_channel_name for channel in setup_channels):
+            if any(channel.name == upload_channel_name.lower() for channel in setup_channels):
                 upload_channel = channel
             else:
                 print(upload_channel_name, 'not in channel, creating')
@@ -142,8 +142,7 @@ class VRS_Commands:
                 serie_channel_name = car['serie'].replace(' ','-')
 
                 # Ensure serie channel exists
-                #if car['serie'].replace(' ','-') not in setup_channels:
-                if any(channel.name == serie_channel_name for channel in setup_channels):
+                if any(channel.name == serie_channel_name.lower() for channel in setup_channels):
                     serie_channel = channel
                 else:
                     print(serie_channel_name, 'not in channel, creating')

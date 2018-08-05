@@ -169,12 +169,15 @@ class VRS_Commands:
                         # upload file if not exists
                         #if not file_uploaded:
                         if not await is_file_uploaded(filename_on_discord):
+                            print('Not uploaded')
                             file_upload_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
                             print(file_upload_msg)
                             uploaded_file = file_upload_msg.attachments[0]
                             print(uploaded_file) 
                             return uploaded_file
                         else:
+                            print('uploaded')
+                            upload_msg = get_upload_message(filename_on_discord)
 
 
                         embed = utils.build_embed(
@@ -187,7 +190,7 @@ class VRS_Commands:
                                 setup="[Download](https://www.google.com)")
                             
                         print(embed)
-
+                            
                         await ctx.send(content='', embed=embed)
                         # TODO retrieve file url if already uploaded
                         #else:

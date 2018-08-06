@@ -92,7 +92,7 @@ class VRS_Commands:
 
 
 
-            driver = scrapper.build_driver(headless=True)
+            driver = scrapper.build_driver(headless=False)
 
             # Change Bot Status    
             #await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))

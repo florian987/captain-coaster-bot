@@ -306,6 +306,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 # Create datapacks list
                 datapack = {}
 
+                datapack_path = ''
+
                 # Build datapack
                 try:
 
@@ -326,12 +328,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                         )[0].get_attribute('title')
 
                     # If datapack is not empty
-                    if datapack['fastest_laptime'] != "":
-                        
-                        # Build desired paths
-                        datapack_path = os.path.join(car['car_path'], datapack['track'])                        
-                        # Create paths if needed
-                        create_dirs(datapack_path)
+                    if datapack['fastest_laptime'] != "":  
 
                         # Open permalink box
                         car_element.find_element_by_css_selector(
@@ -355,7 +352,12 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
             for datapack in car['datapacks']:
                 datapack['files'] = []
-                
+
+                # Build desired paths
+                datapack_path = os.path.join(car['car_path'], datapack['track'])                        
+                # Create paths if needed
+                create_dirs(datapack_path)
+
                 # Load car URL and wait Js load
                 if "url" in datapack:
                     
@@ -443,6 +445,9 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                         datapack['files'].append(file)
             
     #pickle.dump(cars_list, open(settings.history_file,'wb'))
+
+    with open (os.path.join(download_dir,'data.json'), 'w') as tempfile:
+        json.dump(cars_list, tempfile)
 
     driver.close()
     

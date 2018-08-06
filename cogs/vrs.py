@@ -161,6 +161,9 @@ class VRS_Commands:
                         # Build embed
                         embed = discord.Embed()
                         embed.title = car['serie'] + ' - ' + car['name']
+                        embed.url = datapack['url']
+                        #embed.colour = discord.Colour.orange()
+                        embed.colour = discord.Colour(16777215)
                         embed.description = datapack['track']
                         embed.set_image(url=car['img_url'])
                         embed.set_author(
@@ -171,18 +174,18 @@ class VRS_Commands:
                         for file in datapack['files']:
                             print('-' * 20)
                             print('file: ', file)
-                            # TODO check filesize
-                            filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
-                            
-                            # upload file if not exists
-                            if not await is_file_uploaded(filename_on_discord):
-                                uploaded_file_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
-                            else:
-                                uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get
+                            if round(os.path.getsize(file['path']) / 1024) < 8000:
+                                # TODO check filesize
+                                filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
+                                
+                                # upload file if not exists
+                                if not await is_file_uploaded(filename_on_discord):
+                                    uploaded_file_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
+                                else:
+                                    uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get
 
-                            # Add file to embed
-                            #embed.add_field(name=file['type'], value='[' + file['name'] + (' + uploaded_file_msg.attachments[0].url + ')')
-                            embed.add_field(name=file['type'], value='[{}]({})'.format(file['name'], uploaded_file_msg.attachments[0].url))
+                                # Add file to embed
+                                embed.add_field(name=file['type'], value='[{}]({})'.format(file['name'], uploaded_file_msg.attachments[0].url))
                         
                         # Send embed
                         await serie_channel.send(content='', embed=embed)
@@ -205,7 +208,7 @@ class VRS_Commands:
             await ctx.send(content='', embed=embed)
 
         # Change Bot Status    
-        #await self.bot.change_presence(activity=discord.Game(name='Enfiler des petits enfants'))
+        await self.bot.change_presence(activity=discord.Game(name='Enfiler des petits enfants'))
             
 
 

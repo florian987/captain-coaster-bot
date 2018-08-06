@@ -182,7 +182,7 @@ class VRS_Commands:
 
                             # Add file to embed
                             #embed.add_field(name=file['type'], value='[' + file['name'] + (' + uploaded_file_msg.attachments[0].url + ')')
-                            embed.add_field(name=file['type'], value='[{}]({})]'.format(file['name'], uploaded_file_msg.attachments[0].url))
+                            embed.add_field(name=file['type'], value='[{}]({})'.format(file['name'], uploaded_file_msg.attachments[0].url))
                         
                         # Send embed
                         await serie_channel.send(content='', embed=embed)

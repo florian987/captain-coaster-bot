@@ -67,6 +67,9 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
         # Build Chrome driver
         driver = webdriver.Chrome(chrome_options=options)
 
+        # Add devtools command to allow download
+        driver.execute_cdp_cmd('Page.setDownloadBehavior', {'behavior': 'allow', 'downloadPath': download_dir})
+
     # Handle Firefox profile
     elif browser == "Firefox":
 

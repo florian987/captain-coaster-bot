@@ -197,7 +197,7 @@ class VRS_Commands:
                             
                         print(embed)
                             
-                        await ctx.send(content='', embed=embed)
+                        await ctx.send(embed)
                         print('-' * 20)
                         print('End of loop')
                         print('-' * 20)

@@ -6,8 +6,15 @@ import json
 
 try:
     import utils
+    print('import utils works')
 except:
+    print('import utils DOES NOT works')
+
+try:
     import cogs.utils
+    print('import utils works')
+except:
+    print('import utils DOES NOT works')
 
 try:
     import scrapper.settings

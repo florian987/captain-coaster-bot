@@ -9,7 +9,7 @@ def build_embed(ctx, **kwargs):
     parameters = {
         'author_avatar_url': ctx.author.avatar_url,
         'author_name': ctx.author.name,
-        'author_url': ctx.author.url,
+        'author_url': ctx.author.avatar_url,
         'colour': discord.Colour.default(),
         'img_url': None,
         'footer_text': None,

@@ -169,6 +169,7 @@ class VRS_Commands:
                         # upload file if not exists
                         #if not file_uploaded:
                         if not await is_file_uploaded(filename_on_discord):
+                            print('-' * 20)
                             print('Not uploaded')
                             file_upload_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
                             print(file_upload_msg)
@@ -177,7 +178,13 @@ class VRS_Commands:
                             return uploaded_file
                         else:
                             print('uploaded')
-                            upload_msg = get_upload_message(filename_on_discord)
+                            #uploaded_file = discord.utils.find(lambda m: m.content == filename_on_discord, upload_channel) # utils.find
+                            uploaded_file_msg = await discord.utils.get(upload_channel.history(), content=filename_on_discord) # utils.get
+                            print('-' * 20)
+                            print('uploaded_file_msg', uploaded_file_msg)
+                            uploaded_file_url = uploaded_file_msg.attachments[0].url
+                            print('uploaded_file_url', uploaded_file_url)
+                            upload_msg = await get_upload_message(filename_on_discord)
 
 
                         embed = utils.build_embed(
@@ -187,11 +194,14 @@ class VRS_Commands:
                                 title=car['serie'] + ' - ' + car['name'],
                                 description=datapack['track'],
                                 img_url=car['img_url'],
-                                setup="[Download](https://www.google.com)")
+                                setup='[Download]({})'.format(uploaded_file_url))
                             
                         print(embed)
                             
                         await ctx.send(content='', embed=embed)
+                        print('-' * 20)
+                        print('End of loop')
+                        print('-' * 20)
                         # TODO retrieve file url if already uploaded
                         #else:
                         #    uploaded_file = await upload_channel.history().get(content=filename_on_discord)[0]

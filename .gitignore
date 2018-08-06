@@ -10,3 +10,5 @@ bin/
 lib
 lib64
 include
+share/
+selenium/

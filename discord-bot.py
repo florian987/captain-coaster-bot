@@ -9,7 +9,7 @@ from secret import secret
 
 import cogs.scrapper.settings
 
-import cogs.utils
+import cogs.custom_functions as tools 
 
 logging.basicConfig(level=logging.DEBUG)
 

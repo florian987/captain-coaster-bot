@@ -441,20 +441,21 @@ def build_datapacks_infos(driver, cars_list, premium=False):
     return cars_list
 
 
-#if __name__ == '__main__':
-#
-#    # Create cars list
-#    cars_list = build_cars_list()
-#    # Build cars datapacks
-#    build_datapacks_infos(cars_list)
-#
-#    #with open ('data.json', 'w') as tempfile:
-#    #    json.dump(cars_list, tempfile)
-#
-#    #print(json.dumps(cars_list, indent=4))
-#
-#
-#    # Finaly close the browser
-#    driver.close()
+if __name__ == '__main__':
+
+    driver = build_driver()
+    # Create cars list
+    cars_list = build_cars_list(driver)
+    # Build cars datapacks
+    build_datapacks_infos(driver, cars_list)
+
+    #with open ('data.json', 'w') as tempfile:
+    #    json.dump(cars_list, tempfile)
+
+    #print(json.dumps(cars_list, indent=4))
+
+
+    # Finaly close the browser
+    driver.close()
 
 

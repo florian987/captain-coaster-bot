@@ -54,10 +54,15 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             "download.default_directory": download_dir,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
-            "safebrowsing.enabled": True
+            "safebrowsing.enabled": False
         })
+
         if headless:
             options.add_argument('headless')
+            # Not tested
+            options.add_argument('disable-gpu')
+
+            #download_path = download_dir
 
         # Build Chrome driver
         driver = webdriver.Chrome(chrome_options=options)

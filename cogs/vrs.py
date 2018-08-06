@@ -42,7 +42,31 @@ class VRS_Commands:
         await ctx.send(','.join(channel.id for channel in channels_setups))
 
 
+    @commands.command(name="flushsetups", aliases=['flushsets'], hidden=True)
+    @commands.is_owner()
+    async def flush_setups(self, ctx):
+        """Flush VRS setups"""
 
+        def is_me(m):
+            return m.author == self.bot.user
+
+        channels_setups = []
+        for channel in self.bot.get_all_channels():
+            if channel.category and channel.category.name == "Setups":
+                channels_setups.append(channel)
+
+        print('-' * 20)
+        print(channels_setups)
+
+        for channel in channels_setups:
+            print('-' * 20)
+            print(channel)
+            deleted = await channel.purge(check=is_me)
+            if deleted:
+                await channel.send('Deleted {} message(s)'.format(len(deleted)))
+                
+
+        #await ctx.send('Deleted {} messages'.format(len(messages) + 1))
         
 
     @commands.command(name="setups", aliases=["vrs-setups"])
@@ -52,13 +76,6 @@ class VRS_Commands:
 
         setups_category_name = "Setups"
         upload_channel_name = "__uploads__"
-
-        #def retrieve_channel(channel_name, channel_category='Setups'):
-        #    if any(channel.name == channel_name.lower() for channel in setup_channels):
-        #            return channel
-        #        else:
-        #            print(serie_channel_name, 'not in channel, creating')
-        #            serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
 
         # Check if VRS is online
         async with aiohttp.ClientSession() as session:
@@ -88,12 +105,16 @@ class VRS_Commands:
                 if category.name == setups_category_name:
                     setups_category = category
 
+            # Ensure upload channel exists
+            if any(channel.name == upload_channel_name.lower() for channel in setup_channels):
+                upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
+            else:
+                upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
 
-
-            driver = scrapper.build_driver(headless=False)
+            driver = scrapper.build_driver(headless=True)
 
             # Change Bot Status    
-            #await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
+            await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
 
             # Scrap VRS
             iracing_cars = scrapper.build_cars_list(driver)
@@ -105,26 +126,15 @@ class VRS_Commands:
             print(cars_list)
             
             # Change Bot Status    
-            #await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
-            #cars_list = scrapper.build_datapacks_infos(driver, iracing_cars)
+            await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
 
-            # Ensure upload channel exists
-            #if car['serie'].replace(' ','-') not in setup_channels:
-            if any(channel.name == upload_channel_name.lower() for channel in setup_channels):
-                upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
-                #upload_channel = channel
-            else:
-                print(upload_channel_name, 'not in channel, creating')
-                upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
-
-            print(upload_channel)
+            
 
             async def is_file_uploaded(filename_on_discord):
-                if upload_channel.history():
-                    async for message in upload_channel.history():
-                        if message.content == filename_on_discord:
-                            return True
-                return False
+                if await upload_channel.history().get(content=filename_on_discord):
+                    return True
+                else:
+                    return False
 
             async def get_upload_message(filename_on_discord):
                 async for message in upload_channel.history():
@@ -136,100 +146,51 @@ class VRS_Commands:
 
                 print(json.dumps(car, indent=4))
 
-                # Check if channel exists and create it
-                #serie_channel = None
-                #upload_channel = None
-
                 serie_channel_name = car['serie'].replace(' ','-')
 
                 # Ensure serie channel exists
                 if any(channel.name == serie_channel_name.lower() for channel in setup_channels):
                     serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
-                    #serie_channel = channel
                 else:
-                    print(serie_channel_name, 'not in channel, creating')
                     serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
 
 
 
                 for datapack in car['datapacks']:
-                    for file in datapack['files']:
-                        filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
+                    if datapack['files']:
+                        # Build embed
+                        embed = discord.Embed()
+                        embed.title = car['serie'] + ' - ' + car['name']
+                        embed.description = datapack['track']
+                        embed.set_image(url=car['img_url'])
+                        embed.set_author(
+                            icon_url = car['img_author'],
+                            name = car['author']
+                        )
 
-                        # Search for uploaded file in upload channel        
-                        #upload_history = await upload_channel.history()
-                        #file_uploaded = discord.utils.find(lambda message: message.content == filename_on_discord, upload_history)
-                        #async for message in upload_channel.history():
-                        #    if message.content == filename_on_discord:
-                        #        return True
+                        for file in datapack['files']:
+                            print('-' * 20)
+                            print('file: ', file)
+                            # TODO check filesize
+                            filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
+                            
+                            # upload file if not exists
+                            if not await is_file_uploaded(filename_on_discord):
+                                uploaded_file_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
+                            else:
+                                uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get
+
+                            # Add file to embed
+                            #embed.add_field(name=file['type'], value='[' + file['name'] + (' + uploaded_file_msg.attachments[0].url + ')')
+                            embed.add_field(name=file['type'], value='[{}]({})]'.format(file['name'], uploaded_file_msg.attachments[0].url))
                         
+                        # Send embed
+                        await serie_channel.send(content='', embed=embed)
 
-                        # upload file if not exists
-                        #if not file_uploaded:
-                        if not await is_file_uploaded(filename_on_discord):
-                            print('-' * 20)
-                            print('Not uploaded')
-                            file_upload_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
-                            print(file_upload_msg)
-                            uploaded_file = file_upload_msg.attachments[0]
-                            print(uploaded_file) 
-                            return uploaded_file
-                        else:
-                            print('uploaded')
-                            #uploaded_file = discord.utils.find(lambda m: m.content == filename_on_discord, upload_channel) # utils.find
-                            #uploaded_file_msg = await discord.utils.get(upload_channel.history(), content=filename_on_discord) # utils.get
-                            uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get
-                            print('-' * 20)
-                            print('uploaded_file_msg', uploaded_file_msg)
-                            uploaded_file_url = uploaded_file_msg.attachments[0].url
-                            print('uploaded_file_url', uploaded_file_url)
-                            upload_msg = await get_upload_message(filename_on_discord)
-
-
-                        embed = tools.build_embed(
-                                ctx, 
-                                author_name=car['author'], 
-                                author_avatar_url=car['img_author'],
-                                title=car['serie'] + ' - ' + car['name'],
-                                description=datapack['track'],
-                                img_url=car['img_url'],
-                                setup='[Download]({})'.format(uploaded_file_url))
-                            
-                        print(embed)
-                            
-                        await ctx.send(embed)
                         print('-' * 20)
                         print('End of loop')
                         print('-' * 20)
-                        # TODO retrieve file url if already uploaded
-                        #else:
-                        #    uploaded_file = await upload_channel.history().get(content=filename_on_discord)[0]
-                        #    return uploaded_file
-
-
-                            # Get attachment
-                            
-
-                        
-
-                   # # Build embed
-                   # title = car['serie']
-                   # text = car['name']
-                   # img = car['img_url']
-#
-                   # embed = discord.Embed(
-                   #     title=title,
-                   #     description=text,
-                   #     colour=discord.Colour.red())                        
-                   # embed.set_image(url=img)
-                   # embed.set_author(icon_url=car['img_author'],
-                   #                 name=car['author'])
-#
-                   # for file in datapack:
-                   #     embed.add_field(name=file['type'], value=uploaded_file.url, inline=True)
-                   # 
-                   # await ctx.send(content='', embed=embed)
-#
+        
         else:
             title = "VRS Offline :("
             text = "Va falloir attendre mon mignon"

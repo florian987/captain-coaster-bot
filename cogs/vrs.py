@@ -12,7 +12,7 @@ except:
 
 try:
     import cogs.utils
-    print('import utils works')
+    print('import cogs.utils works')
 except:
     print('import utils DOES NOT works')
 

@@ -42,7 +42,7 @@ def build_embed(ctx, **kwargs):
     
     # Set remaining args as fields
     if kwargs:
-        for k, v in kwargs:
+        for k, v in kwargs.items():
             embed.add_field(name=k, value=v, inline=True) 
 
     # Set img if set

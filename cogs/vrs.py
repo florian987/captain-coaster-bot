@@ -180,7 +180,7 @@ class VRS_Commands:
                             print('uploaded')
                             #uploaded_file = discord.utils.find(lambda m: m.content == filename_on_discord, upload_channel) # utils.find
                             #uploaded_file_msg = await discord.utils.get(upload_channel.history(), content=filename_on_discord) # utils.get
-                            uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord)) # utils.get
+                            uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get
                             print('-' * 20)
                             print('uploaded_file_msg', uploaded_file_msg)
                             uploaded_file_url = uploaded_file_msg.attachments[0].url

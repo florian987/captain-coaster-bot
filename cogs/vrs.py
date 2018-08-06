@@ -4,17 +4,8 @@ import aiohttp
 import os
 import json
 
-try:
-    import utils
-    print('import utils works')
-except:
-    print('import utils DOES NOT works')
-
-try:
-    import cogs.utils
-    print('import cogs.utils works')
-except:
-    print('import utils DOES NOT works')
+import cogs.custom_functions as tools
+   
 
 try:
     import scrapper.settings
@@ -195,7 +186,7 @@ class VRS_Commands:
                             upload_msg = await get_upload_message(filename_on_discord)
 
 
-                        embed = utils.build_embed(
+                        embed = tools.build_embed(
                                 ctx, 
                                 author_name=car['author'], 
                                 author_avatar_url=car['img_author'],

@@ -48,8 +48,8 @@ class Default_Commands:
             title="Pong!",
             description="Latency = {}ms".format(latency),
             colour=ctx.author.colour)
-        embed.set_author(icon_url=ctx.author.avatar_url,
-                         name=str(ctx.author))
+        #embed.set_author(icon_url=ctx.author.avatar_url,
+        #                 name=str(ctx.author))
         return await ctx.send(content='', embed=embed)
 
 

@@ -84,32 +84,32 @@ class VRS_Commands:
                         return False
 
 
-        async def message_exists(channel: discord.TextChannel, filename):
+        async def message_exists(channel: discord.TextChannel, message):
             """Search message content in a defined channel"""
-            if await channel.history().get(content=filename):
+            if await channel.history().get(content=message):
                 return True
-            else:
-                return False
+            return False
 
 
         # TODO END THIS
-        #async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
-        #    """Ensure a channel exists and create it if needed before returning it"""
-        #    if any(channel.name == chan for channel in cat.channels):
-        #        return discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower(), category=cat.name)
-        #    else:
-        #        return await ctx.guild.create_text_channel(serie_channel_name, category=cat.name)
+        async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
+            """Ensure a channel exists and create it if needed before returning it"""
+            chan = discord.utils.get(ctx.guild.text_channels, name=chan, category=cat.name)
+            if chan:
+                return chan
+            return await ctx.guild.create_text_channel(name=chan, category=cat.name)
+                
 
 
         # Build cars infos
         if is_vrs_online():
             
             # Ensure upload channel exists
-            if any(channel.name == upload_channel_name.lower() for channel in setup_category.channels):
-                upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
-            else:
-                upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setup_category)
-            #upload_channel = ensure_channel_exists(upload_channel_name.lower(), setup_category)
+            #if any(channel.name == upload_channel_name.lower() for channel in setup_category.channels):
+            #    upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
+            #else:
+            #    upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setup_category)
+            upload_channel = ensure_channel_exists(upload_channel_name.lower(), setup_category)
 
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
@@ -132,11 +132,11 @@ class VRS_Commands:
                 serie_channel_name = car['serie'].replace(' ','-').lower()
 
                 # Ensure serie channel exists
-                if any(channel.name == serie_channel_name.lower() for channel in setup_category.channels):
-                    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
-                else:
-                    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setup_category)
-                #serie_channel = await ensure_channel_exists(serie_channel_name, setup_category)
+                #if any(channel.name == serie_channel_name.lower() for channel in setup_category.channels):
+                #    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
+                #else:
+                #    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setup_category)
+                serie_channel = await ensure_channel_exists(serie_channel_name, setup_category)
 
 
 
@@ -162,7 +162,7 @@ class VRS_Commands:
                                 filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
                                 
                                 # upload file if not exists
-                                if not await message_exists(upload_channel_name, filename_on_discord):
+                                if not await message_exists(upload_channel, filename_on_discord):
                                     uploaded_file_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
                                 else:
                                     uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get

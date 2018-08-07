@@ -54,6 +54,7 @@ class Dev_Commands:
                 await ctx.send('Please provide a category name.')
         if isinstance(error, commands.BadArgument):
             print(type(error), dir(error))
+            print(error.args)
             await ctx.send(str(error).replace('Channel', 'Category'))
 
     @do_repeat.error

@@ -97,10 +97,8 @@ class VRS_Commands:
             print('cat:', type(cat), cat)
             chan_to_return = discord.utils.get(ctx.guild.text_channels, name=chan, category=cat)
             if chan_to_return:
-                return chan_to_return
-            else:
-                chan_to_return = await ctx.guild.create_text_channel(name=chan, category=cat)
-            return chan_to_return
+                return chan_to_return            
+            return await ctx.guild.create_text_channel(name=chan, category=cat)
                 
 
 
@@ -112,7 +110,7 @@ class VRS_Commands:
             #    upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
             #else:
             #    upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setup_category)
-            upload_channel = ensure_channel_exists(upload_channel_name.lower(), setup_category)
+            upload_channel = await ensure_channel_exists(upload_channel_name.lower(), setup_category)
 
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))

@@ -93,23 +93,23 @@ class VRS_Commands:
 
 
         # TODO END THIS
-        async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
-            """Ensure a channel exists and create it if needed before returning it"""
-            if any(channel.name == chan for channel in cat.channels):
-                return discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower(), category=cat.name)
-            else:
-                return await ctx.guild.create_text_channel(serie_channel_name, category=cat.name)
+        #async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
+        #    """Ensure a channel exists and create it if needed before returning it"""
+        #    if any(channel.name == chan for channel in cat.channels):
+        #        return discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower(), category=cat.name)
+        #    else:
+        #        return await ctx.guild.create_text_channel(serie_channel_name, category=cat.name)
 
 
         # Build cars infos
         if is_vrs_online():
             
             # Ensure upload channel exists
-            #if any(channel.name == upload_channel_name.lower() for channel in setup_category.channels):
-            #    upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
-            #else:
-            #    upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setup_category)
-            upload_channel = ensure_channel_exists(upload_channel_name.lower(), setup_category)
+            if any(channel.name == upload_channel_name.lower() for channel in setup_category.channels):
+                upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
+            else:
+                upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setup_category)
+            #upload_channel = ensure_channel_exists(upload_channel_name.lower(), setup_category)
 
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
@@ -132,11 +132,11 @@ class VRS_Commands:
                 serie_channel_name = car['serie'].replace(' ','-').lower()
 
                 # Ensure serie channel exists
-                #if any(channel.name == serie_channel_name.lower() for channel in setup_category.channels):
-                #    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
-                #else:
-                #    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setup_category)
-                serie_channel = ensure_channel_exists(serie_channel_name, setup_category)
+                if any(channel.name == serie_channel_name.lower() for channel in setup_category.channels):
+                    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
+                else:
+                    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setup_category)
+                #serie_channel = await ensure_channel_exists(serie_channel_name, setup_category)
 
 
 

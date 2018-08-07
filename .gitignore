@@ -12,3 +12,4 @@ lib64
 include
 share/
 selenium/
+config.json

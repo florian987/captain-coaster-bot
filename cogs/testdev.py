@@ -18,8 +18,8 @@ class Dev_Commands:
     @commands.is_owner()
     async def showconf(self, ctx):
         """Display Bot configuration"""
-        print(self.bot)
-         
+        print(dir(self.bot))
+
     
     """Below is an example of a Local Error Handler for our command do_repeat"""
     @commands.command(name='repeat', aliases=['mimic', 'copy'])

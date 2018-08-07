@@ -11,17 +11,6 @@ class Dev_Commands:
     async def list_categories(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
-    
-    
-    @commands.command(name='showconf', aliases=['displayconf'])
-    @commands.is_owner()
-    async def showconf(self, ctx):
-        """Display Bot configuration"""
-        print(dir(self.bot))
-        print(dir(self.bot.user))
-        print('name:', self.bot.user.name)
-        print('avatar_url:', self.bot.user.avatar_url)
-        print(self.bot.user)
 
     
     """Below is an example of a Local Error Handler for our command do_repeat"""

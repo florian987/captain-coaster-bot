@@ -14,13 +14,21 @@ class Dev_Commands:
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
     
     
+    @commands.command(name='showconf', aliases=['getchans'])
+    @commands.is_owner()
+    async def showconf(self, ctx):
+        """Display Bot configuration"""
+        print(self.bot)
+        await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
+    
+    
     """Below is an example of a Local Error Handler for our command do_repeat"""
     @commands.command(name='repeat', aliases=['mimic', 'copy'])
     async def do_repeat(self, ctx, *, inp: str):
         """A simple command which repeats your input!
         inp  : The input to be repeated"""
-
         await ctx.send(inp)
+
 
     #
     # ERROR HANDLER

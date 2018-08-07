@@ -45,11 +45,11 @@ class Dev_Commands:
         #                 name=str(ctx.author))
         #await ctx.send(content='', embed=embed)
 
-    @list_categories.error
-    async def  list_categories_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            if error.param.name == 'lookup_category':
-                await ctx.send('Please provide a category name.')
+    #@list_categories.error
+    #async def  list_categories_handler(self, ctx, error):
+    #    if isinstance(error, commands.MissingRequiredArgument):
+    #        if error.param.name == 'lookup_category':
+    #            await ctx.send('Please provide a category name.')
 
     @do_repeat.error
     async def do_repeat_handler(self, ctx, error):

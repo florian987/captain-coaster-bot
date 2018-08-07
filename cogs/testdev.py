@@ -9,14 +9,9 @@ class Dev_Commands:
 
     @commands.command(name='getchannels', aliases=['getchans'])
     @commands.is_owner()
-    async def test(self, ctx, lookup_category: discord.CategoryChannel = None):
+    async def list_categories(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
-        if not lookup_category:
-            await ctx.send("Please provide a category name.")
-        else:
-            await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
-        #except discord.ext.commands.errors.BadArgument:
-        #    await ctx.send(f'No category name {lookup_category} found.')
+        await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
     
     
     """Below is an example of a Local Error Handler for our command do_repeat"""
@@ -50,6 +45,11 @@ class Dev_Commands:
         #                 name=str(ctx.author))
         #await ctx.send(content='', embed=embed)
 
+    @list_categories.error
+    async def  list_categories_handler(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            if error.param.name == 'lookup_category':
+                await ctx.send('Please provide a category name.')
 
     @do_repeat.error
     async def do_repeat_handler(self, ctx, error):

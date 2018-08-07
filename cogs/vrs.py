@@ -93,8 +93,6 @@ class VRS_Commands:
         # TODO END THIS
         async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
             """Ensure a channel exists and create it if needed before returning it"""
-            print('chan:', type(chan), chan)
-            print('cat:', type(cat), cat)
             chan_to_return = discord.utils.get(ctx.guild.text_channels, name=chan, category=cat)
             if chan_to_return:
                 return chan_to_return            
@@ -105,16 +103,10 @@ class VRS_Commands:
         # Build cars infos
         if is_vrs_online():
             
-            # Ensure upload channel exists
-            #if any(channel.name == upload_channel_name.lower() for channel in setup_category.channels):
-            #    upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
-            #else:
-            #    upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setup_category)
             upload_channel = await ensure_channel_exists(upload_channel_name.lower(), setup_category)
 
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
-
             
             driver = scrapper.build_driver(headless=True) # Create webdriver            
             iracing_cars = scrapper.build_cars_list(driver) # Scrap VRS website and build cars infos
@@ -123,22 +115,11 @@ class VRS_Commands:
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
 
-
-
-
+            # Upload files to discord
             for car in cars_list:
 
-
-                serie_channel_name = car['serie'].replace(' ','-').lower()
-
-                # Ensure serie channel exists
-                #if any(channel.name == serie_channel_name.lower() for channel in setup_category.channels):
-                #    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
-                #else:
-                #    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setup_category)
+                serie_channel_name = car['serie'].replace(' ','-').lower() # Create serie channel name
                 serie_channel = await ensure_channel_exists(serie_channel_name, setup_category)
-
-
 
                 for datapack in car['datapacks']:
                     if datapack['files']:
@@ -155,15 +136,13 @@ class VRS_Commands:
                         )
 
                         for file in datapack['files']:
-                            print('-' * 20)
-                            print('file: ', file)
                             if round(os.path.getsize(file['path']) / 1024) < 8192: # Check if filesize < 8MB
                                 filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
                                 # upload file if not exists
                                 if not await message_exists(upload_channel, filename_on_discord):
                                     uploaded_file_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
                                 else:
-                                    uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get
+                                    uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord)
 
                                 # Add file to embed
                                 embed.add_field(name=file['type'], value='[{}]({})'.format(file['name'], uploaded_file_msg.attachments[0].url))

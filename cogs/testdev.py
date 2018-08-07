@@ -11,7 +11,7 @@ class Dev_Commands:
     async def list_categories(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
-        print(ctx)
+        print(ctx.guild.roles)
         print(dir(ctx))
 
     

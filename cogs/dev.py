@@ -8,7 +8,8 @@ class Dev_Commands:
 
     @commands.command(name='getchannels', aliases=['getchans'])
     @commands.is_owner()
-    async def list_categories(self, ctx, *, lookup_category: discord.CategoryChannel):
+    @commands.guild_only()
+    async def list_channels(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
         print(ctx.guild.roles)
@@ -27,8 +28,8 @@ class Dev_Commands:
     # ERROR HANDLER
     #
 
-    @list_categories.error
-    async def  list_categories_handler(self, ctx, error):
+    @list_channels.error
+    async def  list_channels_handler(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             if error.param.name == 'lookup_category':
                 await ctx.send('Please provide a category name.')

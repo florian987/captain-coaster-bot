@@ -15,6 +15,15 @@ class VRS_Commands:
     def __init__(self, bot):
         self.bot = bot
 
+    async def __local_check(self, ctx):
+        return discord.utils.find(lambda r: r.name == 'Les Pilotes', ctx.author.roles)
+        #if ispilote:
+        #    print(f'{ctx.author.name} is pilote')
+        #    return True
+        #else:
+        #    print(f'{ctx.author.name} is not pilote')
+        #    return False
+
 
     @commands.command(name="get_setup_channels", aliases=["setup_chans",'get_setups_chans'])
     @commands.guild_only()
@@ -24,8 +33,7 @@ class VRS_Commands:
         setup_category = discord.utils.find(lambda c: c.name == "Setups", ctx.guild.categories)
 
         # Send message
-        await ctx.send(','.join(channel.name for channel in setup_category.channels))
-        await ctx.send(','.join(channel.id for channel in setup_category.channels))
+        await ctx.send(','.join(channel.name for channel in setup_category.channels).replace('_',r'\_'))
 
 
     @commands.command(name="flushsetups", aliases=['flushsets'], hidden=True)

@@ -47,7 +47,10 @@ def get_prefix(bot, message):
 initial_extensions = ['cogs.owner',
                       'cogs.default',
                       'cogs.vrs',
-                      'cogs.embed']
+                      'cogs.embed',
+                      'cogs.dev',
+                      'cogs.error_handler',
+                      'cogs.config']
 
 # Proxy settings
 proxy='http://fw_in.bnf.fr:8080'

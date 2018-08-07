@@ -22,30 +22,6 @@ class Dev_Commands:
 
         await ctx.send(inp)
 
-
-        # TODO Error handler cog
-        #https://gist.github.com/EvieePy/7822af90858ef65012ea500bcecf1612
-
-            #category = discord.utils.find(lambda c: c.name == lookup_category, ctx.guild.categories)
-            #print(category)
-            #if category:
-            #    print(category.channels)
-            #    await ctx.send(', '.join(channel.name for channel in category.channels))
-            #else:
-            #    await ctx.send(f'No category name {lookup_category} found.')
-
-
-        #title = None
-        #text = None
-        #embed = discord.Embed(
-        #    title=title,
-        #    description=text,
-        #    colour=ctx.author.colour)
-        #embed.set_author(icon_url=ctx.author.avatar_url,
-        #                 name=str(ctx.author))
-        #await ctx.send(content='', embed=embed)
-
-
     #
     # ERROR HANDLER
     #

@@ -53,12 +53,12 @@ class VRS_Commands:
             if deleted:
                 await channel.send('Deleted {} message(s)'.format(len(deleted)))
                 purged_channels += 1
-                purged_msgs +=len(deleted)
+                purged_msgs += len(deleted)
 
-            if purged_msgs > 0:
-                await ctx.send(f"Purged {purged_msgs} in {purged_channels}.")
-            else:
-                await ctx.send("Nothing to purge.")
+        if purged_msgs > 0:
+            await ctx.send(f"Purged {purged_msgs} in {purged_channels} channel(s).")
+        else:
+            await ctx.send("Nothing to purge.")
             
         
 

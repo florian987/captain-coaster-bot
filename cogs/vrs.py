@@ -44,11 +44,10 @@ class VRS_Commands:
         def is_me(m):
             return m.author == self.bot.user
 
+        purged_channels = 0
+        purged_msgs = 0
+
         for channel in setup_category.channels:
-
-            purged_channels = 0
-            purged_msgs = 0
-
             deleted = await channel.purge(check=is_me)
             if deleted:
                 await channel.send('Deleted {} message(s)'.format(len(deleted)))

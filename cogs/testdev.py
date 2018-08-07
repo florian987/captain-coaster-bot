@@ -9,6 +9,7 @@ class Dev_Commands:
 
     @commands.command(name='getchannels', aliases=['getchans'])
     @commands.is_owner()
+    @commands.NoPrivateMessage()
     async def list_categories(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
@@ -46,6 +47,9 @@ class Dev_Commands:
         #await ctx.send(content='', embed=embed)
 
 
+    #
+    # ERROR HANDLER
+    #
 
     @list_categories.error
     async def  list_categories_handler(self, ctx, error):

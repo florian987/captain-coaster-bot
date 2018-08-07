@@ -16,9 +16,6 @@ class VRS_Commands:
         self.bot = bot
 
 
-    
-
-
     @commands.command(name="get_setup_channels", aliases=["setup_chans",'get_setups_chans'])
     @commands.guild_only()
     async def get_channels(self, ctx):
@@ -29,9 +26,6 @@ class VRS_Commands:
         # Send message
         await ctx.send(','.join(channel.name for channel in setup_category.channels))
         await ctx.send(','.join(channel.id for channel in setup_category.channels))
-
-
-
 
 
     @commands.command(name="flushsetups", aliases=['flushsets'], hidden=True)

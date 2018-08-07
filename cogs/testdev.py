@@ -1,8 +1,6 @@
 from discord.ext import commands
 import discord.ext.commands.errors
 import discord
-import json
-
 
 class Dev_Commands:
     def __init__(self, bot):

@@ -51,5 +51,17 @@ class Dev_Commands:
         #await ctx.send(content='', embed=embed)
 
 
+    @do_repeat.error
+    async def do_repeat_handler(self, ctx, error):
+        """A local Error Handler for our command do_repeat.
+        This will only listen for errors in do_repeat.
+
+        The global on_command_error will still be invoked after."""
+
+        # Check if our required argument inp is missing.
+        if isinstance(error, commands.MissingRequiredArgument):
+            if error.param.name == 'inp':
+                await ctx.send("You forgot to give me input to repeat!")
+
 def setup(bot):
     bot.add_cog(Dev_Commands(bot))

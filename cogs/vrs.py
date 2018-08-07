@@ -6,15 +6,8 @@ import json
 
 import cogs.custom_functions as tools
    
-
-try:
-    import scrapper.settings
-    import scrapper.scrapper as scrapper
-except ModuleNotFoundError:
-    import cogs.scrapper.settings
-    import cogs.scrapper.scrapper as scrapper
-except:
-    print('Can not import scrapper modules')
+import cogs.scrapper.settings
+import cogs.scrapper.scrapper as scrapper
 
 
 
@@ -23,51 +16,42 @@ class VRS_Commands:
         self.bot = bot
 
 
+    
 
-    @commands.command(name="get_channels", aliases=["get_chans",'get_setups_chans','get_setups_channels'])
+
+    @commands.command(name="get_setup_channels", aliases=["setup_chans",'get_setups_chans'])
     @commands.guild_only()
     async def get_channels(self, ctx):
         """ Build setups channels list"""
+        # Retrieve setups categories
+        setup_category = discord.utils.find(lambda c: c.name == "Setups", ctx.guild.categories)
 
-        channels_setups = []
-        for channel in self.bot.get_all_channels():
-            if channel.category:
-                if channel.category.name == "Setups":
-                    channels_setups.append(channel)
-        
-        #for channel in channels_setups:
-        #    print(channel.name)
+        # Send message
+        await ctx.send(','.join(channel.name for channel in setup_category.channels))
+        await ctx.send(','.join(channel.id for channel in setup_category.channels))
 
-        await ctx.send(','.join(channel.name for channel in channels_setups))
-        await ctx.send(','.join(channel.id for channel in channels_setups))
+
+
 
 
     @commands.command(name="flushsetups", aliases=['flushsets'], hidden=True)
     @commands.is_owner()
     async def flush_setups(self, ctx):
         """Flush VRS setups"""
+        # Retrieve setups categories
+        setup_category = discord.utils.find(lambda c: c.name == "Setups", ctx.guild.categories)
 
         def is_me(m):
             return m.author == self.bot.user
 
-        channels_setups = []
-        for channel in self.bot.get_all_channels():
-            if channel.category and channel.category.name == "Setups":
-                channels_setups.append(channel)
-
-        print('-' * 20)
-        print(channels_setups)
-
-        for channel in channels_setups:
-            print('-' * 20)
-            print(channel)
+        for channel in setup_category.channels:
             deleted = await channel.purge(check=is_me)
             if deleted:
                 await channel.send('Deleted {} message(s)'.format(len(deleted)))
-                
-
-        #await ctx.send('Deleted {} messages'.format(len(messages) + 1))
         
+
+
+
 
     @commands.command(name="setups", aliases=["vrs-setups"])
     @commands.guild_only()
@@ -77,82 +61,71 @@ class VRS_Commands:
         setups_category_name = "Setups"
         upload_channel_name = "__uploads__"
 
+        setup_category = discord.utils.find(lambda c: c.name == setups_category_name, ctx.guild.categories)
+
         # Check if VRS is online
-        async with aiohttp.ClientSession() as session:
-            async with session.get('https://virtualracingschool.appspot.com/#/DataPacks') as r:
-                if r.status == 200:
-                    online = True
-                else:
-                    online = False
+        async def is_vrs_online():
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://virtualracingschool.appspot.com/#/DataPacks') as r:
+                    if r.status == 200:
+                        return True
+                    else:
+                        return False
 
 
-        # Build channels list
-        channels_setups = []
-        for channel in self.bot.get_all_channels():
-            if channel.category and channel.category.name == setups_category_name:
-                channels_setups.append(channel)
+        async def message_exists(channel: discord.TextChannel, filename):
+            """Search message content in a defined channel"""
+            if await channel.history().get(content=filename):
+                return True
+            else:
+                return False
+
+
+        # TODO END THIS
+        async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
+            """Ensure a channel exists and create it if needed before returning it"""
+            if any(channel.name == chan for channel in cat.channels):
+                return discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower(), category=cat.name)
+            else:
+                return await ctx.guild.create_text_channel(serie_channel_name, category=cat.name)
+
 
         # Build cars infos
-        if online:
-            # retrieve discord channels list
-            setup_channels = []
-            for channel in self.bot.get_all_channels():
-                if channel.category and channel.category.name == setups_category_name:
-                    setup_channels.append(channel)
-
-            # Retrieve desired category_id
-            for category in ctx.guild.categories:
-                if category.name == setups_category_name:
-                    setups_category = category
-
+        if is_vrs_online():
+            
             # Ensure upload channel exists
-            if any(channel.name == upload_channel_name.lower() for channel in setup_channels):
-                upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
-            else:
-                upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setups_category)
-
-            driver = scrapper.build_driver(headless=True)
+            #if any(channel.name == upload_channel_name.lower() for channel in setup_category.channels):
+            #    upload_channel = discord.utils.get(ctx.guild.text_channels, name=upload_channel_name.lower())
+            #else:
+            #    upload_channel = await ctx.guild.create_text_channel(upload_channel_name, category=setup_category)
+            upload_channel = ensure_channel_exists(upload_channel_name.lower(), setup_category)
 
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
 
+            # Create webdriver
+            driver = scrapper.build_driver(headless=True)
             # Scrap VRS
             iracing_cars = scrapper.build_cars_list(driver)
-
-            # Build datapacks in async
             cars_list = await self.bot.loop.run_in_executor(None, scrapper.build_datapacks_infos, driver, iracing_cars)
 
-            print('End of datapacks building')
-            print(cars_list)
-            
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
 
-            
 
-            async def is_file_uploaded(filename_on_discord):
-                if await upload_channel.history().get(content=filename_on_discord):
-                    return True
-                else:
-                    return False
-
-            async def get_upload_message(filename_on_discord):
-                async for message in upload_channel.history():
-                    if message.content == filename_on_discord:
-                        return message
 
 
             for car in cars_list:
 
-                print(json.dumps(car, indent=4))
 
-                serie_channel_name = car['serie'].replace(' ','-')
+                serie_channel_name = car['serie'].replace(' ','-').lower()
 
                 # Ensure serie channel exists
-                if any(channel.name == serie_channel_name.lower() for channel in setup_channels):
-                    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
-                else:
-                    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setups_category)
+                #if any(channel.name == serie_channel_name.lower() for channel in setup_category.channels):
+                #    serie_channel = discord.utils.get(ctx.guild.text_channels, name=serie_channel_name.lower())
+                #else:
+                #    serie_channel = await ctx.guild.create_text_channel(serie_channel_name, category=setup_category)
+                serie_channel = ensure_channel_exists(serie_channel_name, setup_category)
 
 
 
@@ -162,7 +135,6 @@ class VRS_Commands:
                         embed = discord.Embed()
                         embed.title = car['serie'] + ' - ' + car['name']
                         embed.url = datapack['url']
-                        #embed.colour = discord.Colour.orange()
                         embed.colour = discord.Colour(16777215)
                         embed.description = datapack['track']
                         embed.set_image(url=car['img_url'])
@@ -174,12 +146,12 @@ class VRS_Commands:
                         for file in datapack['files']:
                             print('-' * 20)
                             print('file: ', file)
-                            if round(os.path.getsize(file['path']) / 1024) < 8000:
+                            if round(os.path.getsize(file['path']) / 1024) < 8192: # Check if filesize < 8MB
                                 # TODO check filesize
                                 filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
                                 
                                 # upload file if not exists
-                                if not await is_file_uploaded(filename_on_discord):
+                                if not await message_exists(upload_channel_name, filename_on_discord):
                                     uploaded_file_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))
                                 else:
                                     uploaded_file_msg = await upload_channel.history().get(content=filename_on_discord) # utils.get
@@ -190,11 +162,9 @@ class VRS_Commands:
                         # Send embed
                         await serie_channel.send(content='', embed=embed)
 
-                        print('-' * 20)
-                        print('End of loop')
-                        print('-' * 20)
         
         else:
+            """If VRS Offline"""
             title = "VRS Offline :("
             text = "Va falloir attendre mon mignon"
             colour = discord.Colour.red()

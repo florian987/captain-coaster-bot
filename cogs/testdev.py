@@ -14,7 +14,7 @@ class Dev_Commands:
         if not lookup_category:
             await ctx.send("Please provide a category name.")
         else:
-            await ctx.send(', '.join(channel.name.replace('_','\_') for channel in lookup_category.channels))
+            await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
         #except discord.ext.commands.errors.BadArgument:
         #    await ctx.send(f'No category name {lookup_category} found.')
     

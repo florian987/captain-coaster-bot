@@ -45,9 +45,21 @@ class VRS_Commands:
             return m.author == self.bot.user
 
         for channel in setup_category.channels:
+
+            purged_channels = 0
+            purged_msgs = 0
+
             deleted = await channel.purge(check=is_me)
             if deleted:
                 await channel.send('Deleted {} message(s)'.format(len(deleted)))
+                purged_channels += 1
+                purged_msgs +=len(deleted)
+
+            if purged_msgs > 0:
+                ctx.send(f"Purged {purged_msgs} in {purged_channels}.")
+            else:
+                ctx.send("Nothing to purge.")
+            
         
 
 

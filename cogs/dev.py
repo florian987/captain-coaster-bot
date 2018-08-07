@@ -24,6 +24,15 @@ class Dev_Commands:
         await ctx.send(inp)
 
 
+    @commands.command(name='say', aliases=['talk'])
+    @commands.is_owner()
+    async def say(self, ctx, *, inp: str):
+        """A simple command which repeats your input!
+        inp  : The input to be repeated"""
+        await ctx.message.delete()
+        await ctx.send(inp)
+
+
     #
     # ERROR HANDLER
     #

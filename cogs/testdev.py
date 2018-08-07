@@ -14,14 +14,23 @@ class Dev_Commands:
         if not lookup_category:
             await ctx.send("Please provide a category name.")
         else:
-            try:
-                await ctx.send(', '.join(channel.name for channel in lookup_category.channels))
-            except discord.ext.commands.errors.BadArgument:
-                await ctx.send(f'No category name {lookup_category} found.')
+            await ctx.send(', '.join(channel.name.replace('_','\_') for channel in lookup_category.channels))
+        #except discord.ext.commands.errors.BadArgument:
+        #    await ctx.send(f'No category name {lookup_category} found.')
+    
+    
+    """Below is an example of a Local Error Handler for our command do_repeat"""
+    @commands.command(name='repeat', aliases=['mimic', 'copy'])
+    async def do_repeat(self, ctx, *, inp: str):
+        """A simple command which repeats your input!
+        inp  : The input to be repeated"""
+
+        await ctx.send(inp)
+
 
         # TODO Error handler cog
         #https://gist.github.com/EvieePy/7822af90858ef65012ea500bcecf1612
-        
+
             #category = discord.utils.find(lambda c: c.name == lookup_category, ctx.guild.categories)
             #print(category)
             #if category:

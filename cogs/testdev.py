@@ -53,8 +53,8 @@ class Dev_Commands:
             if error.param.name == 'lookup_category':
                 await ctx.send('Please provide a category name.')
         if isinstance(error, commands.BadArgument):
-            print(type(error), dir(error))
-            print(error.args, error.__str__)
+            #print(type(error), dir(error))
+            #print(error.args, error.__str__)
             await ctx.send(str(error).replace('Channel', 'Category'))
 
     @do_repeat.error

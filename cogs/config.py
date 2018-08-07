@@ -8,7 +8,7 @@ class Configs_Commands:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name=None, aliases=[])
+    @commands.command(name='saveconfig', aliases=['saveconf'])
     @commands.is_owner()
     async def config_save(self, ctx):
         """Save bot configuraiton into a json file"""

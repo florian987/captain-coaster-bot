@@ -94,6 +94,8 @@ class VRS_Commands:
         # TODO END THIS
         async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
             """Ensure a channel exists and create it if needed before returning it"""
+            print('chan:', type(chan), chan)
+            print('cat:', type(cat), cat)
             chan = discord.utils.get(ctx.guild.text_channels, name=chan, category=cat.name)
             if chan:
                 return chan
@@ -114,11 +116,10 @@ class VRS_Commands:
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Lister les setups'))
 
-            # Create webdriver
-            driver = scrapper.build_driver(headless=True)
-            # Scrap VRS
-            iracing_cars = scrapper.build_cars_list(driver)
-            cars_list = await self.bot.loop.run_in_executor(None, scrapper.build_datapacks_infos, driver, iracing_cars)
+            
+            driver = scrapper.build_driver(headless=True) # Create webdriver            
+            iracing_cars = scrapper.build_cars_list(driver) # Scrap VRS website and build cars infos
+            cars_list = await self.bot.loop.run_in_executor(None, scrapper.build_datapacks_infos, driver, iracing_cars) # Build datapacks infos
 
             # Change Bot Status    
             await self.bot.change_presence(activity=discord.Game(name='Récupérer les setups'))
@@ -158,9 +159,7 @@ class VRS_Commands:
                             print('-' * 20)
                             print('file: ', file)
                             if round(os.path.getsize(file['path']) / 1024) < 8192: # Check if filesize < 8MB
-                                # TODO check filesize
                                 filename_on_discord = car['serie'].replace(' ','_') + '-' + car['name'].replace(' ','_') + '-' + datapack['track'].replace(' ','_') + '-' + file['name']
-                                
                                 # upload file if not exists
                                 if not await message_exists(upload_channel, filename_on_discord):
                                     uploaded_file_msg = await upload_channel.send(content=filename_on_discord, file=discord.File(file['path']))

@@ -56,9 +56,9 @@ class VRS_Commands:
                 purged_msgs +=len(deleted)
 
             if purged_msgs > 0:
-                ctx.send(f"Purged {purged_msgs} in {purged_channels}.")
+                await ctx.send(f"Purged {purged_msgs} in {purged_channels}.")
             else:
-                ctx.send("Nothing to purge.")
+                await ctx.send("Nothing to purge.")
             
         
 

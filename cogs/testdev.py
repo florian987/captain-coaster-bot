@@ -11,6 +11,8 @@ class Dev_Commands:
     async def list_categories(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
+        print(ctx)
+        print(dir(ctx))
 
     
     """Below is an example of a Local Error Handler for our command do_repeat"""

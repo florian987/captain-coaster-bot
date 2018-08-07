@@ -14,7 +14,7 @@ class Dev_Commands:
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
     
     
-    @commands.command(name='showconf', aliases=['getchans'])
+    @commands.command(name='showconf', aliases=['displayconf'])
     @commands.is_owner()
     async def showconf(self, ctx):
         """Display Bot configuration"""

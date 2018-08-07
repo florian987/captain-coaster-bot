@@ -20,6 +20,8 @@ class Dev_Commands:
         """Display Bot configuration"""
         print(dir(self.bot))
         print(dir(self.bot.user))
+        print('name:', self.bot.user.name)
+        print('avatar_url:', self.bot.user.avatar_url)
 
     
     """Below is an example of a Local Error Handler for our command do_repeat"""

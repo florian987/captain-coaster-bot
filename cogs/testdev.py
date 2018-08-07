@@ -9,7 +9,6 @@ class Dev_Commands:
 
     @commands.command(name='getchannels', aliases=['getchans'])
     @commands.is_owner()
-    @commands.check(ctx.guild is not None)
     async def list_categories(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))

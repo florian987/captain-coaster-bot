@@ -23,7 +23,7 @@ class Dev_Commands:
         print(dir(self.bot.user))
         print('name:', self.bot.user.name)
         print('avatar_url:', self.bot.user.avatar_url)
-        print(json.dumps(self.bot.user, indent=4))
+        print(self.bot.user)
 
     
     """Below is an example of a Local Error Handler for our command do_repeat"""

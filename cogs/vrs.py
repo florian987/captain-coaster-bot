@@ -96,9 +96,9 @@ class VRS_Commands:
             """Ensure a channel exists and create it if needed before returning it"""
             print('chan:', type(chan), chan)
             print('cat:', type(cat), cat)
-            chan = discord.utils.get(ctx.guild.text_channels, name=chan, category=cat.name)
-            if chan:
-                return chan
+            chan_to_return = discord.utils.get(ctx.guild.text_channels, name=chan, category=cat.name)
+            if chan_to_return:
+                return chan_to_return
             return await ctx.guild.create_text_channel(name=chan, category=cat.name)
                 
 

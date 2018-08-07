@@ -19,6 +19,7 @@ class Dev_Commands:
     async def showconf(self, ctx):
         """Display Bot configuration"""
         print(dir(self.bot))
+        print(dir(self.bot.user))
 
     
     """Below is an example of a Local Error Handler for our command do_repeat"""

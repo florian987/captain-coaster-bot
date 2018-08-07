@@ -93,4 +93,5 @@ async def on_ready():
 bot.run(
     secret,
     bot=True,
-reconnect=True)
+    reconnect=True
+)

@@ -19,8 +19,7 @@ class Dev_Commands:
     async def showconf(self, ctx):
         """Display Bot configuration"""
         print(self.bot)
-        await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
-    
+         
     
     """Below is an example of a Local Error Handler for our command do_repeat"""
     @commands.command(name='repeat', aliases=['mimic', 'copy'])

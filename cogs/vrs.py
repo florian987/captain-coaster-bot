@@ -27,7 +27,7 @@ class VRS_Commands:
 
     @commands.command(name="get_setup_channels", aliases=["setup_chans",'get_setups_chans'])
     @commands.guild_only()
-    @commands.has_role(config['users'])
+    #@commands.has_role(config['users'])
     async def get_channels(self, ctx):
         """ Build setups channels list"""
         # Retrieve setups categories
@@ -69,7 +69,7 @@ class VRS_Commands:
 
     @commands.command(name="setups", aliases=["vrs-setups"])
     @commands.guild_only()
-    @commands.has_role(config['users'])
+    #@commands.has_role(config['users'])
     async def setups(self, ctx):
         """Retrieve cars setups from Virtual Racing School Website"""
 
@@ -158,6 +158,7 @@ class VRS_Commands:
                                 # Add file to embed
                                 embed.add_field(name=file['type'], value='[{}]({})'.format(file['name'], uploaded_file_msg.attachments[0].url))
                         
+                        # TODO Validate this works 
                         # Send embed
                         if not await embed_exists(serie_channel, embed):
                             await serie_channel.send(content='', embed=embed)

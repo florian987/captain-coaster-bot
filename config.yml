@@ -20,13 +20,14 @@ activity: "Enfiler les petits enfants"
 #   - figlet (requires pyfiglet)
 # Remove sysinfo_linux and figlet if you don't want to install the requirements.
 # Also please install: "pip3 install pyfiglet psutil humanize" if you want to run the bot with these extensions.
-extensions: ['cogs.owner',
-                      'cogs.default',
-                      'cogs.vrs',
-                      'cogs.embed',
-                      'cogs.dev',
-                      'cogs.error_handler',
-                      'cogs.config']
+extensions:
+  - cogs.owner
+  - cogs.default
+  - cogs.vrs
+  - cogs.embed
+  - cogs.dev
+  - cogs.error_handler
+  - cogs.config
 
 # The bots' admin role. This role is required to execute several critical commands
 # like load, unload and so on.

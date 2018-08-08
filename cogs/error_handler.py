@@ -52,6 +52,10 @@ class CommandErrorHandler:
         elif isinstance(error, commands.DisabledCommand):
             return await ctx.send(f'{ctx.command} has been disabled.')
 
+        # Not Working
+        #elif isinstance(error, commands.MissingRequiredArgument):
+        #    return await ctx.send(f'{ctx.command} need at least 1 argument.')
+
         elif isinstance(error, commands.NoPrivateMessage):
             try:
                 return await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')

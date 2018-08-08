@@ -7,7 +7,7 @@ class Embed_Commands:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='embed', aliases=['embedtest','testembed','embd','embdtest','testembd'])
+    @commands.command(name='embed', aliases=['embedtest','testembed','embd','embdtest','testembd','mbd'])
     @commands.guild_only()
     async def testembed(self, ctx, *, args):
         """A simple command which generate embeds using.
@@ -30,7 +30,6 @@ class Embed_Commands:
 
         args_dict = {}
 
-        #for arg in args.split(';'):
         for arg in shlex.split(args):
             print(arg)
             splitted_arg = arg.split("=")
@@ -58,7 +57,6 @@ class Embed_Commands:
                 description=descr,
                 colour=colour
             )
-
             embed.set_author(
                 icon_url=author_icon,
                 name=author_name,
@@ -74,7 +72,6 @@ class Embed_Commands:
             for key, value in kwargs.items():
                 embed.add_field(name=key, value=value, inline=True)
 
-
             if print_dict:
                 content = embed.to_dict()
 
@@ -84,7 +81,18 @@ class Embed_Commands:
 
         await ctx.send(content=content, embed=embed)
 
-
+    #
+    # ERROR HANDLER
+    #
+    @testembed.error
+    async def getparam_handler(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                title="Title",
+                description="Description",
+                colour=ctx.author.color
+            )
+            await ctx.send(content='', embed=embed)
 
 def setup(bot):
     bot.add_cog(Embed_Commands(bot))

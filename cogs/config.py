@@ -49,6 +49,11 @@ class Configs_Commands:
         """Return any bot parameter by its name (https://discordpy.readthedocs.io/en/rewrite/api.html#user)"""
         await ctx.send(str(getattr(self.bot.user, param)))
 
+        # List params
+        #dict = {
+        #    i: getattr(self.bot.user, i)
+        #    for i in dir(self.bot.user)
+        #}
 
 
     @conf.group(name='set', aliases=['change'])

@@ -27,6 +27,7 @@ class VRS_Commands:
 
     @commands.command(name="get_setup_channels", aliases=["setup_chans",'get_setups_chans'])
     @commands.guild_only()
+    @commands.has_role(config['users'])
     async def get_channels(self, ctx):
         """ Build setups channels list"""
         # Retrieve setups categories
@@ -68,6 +69,7 @@ class VRS_Commands:
 
     @commands.command(name="setups", aliases=["vrs-setups"])
     @commands.guild_only()
+    @commands.has_role(config['users'])
     async def setups(self, ctx):
         """Retrieve cars setups from Virtual Racing School Website"""
 
@@ -88,6 +90,13 @@ class VRS_Commands:
         async def message_exists(channel: discord.TextChannel, message):
             """Search message content in a defined channel"""
             if await channel.history().get(content=message):
+                return True
+            return False
+
+
+        async def embed_exists(channel: discord.TextChannel, embed):
+            """Search message content in a defined channel"""
+            if await channel.history().get(embed=embed):
                 return True
             return False
 
@@ -150,7 +159,8 @@ class VRS_Commands:
                                 embed.add_field(name=file['type'], value='[{}]({})'.format(file['name'], uploaded_file_msg.attachments[0].url))
                         
                         # Send embed
-                        await serie_channel.send(content='', embed=embed)
+                        if not await embed_exists(serie_channel, embed):
+                            await serie_channel.send(content='', embed=embed)
 
         
         else:

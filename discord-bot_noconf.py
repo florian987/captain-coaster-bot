@@ -34,13 +34,7 @@ try:
         config = yaml.load(config_file)
 except FileNotFoundError:
     print('Config file not found!')
-    exit(1)
 
-try:
-    token = config['token']
-except:
-    print('Token not set in config.')
-    exit(1)
 
 
 def get_prefix(bot, message):
@@ -50,8 +44,7 @@ def get_prefix(bot, message):
 
     # Notice how you can use spaces in prefixes.
     # Try to keep them simple though.
-    #prefixes = ['/']
-    prefixes = config['prefixes']
+    prefixes = ['/']
 
     # If we are in a guild, we allow for the user to mention
     # us or use any of the prefixes in our list.
@@ -61,22 +54,20 @@ def get_prefix(bot, message):
 # Below cogs represents our folder our cogs are in.
 # Following is the file name. So 'meme.py' in cogs, would be cogs.meme
 # Think of it like a dot path import
-#initial_extensions = ['cogs.owner',
-#                      'cogs.default',
-#                      'cogs.vrs',
-#                      'cogs.embed',
-#                      'cogs.dev',
-#                      'cogs.error_handler',
-#                      'cogs.config']
-
-initial_extensions = config['extensions']
+initial_extensions = ['cogs.owner',
+                      'cogs.default',
+                      'cogs.vrs',
+                      'cogs.embed',
+                      'cogs.dev',
+                      'cogs.error_handler',
+                      'cogs.config']
 
 # Proxy settings
 proxy='http://fw_in.bnf.fr:8080'
 
 bot = commands.Bot(
     command_prefix=get_prefix,
-    description=config['description'])
+    description='Socquette Bot')
 
 
 # Here we load our extensions(cogs) listed above in [initial_extensions].
@@ -103,8 +94,7 @@ async def on_ready():
 
     # Changes our bots Playing Status. t
     # ype=1(streaming) for a standard game you could remove type and url.
-    if config['activity']:
-        await bot.change_presence(activity=discord.Game(name=config['activity']))
+    await bot.change_presence(activity=discord.Game(name='enfiler des petits enfants ...'))
 
     
 
@@ -114,7 +104,7 @@ async def on_ready():
 
 
 bot.run(
-    token,
+    secret,
     bot=True,
     reconnect=True
 )

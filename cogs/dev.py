@@ -37,7 +37,7 @@ class Dev_Commands:
     #
 
     @list_channels.error
-    async def  list_channels_handler(self, ctx, error):
+    async def list_channels_handler(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             if error.param.name == 'lookup_category':
                 await ctx.send('Please provide a category name.')

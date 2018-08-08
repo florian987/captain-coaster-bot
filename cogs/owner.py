@@ -47,6 +47,13 @@ class OwnerCog:
         else:
             await ctx.send('**`SUCCESS`**')
 
+    @commands.command(name='listcogs', hidden=True)
+    @commands.is_owner()
+    async def cog_list(self, ctx):
+        """Command which List loaded Modules."""
+
+        await ctx.send('```\n' + ", ".join([ext.split(".")[1] for ext in ctx.bot.extensions]) + '\n```')
+
 
 def setup(bot):
     bot.add_cog(OwnerCog(bot))

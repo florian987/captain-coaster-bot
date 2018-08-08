@@ -1,4 +1,5 @@
 from discord.ext import commands
+import discord
 
 
 class OwnerCog:
@@ -18,7 +19,11 @@ class OwnerCog:
         except Exception as e:
             await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
         else:
-            await ctx.send('**`SUCCESS`**')
+            embed = discord.Embed(
+                description='Cog loaded.',
+                colour=discord.Colour.green())
+            #await ctx.send('**`SUCCESS`**')
+            await ctx.send(content='', embed=embed)
 
     @commands.command(name='unload', hidden=True)
     @commands.is_owner()
@@ -31,7 +36,11 @@ class OwnerCog:
         except Exception as e:
             await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
         else:
-            await ctx.send('**`SUCCESS`**')
+            embed = discord.Embed(
+                description='Cog unloaded.',
+                colour=discord.Colour.green())
+            #await ctx.send('**`SUCCESS`**')
+            await ctx.send(content='', embed=embed)
 
     @commands.command(name='reload', hidden=True)
     @commands.is_owner()
@@ -45,7 +54,11 @@ class OwnerCog:
         except Exception as e:
             await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
         else:
-            await ctx.send('**`SUCCESS`**')
+            embed = discord.Embed(
+                description='Cog reloaded.',
+                colour=discord.Colour.green())
+            #await ctx.send('**`SUCCESS`**')
+            await ctx.send(content='', embed=embed)
 
     @commands.command(name='listcogs', hidden=True)
     @commands.is_owner()

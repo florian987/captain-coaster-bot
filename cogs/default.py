@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import parser
 
 
 class Default_Commands:
@@ -8,7 +9,7 @@ class Default_Commands:
 
     @commands.command(name='calc', aliases=['calculate'])
     @commands.guild_only()
-    async def calc(self, ctx, first: int, operator, second: int):
+    async def calc(self, ctx, *, args):
         """A simple command which does calculations.
         Examples:
         /calc 6 * 4 -- multiply
@@ -17,16 +18,8 @@ class Default_Commands:
         /calc 6 - 4 -- subtract
         /calc 6 ** 3 -- power
         """
-        if operator == "*":
-            total = first * second
-        if operator == "+":
-            total = first + second
-        if operator == "-":
-            total = first - second
-        if operator == "/":
-            total = first // second
-        if operator == "**":
-            total = first ** second
+
+        total = eval(parser.expr(args).compile())
 
         # embed doc
         # https://cdn.discordapp.com/attachments/84319995256905728/252292324967710721/embed.png

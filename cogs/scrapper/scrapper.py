@@ -26,6 +26,13 @@ except ModuleNotFoundError:
 except:
     print("Can not load settings")
 
+
+
+# Credentials
+
+google_email = "adelargem@gmail.com"
+google_password = "AerhEHa3654G!gre"
+
 script_dir = os.path.dirname(os.path.realpath(__file__))
 download_dir = os.path.join(script_dir, "downloads")
 log_dir = os.path.join(script_dir, "logs")
@@ -38,7 +45,7 @@ needed_dirs = [
 ]
 
 
-def build_driver(browser="Chrome", headless=True, proxy=None):
+def build_driver(browser="Chrome", headless=False, proxy=None):
 
 
 
@@ -257,28 +264,56 @@ def build_cars_list(driver):
     
 
 
+def authenticate(driver):
+    driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
+    time.sleep(2)
+    try:
+        # Open menu
+        wait_by_css(driver, ".button-collapse")
+        driver.find_element_by_class_name(".button-collapse").click()
+        time.sleep(2)
 
+        # Dérouler menu
+        driver.find_element_by_css_selector('i.material-icons:nth-child(4)').click
+        time.sleep(2)
+
+        ## Click login button
+        #wait_by_css(driver, "//a[@class='KM1CN4-a-v']", 5)
+        #driver.find_element_by_class_name('KM1CN4-a-v').click
+        driver.find_element_by_css_selector('li.active > div:nth-child(2) > ul:nth-child(1) > li:nth-child(5) > a:nth-child(1) > span:nth-child(2)').click
+        # click Login with google
+        wait_by_id(driver, '#gwt-debug-googleLogin')
+        driver.find_element_by_id('#gwt-debug-googleLogin').click
+        # Type login
+        wait_by_id(driver, 'identifierId')
+        driver.find_element_by_id('identifierId').send_keys(google_email)
+        driver.find_element_by_css_selector('#identifierNext > div:nth-child(2)').click()
+
+        wait_by_css(driver, '#password > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > input:nth-child(1)')
+        driver.find_element_by_css_selector('#password > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > input:nth-child(1)').send_keys(google_password)
+        driver.find_element_by_css_selector('#passwordNext > div:nth-child(2)').click()
+        return True
+    except:
+        return False
 
 
 
 
 def build_datapacks_infos(driver, cars_list, premium=False):
     
-   # # Auth
-   # wait_by_xpath(driver, "//span[text()='Login / Logout']]")
-   # driver.find_element_by_xpath("//a[@data-vrs-widget='MenuLink'][4]").click()
+    # Auth
+    #wait_by_xpath(driver, "//span[text()='Login / Logout']]")
+    #driver.find_element_by_xpath("//a[@data-vrs-widget='MenuLink'][4]").click()
 #
-   # wait_by_id(driver, By.ID, "gwt-debug-googleLogin")
-   # driver.find_element_by_id("gwt-debug-googleLogin").click
-#
-   # try:
-   #     wait_by_css(driver, "//a[@class='KM1CN4-a-v']", 5)
-   #     driver.find_element_by_class_name('KM1CN4-a-v').click
-   # except:
-   #     pass
-   # 
-#
-#
+    #wait_by_id(driver, "gwt-debug-googleLogin")
+    #driver.find_element_by_id("gwt-debug-googleLogin").click
+
+  
+
+   
+    
+    premium = authenticate(driver)
+
     # Define list to iterate over
     if not premium:
         cars_list = [item for item in cars_list if not item['premium']]

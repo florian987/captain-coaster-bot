@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import shlex
 
 
 class Embed_Commands:
@@ -29,7 +30,9 @@ class Embed_Commands:
 
         args_dict = {}
 
-        for arg in args.split(';'):
+        #for arg in args.split(';'):
+        for arg in shlex.split(args):
+            print(arg)
             splitted_arg = arg.split("=")
             args_dict[splitted_arg[0]] = splitted_arg[1].strip('"').strip("'")
 

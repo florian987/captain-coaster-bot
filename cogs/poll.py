@@ -17,6 +17,9 @@ class Poll_Commands:
 
         splitted_args = shlex.split(args)
 
+        if len(splitted_args) < 3:
+            return
+
         embed = discord.Embed(
             title = splitted_args.pop(0)
         )

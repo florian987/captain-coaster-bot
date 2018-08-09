@@ -11,20 +11,14 @@ description: "Bot discord made by Repz using an awesome python lib"
 prefixes: ['!', '/']
 
 # The bots' activity on Discord:
-activity: "Enfiler les petits enfants"
+activity: "Commands: !help"
 
-# The bots' startup extensions. 
-# List:
-#   - sysinfo_linux (requires humanize, psutil)
-#   - sysinfo_windows
-#   - figlet (requires pyfiglet)
-# Remove sysinfo_linux and figlet if you don't want to install the requirements.
-# Also please install: "pip3 install pyfiglet psutil humanize" if you want to run the bot with these extensions.
+# The bots' startup extensions.
 extensions:
   - cogs.owner
   - cogs.default
   - cogs.vrs
-  - cogs.embed
+  - embed
   - cogs.dev
   - cogs.error_handler
   - cogs.config

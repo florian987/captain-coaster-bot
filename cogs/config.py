@@ -4,7 +4,9 @@ import os
 import json
 import aiohttp
 import io
-from PIL import Image
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class Configs_Commands:
@@ -60,8 +62,14 @@ class Configs_Commands:
     @commands.is_owner()
     async def set(self, ctx):
         """Change bot parameters"""
+
         if ctx.invoked_subcommand is None:
             await ctx.send('Invalid config command passed...')
+            return
+
+        log.info(f"{ctx.author} changed {ctx.command.name} parameter to "
+                "{ctx.command.parameter}")
+
 
     @set.command(name='username', aliases=['nick','pseudo','nickname','name'])
     @commands.is_owner()
@@ -86,11 +94,13 @@ class Configs_Commands:
     #
     @getparam.error
     async def getparam_handler(self, ctx, error):
-        # Check if our required argument inp is missing.
+        # Check if our required argument is missing.
         if isinstance(error, commands.CommandInvokeError):
             await ctx.send("This parameter doesn't exists!")
         elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("Provide a parameter please sir!")
+            params_list = [ i for i in dir(self.bot.user) if not i.startswith('_') ]
+            embed = discord.Embed(description=f'```{", ".join(params_list)}```')
+            await ctx.send("Provide a parameter please sir!", embed=embed)
 
 def setup(bot):
     bot.add_cog(Configs_Commands(bot))

@@ -1,6 +1,8 @@
 from discord.ext import commands
 import discord
+import logging
 
+log = logging.getLogger(__name__)
 
 class OwnerCog:
 
@@ -14,13 +16,17 @@ class OwnerCog:
         """Command which Loads a Module.
         Remember to use dot path. e.g: cogs.owner"""
 
+        if not cog.startswith("cogs"):
+            cog = 'cogs.' + cog
         try:
-            self.bot.load_extension(cog)
+            self.bot.load_extension(cog)            
         except Exception as e:
+            log.info(f"{ctx.author} failed to load {cog}.")
             await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
         else:
+            log.info(f"{ctx.author} loaded cog{cog.strip('cogs.')}.")
             embed = discord.Embed(
-                description='Cog loaded.',
+                description=f"Cog `{cog.strip('cogs.')}` loaded.",
                 colour=discord.Colour.green())
             #await ctx.send('**`SUCCESS`**')
             await ctx.send(content='', embed=embed)
@@ -31,6 +37,8 @@ class OwnerCog:
         """Command which Unloads a Module.
         Remember to use dot path. e.g: cogs.owner"""
 
+        if not cog.startswith("cogs"):
+            cog = 'cogs.' + cog
         try:
             self.bot.unload_extension(cog)
         except Exception as e:
@@ -48,6 +56,8 @@ class OwnerCog:
         """Command which Reloads a Module.
         Remember to use dot path. e.g: cogs.owner"""
 
+        if not cog.startswith("cogs"):
+            cog = 'cogs.' + cog
         try:
             self.bot.unload_extension(cog)
             self.bot.load_extension(cog)

@@ -3,11 +3,8 @@ import discord
 import aiohttp
 import os
 import json
-
-import cogs.custom_functions as tools
    
-import cogs.scrapper.settings
-import cogs.scrapper.scrapper as scrapper
+import scrapper.vrs as scrapper
 
 
 
@@ -58,7 +55,7 @@ class VRS_Commands:
                 purged_msgs += len(deleted)
 
         if purged_msgs > 0:
-            await ctx.send(f"Purged {purged_msgs} in {purged_channels} channel(s).")
+            await ctx.send(f"Purged {purged_msgs} message(s) in {purged_channels} channel(s).")
         else:
             await ctx.send("Nothing to purge.")
             
@@ -94,11 +91,11 @@ class VRS_Commands:
             return False
 
 
-        async def embed_exists(channel: discord.TextChannel, embed):
-            """Search message content in a defined channel"""
-            if await channel.history().get(embed=embed):
-                return True
-            return False
+        #async def embed_exists(channel: discord.TextChannel, embed):
+        #    """Search message content in a defined channel"""
+        #    if await channel.history().get(embed=embed):
+        #        return True
+        #    return False
 
 
         # TODO END THIS
@@ -160,8 +157,8 @@ class VRS_Commands:
                         
                         # TODO Validate this works 
                         # Send embed
-                        if not await embed_exists(serie_channel, embed):
-                            await serie_channel.send(content='', embed=embed)
+                        #if not await embed_exists(serie_channel, embed):
+                        await serie_channel.send(content='', embed=embed)
 
         
         else:

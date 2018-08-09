@@ -10,7 +10,7 @@ class Embed_Commands:
     @commands.command(name='embed', aliases=['embedtest','testembed','embd','embdtest','testembd','mbd'])
     @commands.guild_only()
     async def testembed(self, ctx, *, args):
-        """A simple command which generate embeds using.
+        """A simple command which generate embeds using keywords.
         Named parameters:
             - title (str)
             - descr (str)

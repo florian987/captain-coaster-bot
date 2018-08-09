@@ -6,12 +6,6 @@ import traceback
 import logging
 import yaml
 
-from secret import secret
-
-import cogs.scrapper.settings
-
-import cogs.custom_functions as tools 
-
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -58,21 +52,9 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-# Below cogs represents our folder our cogs are in.
-# Following is the file name. So 'meme.py' in cogs, would be cogs.meme
-# Think of it like a dot path import
-#initial_extensions = ['cogs.owner',
-#                      'cogs.default',
-#                      'cogs.vrs',
-#                      'cogs.embed',
-#                      'cogs.dev',
-#                      'cogs.error_handler',
-#                      'cogs.config']
-
+# Import initial cogs
 initial_extensions = config['extensions']
 
-# Proxy settings
-proxy='http://fw_in.bnf.fr:8080'
 
 bot = commands.Bot(
     command_prefix=get_prefix,
@@ -82,6 +64,10 @@ bot = commands.Bot(
 # Here we load our extensions(cogs) listed above in [initial_extensions].
 if __name__ == '__main__':
     for extension in initial_extensions:
+
+        if not extension.startswith("cogs"):
+            extension = 'cogs.' + extension # Add '.cogs' prefix just in case
+            
         try:
             bot.load_extension(extension)
         except Exception as e:
@@ -106,11 +92,20 @@ async def on_ready():
     if config['activity']:
         await bot.change_presence(activity=discord.Game(name=config['activity']))
 
-    
-
     print('Successfully logged in and booted...!')
 
 
+#@bot.before_invoke
+#async def before_any_command(ctx):
+#    if config['activity']:
+#        await bot.change_presence(activity=discord.Game(name=config['activity']))
+#    pass
+
+@bot.after_invoke
+async def after_any_command(ctx):
+    if config['activity']:
+        await bot.change_presence(activity=discord.Game(name=config['activity']))
+    pass
 
 
 bot.run(

@@ -85,7 +85,6 @@ class Embed_Commands:
         log.debug(f"Embed: {embed.to_dict()}")
 
         await ctx.send(content=content, embed=embed)
-        await ctx.send(content=content, embed=embed)
 
     #
     # ERROR HANDLER

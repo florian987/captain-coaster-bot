@@ -160,6 +160,14 @@ class Youtube_Commands:
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
+    # Use an existing command
+    #def disconnect(self, ctx):
+    #    await ctx.voice_client.disconnect()
+#
+    #@play.after_invoke
+    #async def after_play_command(self, ctx):
+    #    self.disconnect(ctx)
+    #    pass
 
 
     #

@@ -34,6 +34,7 @@ class CommandErrorHandler:
         print(dir(error))
         print(error)
         print(error.with_traceback)
+        print(error.original)
 
         # This prevents any commands with local handlers being handled here in on_command_error.
         if hasattr(ctx.command, 'on_error'):

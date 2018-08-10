@@ -22,14 +22,19 @@ class OwnerCog:
             self.bot.load_extension(cog)            
         except Exception as e:
             log.info(f"{ctx.author} failed to load {cog}.")
-            await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            #await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            embed = discord.Embed(
+                title=f"Failed to load {cog} cog.",
+                description='{} - {}'.format(type(e).__name__, e),
+                colour=discord.Color.red()
+            )
         else:
             log.info(f"{ctx.author} loaded cog{cog.strip('cogs.')}.")
             embed = discord.Embed(
                 description=f"Cog `{cog.strip('cogs.')}` loaded.",
                 colour=discord.Colour.green())
             #await ctx.send('**`SUCCESS`**')
-            await ctx.send(content='', embed=embed)
+        await ctx.send(content='', embed=embed)
 
     @commands.command(name='unload', hidden=True)
     @commands.is_owner()
@@ -42,13 +47,18 @@ class OwnerCog:
         try:
             self.bot.unload_extension(cog)
         except Exception as e:
-            await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            #await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            embed = discord.Embed(
+                title=f"Failed to unload {cog} cog.",
+                description='{} - {}'.format(type(e).__name__, e),
+                colour=discord.Color.red()
+            )
         else:
             embed = discord.Embed(
                 description='Cog unloaded.',
                 colour=discord.Colour.green())
             #await ctx.send('**`SUCCESS`**')
-            await ctx.send(content='', embed=embed)
+        await ctx.send(content='', embed=embed)
 
     @commands.command(name='reload', hidden=True)
     @commands.is_owner()
@@ -62,13 +72,18 @@ class OwnerCog:
             self.bot.unload_extension(cog)
             self.bot.load_extension(cog)
         except Exception as e:
-            await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            #await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            embed = discord.Embed(
+                title=f"Failed to reload {cog} cog.",
+                description='{} - {}'.format(type(e).__name__, e),
+                colour=discord.Color.red()
+            )
         else:
             embed = discord.Embed(
                 description='Cog reloaded.',
                 colour=discord.Colour.green())
             #await ctx.send('**`SUCCESS`**')
-            await ctx.send(content='', embed=embed)
+        await ctx.send(content='', embed=embed)
 
     @commands.command(name='listcogs', hidden=True)
     @commands.is_owner()

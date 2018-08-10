@@ -47,6 +47,7 @@ def in_channel(channel_id: int):
         return check
     return commands.check(predicate)
 
+
 # PlaceHolder, need constants
 #def locked():
 #    """

@@ -184,6 +184,7 @@ class Youtube_Commands:
         # Check if our required argument is missing.
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"Volume: {ctx.voice_client.source.volume}%")
+            
 
 def setup(bot):
     bot.add_cog(Youtube_Commands(bot))

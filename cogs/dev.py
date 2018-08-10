@@ -11,13 +11,13 @@ class Dev_Commands:
     @commands.guild_only()
     async def list_channels(self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
+
         await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
         print(ctx.guild.roles)
         print(dir(ctx))
 
-    
-    """Below is an example of a Local Error Handler for our command do_repeat"""
     @commands.command(name='repeat', aliases=['mimic', 'copy'])
+    @commands.is_owner()
     async def do_repeat(self, ctx, *, inp: str):
         """A simple command which repeats your input!
         inp  : The input to be repeated"""
@@ -40,11 +40,18 @@ class Dev_Commands:
     async def list_channels_handler(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             if error.param.name == 'lookup_category':
-                await ctx.send('Please provide a category name.')
-        if isinstance(error, commands.BadArgument):
+                embed = discord.Embed(
+                    description="Please provide a category name.",
+                    color=discord.Colour.red()
+                )
+        elif isinstance(error, commands.BadArgument):
             #print(type(error), dir(error))
             #print(error.args, error.__str__)
-            await ctx.send(str(error).replace('Channel', 'Category'))
+            embed = discord.Embed(
+                    description=str(error).replace('Channel', 'Category'),
+                    color=discord.Colour.red()
+                )
+        await ctx.send(content='', embed=embed)
 
     @do_repeat.error
     async def do_repeat_handler(self, ctx, error):
@@ -56,7 +63,11 @@ class Dev_Commands:
         # Check if our required argument inp is missing.
         if isinstance(error, commands.MissingRequiredArgument):
             if error.param.name == 'inp':
-                await ctx.send("You forgot to give me input to repeat!")
+                embed = discord.Embed(
+                    description='I need some text my dude.',
+                    color=discord.Colour.red()
+                )
+        await ctx.send(content='', embed=embed)
 
 def setup(bot):
     bot.add_cog(Dev_Commands(bot))

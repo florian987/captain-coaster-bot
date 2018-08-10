@@ -17,25 +17,17 @@ class Poll_Commands:
         Usage: /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
         """
 
+        # Placeholder in case clean_content is NOK
         # Replace mentions
-        user_mentions = re.findall(r'(<@!?[0-9]+>)', args)
-        for user_mention in user_mentions:
-            user_id = re.search(r'<@!?([0-9]+)>', user_mention).group(1)
-            print('-' * 200)
-            print(user_mention)
-            print(user_id)
-            print(ctx.guild.get_member(int(user_id)).nick)
-            print(args)
-            args = args.replace(user_mention, '@' + ctx.guild.get_member(int(user_id)).nick)
-            print(args)
+        #user_mentions = re.findall(r'(<@!?[0-9]+>)', args)
+        #for user_mention in user_mentions:
+        #    user_id = re.search(r'<@!?([0-9]+)>', user_mention).group(1)
+        #    args = args.replace(user_mention, '@' + ctx.guild.get_member(int(user_id)).nick)
 
-        splitted_args = shlex.split(args)
-
-        print(splitted_args)
+        splitted_args = shlex.split(args.clean_content)
 
         if len(splitted_args) < 3:
             return
-
 
         embed = discord.Embed(
             title = splitted_args.pop(0)
@@ -63,9 +55,15 @@ class Poll_Commands:
             embed = discord.Embed(
                 title="Title",
                 description="Description",
-                colour=ctx.author.color
+                colour=discord.Colour.red()
             )
-            await ctx.send(content='', embed=embed)
+        elif isinstance(error, commands.CommandInvokeError):
+            embed = discord.Embed(
+                description="Not enough emojis on this server :(.",
+                colour=discord.Colour.red()
+            )
+
+        await ctx.send(content='', embed=embed)
 
 #Not enough emojis
 #Command raised an exception: IndexError: Cannot choose from an empty sequence

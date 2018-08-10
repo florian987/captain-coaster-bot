@@ -14,12 +14,6 @@ class VRS_Commands:
 
     async def __local_check(self, ctx):
         return discord.utils.find(lambda r: r.name == 'Les Pilotes', ctx.author.roles)
-        #if ispilote:
-        #    print(f'{ctx.author.name} is pilote')
-        #    return True
-        #else:
-        #    print(f'{ctx.author.name} is not pilote')
-        #    return False
 
 
     @commands.command(name="get_setup_channels", aliases=["setup_chans",'get_setups_chans'])

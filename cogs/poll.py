@@ -4,11 +4,15 @@ import discord
 import shlex
 import random
 import re
+from emoji import UNICODE_EMOJI
+import logging
 
+log = logging.getLogger(__name__)
 
 class Poll_Commands:
     def __init__(self, bot):
         self.bot = bot
+        self.std_emojis = [ e for e in UNICODE_EMOJI if len(e) == 1]
 
     @commands.command(name='poll', aliases=['vote'])
     @commands.guild_only()
@@ -33,6 +37,7 @@ class Poll_Commands:
             title = splitted_args.pop(0)
         )
 
+        # TODO Add std_emojis
         used_emojis = []
         allowed_emojis = [e for e in self.bot.emojis if e.guild == ctx.guild and not e.managed]
         
@@ -46,18 +51,23 @@ class Poll_Commands:
         while len(used_emojis):
             await message.add_reaction(used_emojis.pop(0))
 
+        log.info(f"{ctx.author} started a poll: {args.clean_content}")
+
     #
     # ERROR HANDLER
     #
     @poll.error
     async def getparam_handler(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
+            log.error(f"{ctx.author} triied to start a poll on '{ctx.guild}' Guild without arguments")
             embed = discord.Embed(
                 title="Title",
                 description="Description",
                 colour=discord.Colour.red()
             )
         elif isinstance(error, commands.CommandInvokeError):
+            log.error(f"{ctx.author} triied to start a poll on '{ctx.guild}' Guild "
+                    "but it doesn't have enough emojis")
             embed = discord.Embed(
                 description="Not enough emojis on this server :(.",
                 colour=discord.Colour.red()

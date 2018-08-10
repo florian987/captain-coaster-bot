@@ -11,19 +11,20 @@ description: "Bot discord made by Repz using an awesome python lib"
 prefixes: ['!', '/']
 
 # The bots' activity on Discord:
-activity: "Commands: !help"
+activity: "Commands: /help"
 
 # The bots' startup extensions.
 extensions:
-  - cogs.owner
-  - cogs.default
-  - cogs.vrs
+  - owner
+  - default
+  - vrs
   - embed
-  - cogs.dev
-  - cogs.error_handler
-  - cogs.config
+  - dev
+  - error_handler
+  - config
+  - youtube
 
 # The bots' admin role. This role is required to execute several critical commands
 # like load, unload and so on.
 #admin_role: Discord Staff
-users_role: Les Pilotes
+users_role: Supers Pilotes

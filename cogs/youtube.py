@@ -2,8 +2,9 @@ from discord.ext import commands
 import discord
 import youtube_dl
 import asyncio
+import logging
 
-
+log = logging.getLogger(__name__)
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -105,7 +106,7 @@ class Youtube_Commands:
         await ctx.send('Now playing: {}'.format(player.title))
 
     @commands.command()
-    async def volume(self, ctx, volume: int):
+    async def volume(self, ctx, volume: float):
         """Changes the player's volume"""
 
         if ctx.voice_client is None:
@@ -118,31 +119,37 @@ class Youtube_Commands:
     async def stop(self, ctx):
         """Stops and disconnects the bot from voice"""
 
+        log.info(f"Disconnected from voice channel '{ctx.voice_client.channel}' by '{ctx.author}'.")
         await ctx.voice_client.disconnect()
 
     @commands.command(name='comeplay', aliases=['playhere', 'joinplay'])
     async def comeplay(self, ctx, *, arg):
-        "Play the desired song in the Voice channel the requester is connected"
-
-        channel = discord.utils.find(lambda c: ctx.author in c.members, ctx.guild.voice_channels)
+        "Play the desired song in your Voice Channel"
 
         if ctx.voice_client is not None:
-            return await ctx.voice_client.move_to(channel)
-
-        await channel.connect()
+            await ctx.voice_client.move_to(ctx.author.voice.channel)
+        else:
+            await ctx.author.voice.channel.connect()
 
         if arg.startswith('http'):
             async with ctx.typing():
                 player = await YTDLSource.from_url(arg, loop=self.bot.loop)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+        else:
+            return
 
         await ctx.send('Now playing: {}'.format(player.title))
 
 
 
+    #
+    # BEFORE / AFTER 
+    #
+
     @play.before_invoke
     @yt.before_invoke
     @stream.before_invoke
+    @comeplay.before_invoke
     async def ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
@@ -155,8 +162,20 @@ class Youtube_Commands:
 
 
 
+    #
+    # ERROR HANDLER
+    #
+    @comeplay.error
+    async def comeplay_handler(self, ctx, error):
+        # Check if our required argument is missing.
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("Provide an url to play sir!")
 
-
+    @volume.error
+    async def volume_handler(self, ctx, error):
+        # Check if our required argument is missing.
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"Volume: {ctx.voice_client.source.volume}%")
 
 def setup(bot):
     bot.add_cog(Youtube_Commands(bot))

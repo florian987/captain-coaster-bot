@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import shlex
+import logging
 
 log = logging.getLogger(__name__)
 
@@ -82,7 +83,7 @@ class Embed_Commands:
 
         log.info(f"{ctx.author} generated an embed in {ctx.channel}.")
         log.debug(f"Embed: {embed.to_dict()}")
-        
+
         await ctx.send(content=content, embed=embed)
         await ctx.send(content=content, embed=embed)
 

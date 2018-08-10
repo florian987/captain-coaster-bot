@@ -1,7 +1,9 @@
 from discord.ext import commands
 import discord
 import parser
+import logging
 
+log = logging.getLogger(__name__)
 
 class Default_Commands:
     def __init__(self, bot):
@@ -30,6 +32,7 @@ class Default_Commands:
         embed.set_author(icon_url=ctx.author.avatar_url,
                          name=str(ctx.author))
         await ctx.send(content='', embed=embed)
+        log.info(f"{ctx.author} did some maths: {args}")
 
     @commands.command(name='ping', aliases=['latency'])
     async def ping(self, ctx):
@@ -43,6 +46,7 @@ class Default_Commands:
             colour=ctx.author.colour)
         #embed.set_author(icon_url=ctx.author.avatar_url,
         #                 name=str(ctx.author))
+        log.info(f"{ctx.author} pinged me at {altency}ms")
         return await ctx.send(content='', embed=embed)
 
 

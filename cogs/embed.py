@@ -25,8 +25,8 @@ class Embed_Commands:
             - footer_test (str)
             - footer_icon (url)
         Examples:
-        /embd title="titre";descr="description"
-        /embed title="titre";descr="description";print_dict=True
+        /mbd title="titre";descr="description"
+        /embd title="titre";descr="description";print_dict=True
         /embed title="titre";descr="description";url="https://google.com"
         """
 

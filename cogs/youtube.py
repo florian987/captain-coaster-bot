@@ -3,6 +3,7 @@ import discord
 import youtube_dl
 import asyncio
 import logging
+import aiohttp
 from bs4 import BeautifulSoup
 
 log = logging.getLogger(__name__)

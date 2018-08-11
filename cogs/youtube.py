@@ -3,6 +3,7 @@ import discord
 import youtube_dl
 import asyncio
 import logging
+from bs4 import BeautifulSoup
 
 log = logging.getLogger(__name__)
 
@@ -54,9 +55,16 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
     # Placeholder
     @classmethod
-    async def search(cls, search, *, loop=None, stream=False):
+    async def search(cls, query, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(search, download=not stream))
+        async with aiohttp.ClientSession() as session:
+                async with session.get("https://www.youtube.com/results?search_query=" + query) as r: 
+                    urls = []
+                    soup = BeautifulSoup(r.content)
+                    for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
+                        urls.append('https://www.youtube.com' + vid['href']) 
+        
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(urls[0], download=not stream))
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]

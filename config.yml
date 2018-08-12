@@ -23,6 +23,7 @@ extensions:
   - error_handler
   - config
   - youtube
+  - poll
 
 # The bots' admin role. This role is required to execute several critical commands
 # like load, unload and so on.

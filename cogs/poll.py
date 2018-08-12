@@ -16,26 +16,14 @@ class Poll_Commands:
 
     @commands.command(name='poll', aliases=['vote'])
     @commands.guild_only()
-    async def poll(self, ctx: Context, *args: str):
+    async def poll(self, ctx: Context, *args: commands.clean_content):
     #async def poll(self, ctx: Context, *, args: str):
         """Start a poll.
         Usage: /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
         """
+        await ctx.message.delete()
 
-        # Placeholder in case clean_content is NOK
-        # Replace mentions
-        #user_mentions = re.findall(r'(<@!?[0-9]+>)', args)
-        #for user_mention in user_mentions:
-        #    user_id = re.search(r'<@!?([0-9]+)>', user_mention).group(1)
-        #    args = args.replace(user_mention, '@' + ctx.guild.get_member(int(user_id)).nick)
-
-        #splitted_args = shlex.split(args.clean_content)
-        #splitted_args = shlex.split(args.clean_content)
-
-        #if len(splitted_args) < 3:
-        #    return
-#
-        print(args)
+        # TODO useless transform ?
         argslist = list(args)
 
         if len(argslist) < 3:
@@ -45,10 +33,18 @@ class Poll_Commands:
             title = argslist.pop(0)
         )
 
+        embed.set_author(
+            icon_url=ctx.author.avatar_url,
+            name=ctx.author.name,
+            url=ctx.author.avatar_url
+        )
+
         # TODO Add std_emojis
         used_emojis = []
-        allowed_emojis = [e for e in self.bot.emojis if e.guild == ctx.guild and not e.managed]
+        guild_emojis = [e for e in self.bot.emojis if e.guild == ctx.guild and not e.managed]
+        allowed_emojis = guild_emojis + self.std_emojis
         
+
         while len(argslist):
             chosen_emoji = random.choice([e for e in allowed_emojis if not e in used_emojis])
             embed.add_field(name=argslist.pop(0), value=chosen_emoji, inline=True)
@@ -61,6 +57,9 @@ class Poll_Commands:
 
         log.info(f"{ctx.author} started a poll: {args}")
 
+
+
+
     #
     # ERROR HANDLER
     #
@@ -69,12 +68,16 @@ class Poll_Commands:
         if isinstance(error, commands.MissingRequiredArgument):
             log.error(f"{ctx.author} triied to start a poll on '{ctx.guild}' Guild without arguments")
             embed = discord.Embed(
-                title="Title",
-                description="Description",
+                description="Poll need question and choices",
                 colour=discord.Colour.red()
             )
-        #elif isinstance(error, BadArgument):
-            # discord.ext.commands.errors.BadArgument: Expected space after closing quotation
+        elif isinstance(error, commands.BadArgument):
+            log.error(f"{ctx.author} triied to start a poll on '{ctx.guild}' Guild with "
+                    f"malformed arguments:\n'{ctx.message.content}'")
+            embed = discord.Embed(
+                description=f"Poll - malformed arguments\n{ctx.message.content}",
+                colour=discord.Colour.red()
+            )
         #elif isinstance(error, commands.CommandInvokeError):
         #    log.error(f"{ctx.author} triied to start a poll on '{ctx.guild}' Guild "
         #            "but it doesn't have enough emojis")

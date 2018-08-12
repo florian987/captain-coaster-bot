@@ -46,7 +46,7 @@ class Default_Commands:
             colour=ctx.author.colour)
         #embed.set_author(icon_url=ctx.author.avatar_url,
         #                 name=str(ctx.author))
-        log.info(f"{ctx.author} pinged me at {altency}ms")
+        log.info(f"{ctx.author} pinged me at {latency}ms")
         return await ctx.send(content='', embed=embed)
 
 

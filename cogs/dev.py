@@ -31,6 +31,15 @@ class Dev_Commands:
         await ctx.message.delete()
         await ctx.send(inp)
 
+    @commands.command(name='args')
+    @commands.is_owner()
+    async def printargs(self, ctx, *args):
+        await ctx.send(content=f"**\*args**\n```\n{args}\n```")
+
+    @commands.command(name='astargs')
+    @commands.is_owner()
+    async def printastargs(self, ctx, *, args):
+        await ctx.send(content=f"**\*, args**\n```\n{args}\n```")
 
     #
     # ERROR HANDLER

@@ -33,36 +33,55 @@ class CommandErrorHandler:
 
         #developer = discord.AppInfo.owner
 
-        owner = discord.utils.get(ctx.guild.members, name='repz', discriminator='1337')
+        #owner = discord.utils.get(ctx.guild.members, id=self.bot.owner_id)
+        owner = self.bot.get_user(self.bot.owner_id)
+
+        print(type(owner))
 #
         dmchan = owner.dm_channel
         if not dmchan:
             dmchan = await owner.create_dm()
 
         
-        
-        print(owner)
 
         embed = discord.Embed(
-            title = error,
-            description = ctx.channel
+            title = "Fix ya shit",
+            colour=discord.Colour.dark_red()
+        )
+
+        if ctx.guild:
+            embed.add_field(
+                name="Guild",
+                value=ctx.guild
+            )
+
+        embed.add_field(
+            name="Channel",
+            value=f'#{ctx.channel}'
+        )
+
+        embed.add_field(
+            name="Command",
+            value=f'```\n{ctx.message.content}\n```'
         )
 
         embed.add_field(
             name = 'error',
-            value = f"```\nerror\n```",
+            value = f"```py\n{error}\n```",
             inline = False
         )
         embed.add_field(
             name = 'traceback',
-            value = f"```\nerror.with_traceback\n```",
+            value = f"```py\n{error.with_traceback}\n```",
             inline = False
         )
-        embed.add_field(
-            name = 'original',
-            value = f"```\nerror.original\n```",
-            inline = False
-        )
+
+        if error.original:
+            embed.add_field(
+                name = 'original',
+                value = f"```py\n{error.original}\n```",
+                inline = False
+            )
 
         await owner.send(content="", embed=embed)
 

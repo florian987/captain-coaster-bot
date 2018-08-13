@@ -21,6 +21,8 @@ class Poll_Commands:
         """Start a poll.
         Usage: /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
         """
+
+        # Delete original message
         await ctx.message.delete()
 
         # TODO useless transform ?
@@ -30,7 +32,8 @@ class Poll_Commands:
             return
 
         embed = discord.Embed(
-            title = argslist.pop(0)
+            title = argslist.pop(0),
+            colour = discord.Colour.dark_gold()
         )
 
         embed.set_author(
@@ -39,19 +42,21 @@ class Poll_Commands:
             url=ctx.author.avatar_url
         )
 
-        # TODO Add std_emojis
+        # Build emojis list
         used_emojis = []
         guild_emojis = [e for e in self.bot.emojis if e.guild == ctx.guild and not e.managed]
         allowed_emojis = guild_emojis + self.std_emojis
         
-
+        # Link emojis to choices
         while len(argslist):
             chosen_emoji = random.choice([e for e in allowed_emojis if not e in used_emojis])
             embed.add_field(name=argslist.pop(0), value=chosen_emoji, inline=True)
             used_emojis.append(chosen_emoji)
 
+        # Send embed
         message = await ctx.send(content='', embed=embed)
 
+        # Add reaction to embed
         while len(used_emojis):
             await message.add_reaction(used_emojis.pop(0))
 

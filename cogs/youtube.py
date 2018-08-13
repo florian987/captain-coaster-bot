@@ -59,11 +59,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
     async def search(cls, query, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
         async with aiohttp.ClientSession() as session:
-                async with session.get("https://www.youtube.com/results?search_query=" + query) as r: 
-                    urls = []
-                    soup = BeautifulSoup(r.content)
-                    for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
-                        urls.append('https://www.youtube.com' + vid['href']) 
+            async with session.get("https://www.youtube.com/results?search_query=" + query) as r: 
+                urls = []
+                soup = BeautifulSoup(r.content)
+                for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
+                    urls.append('https://www.youtube.com' + vid['href']) 
         
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(urls[0], download=not stream))
         if 'entries' in data:
@@ -71,6 +71,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
             data = data['entries'][0]
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+
+
 
 class Youtube_Commands:
     def __init__(self, bot):

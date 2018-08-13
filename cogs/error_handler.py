@@ -31,6 +31,33 @@ class CommandErrorHandler:
         ctx   : Context
         error : Exception"""
 
+        #dmchan = discord.AppInfo.owner.dm_channel
+        #if not dmchan:
+        #    dmchan = await discord.AppInfo.owner.create_dm()
+#
+        #embed = discord.Embed(
+        #    title = error,
+        #    description = ctx.guild.channel
+        #)
+#
+        #embed.add_field(
+        #    name = 'error',
+        #    value = f"```\nerror\n```",
+        #    inline = False
+        #)
+        #embed.add_field(
+        #    name = 'traceback',
+        #    value = f"```\nerror.with_traceback\n```",
+        #    inline = False
+        #)
+        #embed.add_field(
+        #    name = 'original',
+        #    value = f"```\nerror.original\n```",
+        #    inline = False
+        #)
+#
+        #dmchan.send(content="", embed=embed)
+
         print(dir(error))
         print(error)
         print(error.with_traceback)

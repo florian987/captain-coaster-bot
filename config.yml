@@ -29,3 +29,10 @@ extensions:
 # like load, unload and so on.
 #admin_role: Discord Staff
 users_role: Supers Pilotes
+
+
+reddit:
+  request_delay: 60
+  subreddits:
+      - 'r/Python'
+

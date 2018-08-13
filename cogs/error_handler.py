@@ -32,13 +32,16 @@ class CommandErrorHandler:
         error : Exception"""
 
         #developer = discord.AppInfo.owner
-#
-        #dmchan = discord.AppInfo.owner.dm_channel
-        #if not dmchan:
-        #    dmchan = await discord.AppInfo.owner.create_dm()
 
-        discord.AppInfo.owner
-        owner = discord.utils.find(lambda m: m == discord.AppInfo.owner, ctx.channel.guild.members)
+        owner = discord.utils.get(ctx.guild.members, name='repz', discriminator='1337')
+#
+        dmchan = owner.dm_channel
+        if not dmchan:
+            dmchan = await owner.create_dm()
+
+        
+        
+        print(owner)
 
         embed = discord.Embed(
             title = error,

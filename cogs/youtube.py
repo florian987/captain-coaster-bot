@@ -151,7 +151,7 @@ class Youtube_Commands:
 
         if arg.startswith('http'):
             async with ctx.typing():
-                player = await YTDLSource.from_url(arg, loop=self.bot.loop, stream=True)
+                player = await YTDLSource.from_url(arg, loop=self.bot.loop, stream=false)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
         else:
             async with ctx.typing():

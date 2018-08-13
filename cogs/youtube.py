@@ -5,6 +5,7 @@ import asyncio
 import logging
 import aiohttp
 from bs4 import BeautifulSoup
+import re
 
 log = logging.getLogger(__name__)
 
@@ -59,11 +60,17 @@ class YTDLSource(discord.PCMVolumeTransformer):
     async def search(cls, query, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
         async with aiohttp.ClientSession() as session:
-            async with session.get("https://www.youtube.com/results?search_query=" + query) as r: 
+            async with session.get("https://www.youtube.com/results?search_query=" + query) as r:
+                html = await r.read()
+                print(html)
                 urls = []
-                soup = BeautifulSoup(r.content)
-                for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
-                    urls.append('https://www.youtube.com' + vid['href']) 
+                soup = BeautifulSoup(html, "html.parser")
+                #for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
+                for vid in soup.findAll('a', href=re.compile("watch")):
+                    urls.append('https://www.youtube.com' + vid['href'])
+                print(urls)
+        
+        #self.from_url
         
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(urls[0], download=not stream))
         if 'entries' in data:
@@ -144,9 +151,12 @@ class Youtube_Commands:
 
         if arg.startswith('http'):
             async with ctx.typing():
-                player = await YTDLSource.from_url(arg, loop=self.bot.loop)
+                player = await YTDLSource.from_url(arg, loop=self.bot.loop, stream=True)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
         else:
+            async with ctx.typing():
+                player = await YTDLSource.search(arg, loop=self.bot.loop)
+                ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
             return
 
         await ctx.send('Now playing: {}'.format(player.title))

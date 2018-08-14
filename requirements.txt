@@ -1,6 +1,5 @@
 aiohttp==3.3.2
 bs4==0.0.1
 https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice]
-discord.py==1.0.0a0
 selenium==3.13.0
 yarl==1.2.6

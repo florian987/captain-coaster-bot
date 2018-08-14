@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiohttp = "==3.3.2"
+"bs4" = "==0.0.1"
+"discord.py" = "==1.0.0a0"
+selenium = "==3.13.0"
+yarl = "==1.2.6"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"

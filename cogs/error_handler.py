@@ -31,6 +31,9 @@ class CommandErrorHandler:
         ctx   : Context
         error : Exception"""
 
+        #traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        traceback_msg = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+
         owner = self.bot.get_user(self.bot.owner_id)
 
         embed = discord.Embed(
@@ -64,11 +67,17 @@ class CommandErrorHandler:
             value = f"```py\n{error}\n```",
             inline = False
         )
-        embed.add_field(
-            name = 'traceback',
-            value = f"```py\n{error.with_traceback}\n```",
-            inline = False
+
+        traceback_embed = discord.Embed(
+            description = f"```py\n{traceback_msg}\n```",
+            colour = discord.Colour.dark_red()
         )
+        #embed.add_field(
+        #    name = 'traceback',
+        #    value = f"```py\n{traceback_msg}\n```",
+        #    #value = f"```py\n{error.__traceback__}\n```",
+        #    inline = False
+        #)
 
         if error.original:
             embed.add_field(
@@ -78,11 +87,14 @@ class CommandErrorHandler:
             )
 
         await owner.send(content="", embed=embed)
+        await owner.send(content="", embed=traceback_embed)
 
+        print('-' * 22)
         print(dir(error))
         print(error)
-        print(error.with_traceback)
+        #print(error.with_traceback())
         print(error.original)
+        print('-' * 22)
 
         # This prevents any commands with local handlers being handled here in on_command_error.
         if hasattr(ctx.command, 'on_error'):

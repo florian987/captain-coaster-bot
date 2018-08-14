@@ -77,7 +77,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         #self.from_url
         url = await cls.get_url(query)
         print(url)
-        await cls.from_url(url)
+        await cls.from_url(url, loop=None)
         
         #data = await loop.run_in_executor(None, lambda: ytdl.extract_info(urls[0], download=not stream))
         #if 'entries' in data:

@@ -113,3 +113,6 @@ bot.run(
     bot=True,
     reconnect=True
 )
+
+
+bot.http_session.close() 

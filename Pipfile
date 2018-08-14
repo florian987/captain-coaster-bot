@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 aiohttp = "==3.3.2"
 "bs4" = "==0.0.1"
-"discord.py" = "==1.0.0a0"
+"discord.py" = {file = "https://github.com/Rapptz/discord.py/archive/rewrite.zip", extras = ["voice"]}
 selenium = "==3.13.0"
 yarl = "==1.2.6"
 

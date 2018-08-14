@@ -4,8 +4,8 @@ data.json
 downloads/*
 logs/*
 settings.json
-scrapper/downloads/
-scrapper/logs/
+bot/scrapper/downloads/
+bot/scrapper/logs/
 bin/
 lib
 lib64

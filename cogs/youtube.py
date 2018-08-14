@@ -6,6 +6,7 @@ import logging
 import aiohttp
 from bs4 import BeautifulSoup
 import re
+import os
 
 log = logging.getLogger(__name__)
 
@@ -57,26 +58,33 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
     # Placeholder
     @classmethod
-    async def search(cls, query, *, loop=None, stream=False):
+    async def get_url(cls, query, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
         async with aiohttp.ClientSession() as session:
             async with session.get("https://www.youtube.com/results?search_query=" + query) as r:
                 html = await r.read()
-                print(html)
+                #print(html)
                 urls = []
                 soup = BeautifulSoup(html, "html.parser")
                 for vid in soup.findAll('a', href=re.compile("watch")):
                     urls.append('https://www.youtube.com' + vid['href'])
                 print(urls)
+                return urls[0]
         
+    @classmethod
+    async def from_search(cls, query, *, loop=None, stream=False):
+        loop = loop or asyncio.get_event_loop()
         #self.from_url
+        url = await cls.get_url(query)
+        print(url)
+        await cls.from_url(url)
         
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(urls[0], download=not stream))
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
-        filename = data['url'] if stream else ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
+        #data = await loop.run_in_executor(None, lambda: ytdl.extract_info(urls[0], download=not stream))
+        #if 'entries' in data:
+        #    # take first item from a playlist
+        #    data = data['entries'][0]
+        #filename = data['url'] if stream else ytdl.prepare_filename(data)
+        #return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
 
@@ -154,9 +162,9 @@ class Youtube_Commands:
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
         else:
             async with ctx.typing():
-                player = await YTDLSource.search(arg, loop=self.bot.loop)
+                player = await YTDLSource.from_search(arg, loop=self.bot.loop, stream=False)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-            return
+            #return
 
         await ctx.send('Now playing: {}'.format(player.title))
 

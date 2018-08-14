@@ -31,18 +31,7 @@ class CommandErrorHandler:
         ctx   : Context
         error : Exception"""
 
-        #developer = discord.AppInfo.owner
-
-        #owner = discord.utils.get(ctx.guild.members, id=self.bot.owner_id)
         owner = self.bot.get_user(self.bot.owner_id)
-
-        print(type(owner))
-#
-        dmchan = owner.dm_channel
-        if not dmchan:
-            dmchan = await owner.create_dm()
-
-        
 
         embed = discord.Embed(
             title = "Fix ya shit",
@@ -58,6 +47,11 @@ class CommandErrorHandler:
         embed.add_field(
             name="Channel",
             value=f'#{ctx.channel}'
+        )
+
+        embed.add_field(
+            name="Cog",
+            value=f"{ctx.cog}"
         )
 
         embed.add_field(

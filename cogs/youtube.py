@@ -14,7 +14,7 @@ youtube_dl.utils.bug_reports_message = lambda: ''
 
 ytdl_format_options = {
     'format': 'bestaudio/best',
-    'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'outtmpl': os.path.join('yt_dls', '%(extractor)s-%(id)s-%(title)s.%(ext)s'),
     'restrictfilenames': True,
     'noplaylist': True,
     'nocheckcertificate': True,
@@ -65,7 +65,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 print(html)
                 urls = []
                 soup = BeautifulSoup(html, "html.parser")
-                #for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
                 for vid in soup.findAll('a', href=re.compile("watch")):
                     urls.append('https://www.youtube.com' + vid['href'])
                 print(urls)
@@ -151,7 +150,7 @@ class Youtube_Commands:
 
         if arg.startswith('http'):
             async with ctx.typing():
-                player = await YTDLSource.from_url(arg, loop=self.bot.loop, stream=false)
+                player = await YTDLSource.from_url(arg, loop=self.bot.loop, stream=False)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
         else:
             async with ctx.typing():

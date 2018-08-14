@@ -13,3 +13,4 @@ include
 share/
 selenium/
 config.json
+yt_dls/

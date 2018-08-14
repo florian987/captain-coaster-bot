@@ -57,8 +57,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
     # Placeholder
-    @classmethod
-    async def get_url(cls, query, *, loop=None, stream=False):
+    @staticmethod
+    async def get_url(query, *, playlist=False, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
         async with aiohttp.ClientSession() as session:
             async with session.get("https://www.youtube.com/results?search_query=" + query) as r:
@@ -68,8 +68,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 soup = BeautifulSoup(html, "html.parser")
                 for vid in soup.findAll('a', href=re.compile("watch")):
                     urls.append('https://www.youtube.com' + vid['href'])
-                print(urls)
-                return urls[0]
+                #print(urls)
+                if playlist:
+                    return urls
+                else:
+                    return urls[0]
         
     @classmethod
     async def from_search(cls, query, *, loop=None, stream=False):
@@ -162,7 +165,9 @@ class Youtube_Commands:
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
         else:
             async with ctx.typing():
-                player = await YTDLSource.from_search(arg, loop=self.bot.loop, stream=False)
+                url = await YTDLSource.get_url(arg)
+                player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=False)
+                #player = await YTDLSource.from_search(arg, loop=self.bot.loop, stream=False)
                 ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
             #return
 

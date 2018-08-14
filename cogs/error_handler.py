@@ -68,15 +68,9 @@ class CommandErrorHandler:
             inline = False
         )
 
-        traceback_embed = discord.Embed(
-            description = f"```py\n{traceback_msg}\n```",
-            colour = discord.Colour.dark_red()
-        )
-        #embed.add_field(
-        #    name = 'traceback',
-        #    value = f"```py\n{traceback_msg}\n```",
-        #    #value = f"```py\n{error.__traceback__}\n```",
-        #    inline = False
+        #traceback_embed = discord.Embed(
+        #    title = "Traceback",
+        #    colour = discord.Colour.dark_red()
         #)
 
         if error.original:
@@ -87,7 +81,8 @@ class CommandErrorHandler:
             )
 
         await owner.send(content="", embed=embed)
-        await owner.send(content="", embed=traceback_embed)
+        #await owner.send(content="", embed=traceback_embed)
+        await owner.send(content=f"**Traceback**\n```py\n{traceback_msg}\n```")
 
         print('-' * 22)
         print(dir(error))

@@ -1,0 +1,34 @@
+image: pythondiscord/bot-ci:latest
+
+variables:
+  PIPENV_CACHE_DIR: "$CI_PROJECT_DIR/pipenv-cache"
+
+cache:
+  paths:
+    - "$CI_PROJECT_DIR/pipenv-cache"
+    - "$CI_PROJECT_DIR/.venv"
+
+stages:
+  - test
+  - build
+
+test:
+  tags:
+  - docker
+
+  stage: test
+
+  script:
+    - pipenv install --dev --deploy
+    - pipenv run lint
+
+build:
+  tags:
+  - docker
+
+  services:
+    - docker:dind
+
+  stage: build
+  script:
+    - sh scripts/deploy.sh

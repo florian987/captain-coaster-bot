@@ -4,7 +4,7 @@ import aiohttp
 import os
 import json
    
-import scrapper.vrs as scrapper
+import bot.scrapper.vrs as scrapper
 
 
 

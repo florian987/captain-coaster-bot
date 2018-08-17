@@ -25,6 +25,7 @@ def with_role(*role_ids: int):
         return False
     return commands.check(predicate)
 
+
 def without_role(*role_ids: int):
     async def predicate(ctx: Context):
         if not ctx.guild: #Block in DM
@@ -38,6 +39,7 @@ def without_role(*role_ids: int):
                 f"The result of the without_role check was {check}")
         return check
     return commands.check(predicate)
+
 
 def in_channel(channel_id: int):
     async def predicate(ctx: Context):

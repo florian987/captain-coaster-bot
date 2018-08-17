@@ -9,7 +9,7 @@ from discord.ext.commands import Bot, Context, group
 
 from bot.constants import Channels, ERROR_REPLIES, Reddit as RedditConfig, Roles
 from bot.converters import Subreddit
-from bot.decorators import with_role
+from decorators import with_role
 from bot.pagination import LinePaginator
 
 log = logging.getLogger(__name__)

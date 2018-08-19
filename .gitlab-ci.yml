@@ -20,7 +20,7 @@ test:
 
   script:
     - pipenv install --dev --deploy
-    - pipenv run lint
+#    - pipenv run lint
 
 build:
   tags:

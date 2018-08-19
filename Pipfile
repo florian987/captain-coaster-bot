@@ -22,12 +22,12 @@ pylint = "*"
 "flake8-string-format" = "*"
 "flake8-tidy-imports" = "*"
 "flake8-todo" = "*"
+pyflakes = "*"
 
 [requires]
 python_version = "3.6"
 
 [scripts]
-
 start = "python -m bot"
 lint = "python -m flake8"
 build = "docker build -t hub.hsfactory.net/jeff/discord-bot:latest -f docker/Dockerfile ."

@@ -22,7 +22,6 @@ pylint = "*"
 "flake8-string-format" = "*"
 "flake8-tidy-imports" = "*"
 "flake8-todo" = "*"
-pyflakes = "*"
 
 [requires]
 python_version = "3.6"

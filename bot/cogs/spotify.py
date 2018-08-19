@@ -10,18 +10,16 @@ class Spotify_Commands:
 
     @commands.group(name='spotify', aliases=['sptf'])
     @commands.guild_only()
-    #@commands.has_role(config['users'])
+    # @commands.has_role(config['users'])
     async def spotify(self, ctx):
         """Interact with spotify"""
 
         if ctx.invoked_subcommand is None:
             await ctx.send('Invalid config command passed...')
 
-
     @spotify.command(name='play', aliases=[])
     @commands.guild_only()
     async def play_song(self, ctx, *, args):
-
 
         title = None
         text = None

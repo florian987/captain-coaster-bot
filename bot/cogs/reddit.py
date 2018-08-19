@@ -4,13 +4,15 @@ import random
 import textwrap
 from datetime import datetime, timedelta
 
+from bot.constants import Channels, ERROR_REPLIES, Reddit as RedditConfig, Roles
+from bot.converters import Subreddit
+from bot.pagination import LinePaginator
+
+from decorators import with_role
+
 from discord import Colour, Embed, TextChannel
 from discord.ext.commands import Bot, Context, group
 
-from bot.constants import Channels, ERROR_REPLIES, Reddit as RedditConfig, Roles
-from bot.converters import Subreddit
-from decorators import with_role
-from bot.pagination import LinePaginator
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +35,8 @@ class Reddit:
 
     async def fetch_posts(self, route: str, *, amount: int = 25, params=None):
         """
-        A helper method to fetch a certain amount of Reddit posts at a given route.
+        A helper method to fetch a certain amount
+        of Reddit posts at a given route.
         """
 
         # Reddit's JSON responses only provide 25 posts at most.
@@ -54,7 +57,11 @@ class Reddit:
 
         return posts[:amount]
 
-    async def send_top_posts(self, channel: TextChannel, subreddit: Subreddit, content=None, time="all"):
+    async def send_top_posts(
+              self,
+              channel: TextChannel,
+              subreddit: Subreddit,
+              content=None, time="all"):
         """
         Create an embed for the top posts, then send it in a given TextChannel.
         """
@@ -96,13 +103,15 @@ class Reddit:
             comments = data["num_comments"]
             author = data["author"]
 
-            title = textwrap.shorten(data["title"], width=64, placeholder="...")
+            title = textwrap.shorten(
+                data["title"], width=64, placeholder="...")
             link = self.URL + data["permalink"]
 
             embed.description += (
                 f"[**{title}**]({link})\n"
                 f"{text}"
-                f"| {ups} upvotes | {comments} comments | u/{author} | {subreddit} |\n\n"
+                f"| {ups} upvotes | {comments} comments "
+                f"| u/{author} | {subreddit} |\n\n"
             )
 
         embed.colour = Colour.blurple()
@@ -129,7 +138,8 @@ class Reddit:
 
                 content_length = head_response.headers["content-length"]
 
-                # If the content is the same size as before, assume there's no new posts.
+                # If the content is the same size as before,
+                # assume there's no new posts.
                 if content_length == self.prev_lengths.get(subreddit, None):
                     continue
 
@@ -152,8 +162,14 @@ class Reddit:
                             break
 
                         embed_data = {
-                            "title": textwrap.shorten(data["title"], width=64, placeholder="..."),
-                            "text": textwrap.shorten(data["selftext"], width=128, placeholder="..."),
+                            "title": textwrap.shorten(
+                                data["title"],
+                                width=64,
+                                placeholder="..."),
+                            "text": textwrap.shorten(
+                                data["selftext"],
+                                width=128,
+                                placeholder="..."),
                             "url": self.URL + data["permalink"],
                             "author": data["author"]
                         }
@@ -169,12 +185,15 @@ class Reddit:
                     embed.title = data["title"]
                     embed.url = data["url"]
                     embed.description = data["text"]
-                    embed.set_footer(text=f"Posted by u/{data['author']} in {subreddit}")
+                    embed.set_footer(
+                        text=f"Posted by u/{data['author']} in {subreddit}")
                     embed.colour = Colour.blurple()
 
                     await self.reddit_channel.send(embed=embed)
 
-                log.trace(f"Sent {len(new_posts)} new {subreddit} posts to channel {self.reddit_channel.id}.")
+                log.trace(
+                    f"Sent {len(new_posts)} new {subreddit} posts to channel "
+                    f"{self.reddit_channel.id}.")
 
     async def poll_top_weekly_posts(self):
         """
@@ -219,7 +238,8 @@ class Reddit:
         await ctx.invoke(self.bot.get_command("help"), "reddit")
 
     @reddit_group.command(name="top")
-    async def top_command(self, ctx: Context, subreddit: Subreddit = "r/Python"):
+    async def top_command(self, ctx: Context,
+                          subreddit: Subreddit = "r/Python"):
         """
         Send the top posts of all time from a given subreddit.
         """
@@ -232,7 +252,8 @@ class Reddit:
         )
 
     @reddit_group.command(name="daily")
-    async def daily_command(self, ctx: Context, subreddit: Subreddit = "r/Python"):
+    async def daily_command(self, ctx: Context,
+                            subreddit: Subreddit = "r/Python"):
         """
         Send the top posts of today from a given subreddit.
         """
@@ -245,7 +266,8 @@ class Reddit:
         )
 
     @reddit_group.command(name="weekly")
-    async def weekly_command(self, ctx: Context, subreddit: Subreddit = "r/Python"):
+    async def weekly_command(self, ctx: Context,
+                             subreddit: Subreddit = "r/Python"):
         """
         Send the top posts of this week from a given subreddit.
         """
@@ -271,7 +293,8 @@ class Reddit:
         await LinePaginator.paginate(
             RedditConfig.subreddits,
             ctx, embed,
-            footer_text="Use the reddit commands along with these to view their posts.",
+            footer_text="Use the reddit commands along "
+                        "with these to view their posts.",
             empty=False,
             max_lines=15
         )

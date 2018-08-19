@@ -4,10 +4,12 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
 """
 
-import discord
-from discord.ext import commands
-#from .utils import checks
 import urllib
+
+
+from discord.ext import commands
+
+# from .utils import checks
 
 
 class SimplyGoogle:
@@ -19,42 +21,57 @@ class SimplyGoogle:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, no_pm=True,name="google")
+    @commands.command(pass_context=True, no_pm=True, name="google")
     async def google(self, ctx, text):
         """Its google, you search with it.
         Example: google A french pug
         Special search options are avaiable; Image, Maps
         Example: google image You know, for kids!
         Another example: google maps New York"""
-        search_type = ctx.message.content[len(ctx.prefix + ctx.command.name) + 1:].lower().split(" ")
+        search_type = ctx.message.content[(
+            len(ctx.prefix + ctx.command.name) + 1
+        )].lower().split(" ")
         # Start of Image
         if search_type[0] == "image":
-            search_valid = str(ctx.message.content[len(ctx.prefix + ctx.command.name) + 1:].lower())
+            search_valid = str(
+                ctx.message.content[len(
+                    ctx.prefix + ctx.command.name) + 1:].lower())
             if search_valid == "image":
                 await ctx.send(content="Please actually search something")
             else:
                 uri = "https://www.google.com/search?tbm=isch&q="
-                quary = str(ctx.message.content[len(ctx.prefix + ctx.command.name) + 7:].lower())
-                encode = urllib.parse.quote_plus(quary, encoding='utf-8', errors='replace')
+                quary = str(
+                    ctx.message.content[len(
+                        ctx.prefix + ctx.command.name
+                        ) + 7:].lower())
+                encode = urllib.parse.quote_plus(
+                    quary, encoding='utf-8', errors='replace')
                 await ctx.send(content=uri + encode)
             # End of Image
         # Start of Maps
         elif search_type[0] == "maps":
-            search_valid = str(ctx.message.content[len(ctx.prefix + ctx.command.name) + 1:].lower())
+            search_valid = str(
+                ctx.message.content[len(
+                    ctx.prefix + ctx.command.name) + 1:].lower())
             if search_valid == "maps":
                 await ctx.send(content="Please actually search something")
             else:
                 uri = "https://www.google.com/maps/search/"
-                quary = str(ctx.message.content[len(ctx.prefix + ctx.command.name) + 6:].lower())
-                encode = urllib.parse.quote_plus(quary, encoding='utf-8', errors='replace')
+                quary = str(
+                    ctx.message.content[len(
+                        ctx.prefix + ctx.command.name) + 6:].lower())
+                encode = urllib.parse.quote_plus(
+                    quary, encoding='utf-8', errors='replace')
                 await ctx.send(content=uri + encode)
             # End of Maps
         # Start of generic search
         else:
             uri = "https://www.google.com/search?q="
-            quary = str(ctx.message.content[len(ctx.prefix + ctx.command.name) + 1:])
-            encode = urllib.parse.quote_plus(quary, encoding='utf-8', errors='replace')
-            #await ctx.send(content=uri + encode)
+            quary = str(
+                ctx.message.content[len(ctx.prefix + ctx.command.name) + 1:])
+            encode = urllib.parse.quote_plus(
+                quary, encoding='utf-8', errors='replace')
+            # await ctx.send(content=uri + encode)
             await ctx.send(content=uri + encode)
             # End of generic search
 

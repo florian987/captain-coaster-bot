@@ -1,6 +1,7 @@
-from discord.ext import commands
-import discord.ext.commands.errors
 import discord
+import discord.ext.commands.errors
+from discord.ext import commands
+
 
 class Dev_Commands:
     def __init__(self, bot):
@@ -9,10 +10,16 @@ class Dev_Commands:
     @commands.command(name='getchannels', aliases=['getchans'])
     @commands.is_owner()
     @commands.guild_only()
-    async def list_channels(self, ctx, *, lookup_category: discord.CategoryChannel):
+    async def list_channels(
+              self, ctx, *, lookup_category: discord.CategoryChannel):
         """List channels from a category"""
 
-        await ctx.send(', '.join(channel.name.replace('_',r'\_') for channel in lookup_category.channels))
+        await ctx.send(
+            ', '.join(
+                channel.name.replace('_', r'\_') for channel in lookup_category
+                .channels)
+            )
+
         print(ctx.guild.roles)
         print(dir(ctx))
 
@@ -22,7 +29,6 @@ class Dev_Commands:
         """A simple command which repeats your input!
         inp  : The input to be repeated"""
         await ctx.send(inp)
-
 
     @commands.command(name='say', aliases=['talk'])
     @commands.is_owner()
@@ -54,8 +60,8 @@ class Dev_Commands:
                     color=discord.Colour.red()
                 )
         elif isinstance(error, commands.BadArgument):
-            #print(type(error), dir(error))
-            #print(error.args, error.__str__)
+            # print(type(error), dir(error))
+            # print(error.args, error.__str__)
             embed = discord.Embed(
                     description=str(error).replace('Channel', 'Category'),
                     color=discord.Colour.red()
@@ -77,6 +83,7 @@ class Dev_Commands:
                     color=discord.Colour.red()
                 )
         await ctx.send(content='', embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Dev_Commands(bot))

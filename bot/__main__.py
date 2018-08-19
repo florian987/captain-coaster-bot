@@ -32,7 +32,7 @@ except FileNotFoundError:
 
 try:
     token = config['token']
-except:
+except Exception:
     print('Token not set in config.')
     exit(1)
 
@@ -44,7 +44,7 @@ def get_prefix(bot, message):
 
     # Notice how you can use spaces in prefixes.
     # Try to keep them simple though.
-    #prefixes = ['/']
+    # prefixes = ['/']
     prefixes = config['prefixes']
 
     # If we are in a guild, we allow for the user to mention
@@ -65,9 +65,10 @@ bot = commands.Bot(
 if __name__ == '__main__':
     for extension in initial_extensions:
 
+        # Add '.cogs' prefix
         if not extension.startswith("cogs"):
-            extension = 'cogs.' + extension # Add '.cogs' prefix just in case
-            
+            extension = 'cogs.' + extension
+
         try:
             bot.load_extension(extension)
         except Exception as e:
@@ -90,21 +91,24 @@ async def on_ready():
     # Changes our bots Playing Status. t
     # ype=1(streaming) for a standard game you could remove type and url.
     if config['activity']:
-        await bot.change_presence(activity=discord.Game(name=config['activity']))
+        await bot.change_presence(
+            activity=discord.Game(name=config['activity']))
 
     print('Successfully logged in and booted...!')
 
 
-#@bot.before_invoke
-#async def before_any_command(ctx):
+# @bot.before_invoke
+# async def before_any_command(ctx):
 #    if config['activity']:
-#        await bot.change_presence(activity=discord.Game(name=config['activity']))
+#        await bot.change_presence(
+#           activity=discord.Game(name=config['activity']))
 #    pass
 
 @bot.after_invoke
 async def after_any_command(ctx):
     if config['activity']:
-        await bot.change_presence(activity=discord.Game(name=config['activity']))
+        await bot.change_presence(
+            activity=discord.Game(name=config['activity']))
     pass
 
 

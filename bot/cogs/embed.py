@@ -5,11 +5,19 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 class Embed_Commands:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='embed', aliases=['embedtest','testembed','embd','embdtest','testembd','mbd'])
+    @commands.command(name='embed', 
+                      aliases=[
+                          'embedtest',
+                          'testembed',
+                          'embd',
+                          'embdtest',
+                          'testembd',
+                          'mbd'])
     @commands.guild_only()
     async def testembed(self, ctx, *, args):
         """A simple command which generate embeds using keywords.
@@ -69,7 +77,7 @@ class Embed_Commands:
                 embed.set_image(url=img)
 
             if footer_text or footer_icon:
-                embed.set_footer(text=footer_text,icon_url=footer_icon)
+                embed.set_footer(text=footer_text, icon_url=footer_icon)
 
             for key, value in kwargs.items():
                 embed.add_field(name=key, value=value, inline=True)
@@ -98,6 +106,7 @@ class Embed_Commands:
                 colour=ctx.author.color
             )
             await ctx.send(content='', embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Embed_Commands(bot))

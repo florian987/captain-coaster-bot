@@ -1,9 +1,12 @@
-from discord.ext import commands
-import discord
-import parser
 import logging
+import parser
+
+import discord
+from discord.ext import commands
+
 
 log = logging.getLogger(__name__)
+
 
 class Default_Commands:
     def __init__(self, bot):
@@ -44,7 +47,7 @@ class Default_Commands:
             title="Pong!",
             description="Latency = {}ms".format(latency),
             colour=ctx.author.colour)
-        #embed.set_author(icon_url=ctx.author.avatar_url,
+        # embed.set_author(icon_url=ctx.author.avatar_url,
         #                 name=str(ctx.author))
         log.info(f"{ctx.author} pinged me at {latency}ms")
         return await ctx.send(content='', embed=embed)

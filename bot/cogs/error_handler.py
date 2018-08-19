@@ -14,7 +14,8 @@ https://gist.github.com/EvieePy/d78c061a4798ae81be9825468fe146be
 Async:
 https://gist.github.com/leovoel/46cd89ed6a8f41fd09c5
 
-This example uses @rewrite version of the lib. For the async version of the lib, simply swap the places of ctx, and error.
+This example uses @rewrite version of the lib. For the async version of the
+lib, simply swap the places of ctx, and error.
 e.g: on_command_error(self, error, ctx)
 
 For a list of exceptions:
@@ -31,13 +32,18 @@ class CommandErrorHandler:
         ctx   : Context
         error : Exception"""
 
-        #traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-        traceback_msg = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+        # traceback.print_exception(
+        #   type(error), error, error.__traceback__, file=sys.stderr)
+        traceback_msg = "".join(
+            traceback.format_exception(
+                type(error), error, error.__traceback__
+            )
+        )
 
         owner = self.bot.get_user(self.bot.owner_id)
 
         embed = discord.Embed(
-            title = "Fix ya shit",
+            title="Fix ya shit",
             colour=discord.Colour.dark_red()
         )
 
@@ -63,44 +69,47 @@ class CommandErrorHandler:
         )
 
         embed.add_field(
-            name = 'error',
-            value = f"```py\n{error}\n```",
-            inline = False
+            name='error',
+            value=f"```py\n{error}\n```",
+            inline=False
         )
 
-        #traceback_embed = discord.Embed(
+        # traceback_embed = discord.Embed(
         #    title = "Traceback",
         #    colour = discord.Colour.dark_red()
-        #)
+        # )
 
         if error.original:
             embed.add_field(
-                name = 'original',
-                value = f"```py\n{error.original}\n```",
-                inline = False
+                name='original',
+                value=f"```py\n{error.original}\n```",
+                inline=False
             )
 
         await owner.send(content="", embed=embed)
-        #await owner.send(content="", embed=traceback_embed)
+        # await owner.send(content="", embed=traceback_embed)
         await owner.send(content=f"**Traceback**\n```py\n{traceback_msg}\n```")
 
         print('-' * 22)
         print(dir(error))
         print(error)
-        #print(error.with_traceback())
+        # print(error.with_traceback())
         print(error.original)
         print('-' * 22)
 
-        # This prevents any commands with local handlers being handled here in on_command_error.
+        # This prevents any commands with local handlers
+        # being handled here in on_command_error.
         if hasattr(ctx.command, 'on_error'):
             return
-        
+
         ignored = (commands.CommandNotFound, commands.UserInputError)
-        
-        # Allows us to check for original exceptions raised and sent to CommandInvokeError.
-        # If nothing is found. We keep the exception passed to on_command_error.
+
+        # Allows us to check for original exceptions raised
+        # and sent to CommandInvokeError.
+        # If nothing is found. We keep the exception passed
+        # to on_command_error.
         error = getattr(error, 'original', error)
-        
+
         # Anything in ignored will return and prevent anything happening.
         if isinstance(error, ignored):
             return
@@ -109,26 +118,30 @@ class CommandErrorHandler:
             return await ctx.send(f'{ctx.command} has been disabled.')
 
         # Not Working
-        #elif isinstance(error, commands.MissingRequiredArgument):
+        # elif isinstance(error, commands.MissingRequiredArgument):
         #    return await ctx.send(f'{ctx.command} need at least 1 argument.')
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
-                return await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
-            except:
+                return await ctx.author.send(
+                    f'{ctx.command} can not be used in Private Messages.')
+            except Exception:
                 pass
 
         # For this error example we check to see where it came from...
         elif isinstance(error, commands.BadArgument):
-            if ctx.command.qualified_name == 'tag list':  # Check if the command being invoked is 'tag list'
-                return await ctx.send('I could not find that member. Please try again.')
+            # Check if the command being invoked is 'tag list'
+            if ctx.command.qualified_name == 'tag list':
+                return await ctx.send(
+                    'I could not find that member. Please try again.')
 
-        # All other Errors not returned come here... And we can just print the default TraceBack.
-        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        # All other Errors not returned come here... 
+        # And we can just print the default TraceBack.
+        print(
+            f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
+        traceback.print_exception(
+            type(error), error, error.__traceback__, file=sys.stderr)
 
-
-                
 
 def setup(bot):
     bot.add_cog(CommandErrorHandler(bot))

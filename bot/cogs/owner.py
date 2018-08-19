@@ -1,8 +1,11 @@
-from discord.ext import commands
-import discord
+
 import logging
 
+import discord
+from discord.ext import commands
+
 log = logging.getLogger(__name__)
+
 
 class OwnerCog:
 
@@ -22,7 +25,8 @@ class OwnerCog:
             self.bot.load_extension(cog)            
         except Exception as e:
             log.error(f"{ctx.author} failed to load {cog}.")
-            #await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            # await ctx.send(
+            # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to load {cog} cog.",
                 description='{} - {}'.format(type(e).__name__, e),
@@ -33,7 +37,7 @@ class OwnerCog:
             embed = discord.Embed(
                 description=f"Cog `{cog.strip('cogs.')}` loaded.",
                 colour=discord.Colour.green())
-            #await ctx.send('**`SUCCESS`**')
+            # await ctx.send('**`SUCCESS`**')
         await ctx.send(content='', embed=embed)
 
     @commands.command(name='unload', hidden=True)
@@ -48,7 +52,8 @@ class OwnerCog:
             self.bot.unload_extension(cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to unload {cog}.")
-            #await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            # await ctx.send(
+            # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to unload {cog} cog.",
                 description='{} - {}'.format(type(e).__name__, e),
@@ -59,7 +64,7 @@ class OwnerCog:
                 description='Cog unloaded.',
                 colour=discord.Colour.green())
             log.info(f"{ctx.author} unloaded {cog}.")
-            #await ctx.send('**`SUCCESS`**')
+            # await ctx.send('**`SUCCESS`**')
         await ctx.send(content='', embed=embed)
 
     @commands.command(name='reload', hidden=True)
@@ -75,7 +80,8 @@ class OwnerCog:
             self.bot.load_extension(cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to load {cog}.")
-            #await ctx.send('**`ERROR:`** {} - {}'.format(type(e).__name__, e))
+            # await ctx.send(
+            # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to reload {cog} cog.",
                 description='{} - {}'.format(type(e).__name__, e),
@@ -85,7 +91,7 @@ class OwnerCog:
             embed = discord.Embed(
                 description='Cog reloaded.',
                 colour=discord.Colour.green())
-            #await ctx.send('**`SUCCESS`**')
+            # await ctx.send('**`SUCCESS`**')
         await ctx.send(content='', embed=embed)
 
     @commands.command(name='listcogs', hidden=True)
@@ -93,7 +99,10 @@ class OwnerCog:
     async def cog_list(self, ctx):
         """Command which List loaded Modules."""
 
-        await ctx.send('```\n' + ", ".join([ext.split(".")[1] for ext in ctx.bot.extensions]) + '\n```')
+        await ctx.send(
+            '```\n' + ", ".join(
+                [ext.split(".")[1] for ext in ctx.bot.extensions]
+                ) + '\n```')
 
 
 def setup(bot):

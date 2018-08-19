@@ -25,3 +25,14 @@ pylint = "*"
 
 [requires]
 python_version = "3.6"
+
+[scripts]
+
+start = "python -m bot"
+lint = "python -m flake8"
+build = "docker build -t hub.hsfactory.net/jeff/discord-bot:latest -f docker/Dockerfile ."
+push = "docker push hub.hsfactory.net/jeff/discord-bot:latest"
+buildbase = "docker build -t pythondiscord/bot-base:latest -f docker/Dockerfile.base ."
+pushbase = "docker push pythondiscord/bot-base:latest"
+buildci = "docker build -t pythondiscord/bot-ci:latest -f docker/ci.Dockerfile ."
+pushci = "docker push pythondiscord/bot-ci:latest"

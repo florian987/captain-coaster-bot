@@ -17,7 +17,7 @@ activity: "Commands: /help"
 extensions:
   - owner
   - default
-  - vrs
+  - simracing
   - embed
   - dev
   - error_handler

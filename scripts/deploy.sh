@@ -38,8 +38,8 @@ if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
     echo "Pushing image"
     docker push hub.hsfactory.net/jeff/discord-bot:latest
 
-    echo "Deploying container"
-    curl -H "token: $AUTODEPLOY_TOKEN" $AUTODEPLOY_WEBHOOK
+    #echo "Deploying container"
+    #curl -H "token: $AUTODEPLOY_TOKEN" $AUTODEPLOY_WEBHOOK
 else
     echo "Skipping deploy"
 fi

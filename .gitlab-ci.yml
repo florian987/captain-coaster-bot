@@ -1,4 +1,4 @@
-image: pythondiscord/bot-ci:latest
+image: hub.hsfactory.net/jeff/discord-bot:ci
 
 variables:
   PIPENV_CACHE_DIR: "$CI_PROJECT_DIR/pipenv-cache"

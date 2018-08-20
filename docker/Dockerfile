@@ -1,4 +1,4 @@
-FROM pythondiscord/bot-base:latest
+FROM hub.hsfactory.net/jeff/discord-bot:base
 
 ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIPENV_IGNORE_VIRTUALENVS=1

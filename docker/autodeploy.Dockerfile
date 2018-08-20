@@ -1,4 +1,4 @@
-FROM google/python-runtime
+FROM  gcr.io/google-appengine/python
 
 RUN apt-get update && \
     apt-get -y install openssh-client

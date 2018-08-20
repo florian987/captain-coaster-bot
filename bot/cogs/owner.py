@@ -22,7 +22,7 @@ class OwnerCog:
         if not cog.startswith("cogs"):
             cog = 'cogs.' + cog
         try:
-            self.bot.load_extension(cog)
+            self.bot.load_extension('bot.' + cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to load {cog}.")
             # await ctx.send(
@@ -49,7 +49,7 @@ class OwnerCog:
         if not cog.startswith("cogs"):
             cog = 'cogs.' + cog
         try:
-            self.bot.unload_extension(cog)
+            self.bot.unload_extension('bot.' + cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to unload {cog}.")
             # await ctx.send(
@@ -76,8 +76,8 @@ class OwnerCog:
         if not cog.startswith("cogs"):
             cog = 'cogs.' + cog
         try:
-            self.bot.unload_extension(cog)
-            self.bot.load_extension(cog)
+            self.bot.unload_extension('bot.' + cog)
+            self.bot.load_extension('bot.' + cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to load {cog}.")
             # await ctx.send(

@@ -1,0 +1,11 @@
+discord-bot:
+  image: hub.hsfactory.net/jeff/discord-bot:latest
+  restart: always
+  volumes:
+    - ./datas/bot:/bot
+  
+git-autodeploy:
+  image: hub.hsfactory.net/jeff/discord-bot:git-autodeploy
+  restart: always
+  volumes:
+    - ./datas/bot:/bot

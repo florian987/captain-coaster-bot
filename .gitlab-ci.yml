@@ -3,6 +3,9 @@ image: hub.hsfactory.net/jeff/discord-bot:ci
 variables:
   PIPENV_CACHE_DIR: "$CI_PROJECT_DIR/pipenv-cache"
 
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN hub.hsfactory.net
+
 cache:
   paths:
     - "$CI_PROJECT_DIR/pipenv-cache"

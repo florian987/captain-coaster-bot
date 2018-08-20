@@ -1,10 +1,10 @@
-import discord
-from discord.ext import commands
-
+import logging
 import sys
 import traceback
-import logging
+
+import discord
 import yaml
+from discord.ext import commands
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -72,9 +72,7 @@ if __name__ == '__main__':
         try:
             bot.load_extension(extension)
         except Exception as e:
-            print('Failed to load extension {}.', file=sys.stderr).format(
-                extension)
-
+            print(f'Failed to load extension {extension}.', file=sys.stderr)
             traceback.print_exc()
 
 
@@ -83,10 +81,10 @@ async def on_ready():
     """http://discordpy.readthedocs.io/en/rewrite/api.html#discord.on_ready"""
 
     print(
-        ("""\n\n
-        Logged in as: {} -{}\n
-        Version: {}\n
-        """).format(bot.user.name, bot.user.id, discord.__version__))
+        (f"""\n\n
+        Logged in as: {bot.user.name} -{bot.user.id}\n
+        Version: {discord.__version__}\n
+        """))
 
     # Changes our bots Playing Status. t
     # ype=1(streaming) for a standard game you could remove type and url.
@@ -119,4 +117,4 @@ bot.run(
 )
 
 
-bot.http_session.close() 
+bot.http_session.close()

@@ -84,7 +84,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
         profile.set_preference('browser.download.dir', download_dir)
         profile.set_preference('browser.download.downloadDir', download_dir)
         profile.set_preference(
-            'browser.helperApps.neverAsk.saveToDisk','application/zip')
+            'browser.helperApps.neverAsk.saveToDisk', 'application/zip')
         profile.set_preference(
             'browser.helperApps.neverAsk.saveToDisk',
             'application/octet-stream')
@@ -230,8 +230,8 @@ def build_cars_list(driver):
     for car_elem in car_row:
 
         # Set premium status depending of style display
-        if ("visible" in car_elem.
-            find_element_by_class_name('blue').get_attribute('style')):
+        if ("visible" in car_elem
+                .find_element_by_class_name('blue').get_attribute('style')):
             car_premium = True
         else:
             car_premium = False
@@ -288,7 +288,7 @@ def authenticate(driver):
         # Dérouler menu
         driver.find_element_by_css_selector(
             'i.material-icons:nth-child(4)'
-            ).click
+        ).click
         time.sleep(2)
 
         # Click login button
@@ -307,16 +307,17 @@ def authenticate(driver):
             '#identifierNext > div:nth-child(2)').click()
 
         wait_by_css(
-            driver, 
+            driver,
             '#password > div:nth-child(1) > div:nth-child(1) '
-            '> div:nth-child(1) > input:nth-child(1)')
+            '> div:nth-child(1) > input:nth-child(1)'
+        )
         driver.find_element_by_css_selector(
             '#password > div:nth-child(1) > div:nth-child(1)'
             '> div:nth-child(1) > input:nth-child(1)'
-            ).send_keys(google_password)
+        ).send_keys(google_password)
         driver.find_element_by_css_selector(
             '#passwordNext > div:nth-child(2)'
-            ).click()
+        ).click()
         return True
     except Exception:
         return False
@@ -355,7 +356,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
             # Iterate over DataPacks tables TR
             car_elems = iter_dom(driver, "//table[@data-vrs-widget="
-                                    "'DataPackWeeksTable']/tbody/tr")
+                                 "'DataPackWeeksTable']/tbody/tr")
             for car_elem in car_elems:
 
                 # Create datapacks list
@@ -367,19 +368,19 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 try:
                     datapack['track'] = car_elem.find_elements_by_css_selector(
                         "td:nth-of-type(2) img"
-                        )[0].get_attribute('title')
+                    )[0].get_attribute('title')
 
                     datapack['fastest_laptime'] = car_elem.find_elements_by_css_selector(
                         "td:nth-of-type(3) div span:nth-of-type(1) span"
-                        )[0].get_attribute('title')
+                    )[0].get_attribute('title')
 
                     datapack['time_of_day'] = (car_elem.find_elements_by_css_selector(
                         "td:nth-of-type(4) div span:nth-of-type(1) span"
-                        )[0].get_attribute('title'))
+                    )[0].get_attribute('title'))
 
                     datapack['track_state'] = car_elem.find_elements_by_css_selector(
                         "td:nth-of-type(4) div span:nth-of-type(2) span"
-                        )[0].get_attribute('title')
+                    )[0].get_attribute('title')
 
                     # If datapack is not empty
                     if datapack['fastest_laptime'] != "":
@@ -394,7 +395,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                         # Close modal
                         driver.find_element_by_css_selector(
-                                ".KM1CN4-a-h a").click()
+                            ".KM1CN4-a-h a").click()
 
                     car['datapacks'].append(datapack)
 

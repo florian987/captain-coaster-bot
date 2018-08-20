@@ -1,5 +1,5 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
 
 
 class Default_Commands:
@@ -9,7 +9,9 @@ class Default_Commands:
     @commands.command(name=None, aliases=[])
     @commands.guild_only()
     async def test(self, ctx):
-        "This is a example of how a embed would work"
+        """
+        This is a example of how a embed would work
+        """
         title = None
         text = None
         embed = discord.Embed(

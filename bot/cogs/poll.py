@@ -51,7 +51,7 @@ class Poll_Commands:
         guild_emojis = [(e for e in self.bot.emojis if
                          e.guild == ctx.guild and not e.managed)]
         allowed_emojis = guild_emojis + self.std_emojis
-        
+
         # Link emojis to choices
         while len(argslist):
             chosen_emoji = random.choice(

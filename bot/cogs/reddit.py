@@ -4,14 +4,13 @@ import random
 import textwrap
 from datetime import datetime, timedelta
 
+from decorators import with_role
+from discord import Colour, Embed, TextChannel
+from discord.ext.commands import Bot, Context, group
+
 from bot.constants import Channels, ERROR_REPLIES, Reddit as RedditConfig, Roles
 from bot.converters import Subreddit
 from bot.pagination import LinePaginator
-
-from decorators import with_role
-
-from discord import Colour, Embed, TextChannel
-from discord.ext.commands import Bot, Context, group
 
 
 log = logging.getLogger(__name__)
@@ -58,10 +57,10 @@ class Reddit:
         return posts[:amount]
 
     async def send_top_posts(
-              self,
-              channel: TextChannel,
-              subreddit: Subreddit,
-              content=None, time="all"):
+            self,
+            channel: TextChannel,
+            subreddit: Subreddit,
+            content=None, time="all"):
         """
         Create an embed for the top posts, then send it in a given TextChannel.
         """

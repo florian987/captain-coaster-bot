@@ -29,7 +29,7 @@ class Default_Commands:
         # embed doc
         # https://cdn.discordapp.com/attachments/84319995256905728/252292324967710721/embed.png
         embed = discord.Embed(
-            title="Answer = **{}**".format(total),
+            title=f"Answer = **{total}**",
             description="Do another calc with `/help calc`!",
             colour=ctx.author.colour)
         embed.set_author(icon_url=ctx.author.avatar_url,
@@ -45,7 +45,7 @@ class Default_Commands:
 
         embed = discord.Embed(
             title="Pong!",
-            description="Latency = {}ms".format(latency),
+            description=f"Latency = {latency}ms",
             colour=ctx.author.colour)
         # embed.set_author(icon_url=ctx.author.avatar_url,
         #                 name=str(ctx.author))

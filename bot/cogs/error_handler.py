@@ -1,7 +1,8 @@
-import traceback
 import sys
-from discord.ext import commands
+import traceback
+
 import discord
+from discord.ext import commands
 
 """
 If you are not using this inside a cog, add the event decorator e.g:
@@ -135,7 +136,7 @@ class CommandErrorHandler:
                 return await ctx.send(
                     'I could not find that member. Please try again.')
 
-        # All other Errors not returned come here... 
+        # All other Errors not returned come here...
         # And we can just print the default TraceBack.
         print(
             f'Ignoring exception in command {ctx.command}:', file=sys.stderr)

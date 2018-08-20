@@ -11,14 +11,17 @@ class Dev_Commands:
     @commands.is_owner()
     @commands.guild_only()
     async def list_channels(
-              self, ctx, *, lookup_category: discord.CategoryChannel):
-        """List channels from a category"""
+            self, ctx, *, lookup_category: discord.CategoryChannel):
+        """
+        List channels from a category
+        """
 
         await ctx.send(
             ', '.join(
-                channel.name.replace('_', r'\_') for channel in lookup_category
-                .channels)
+                channel.name.replace('_', r'\_')
+                for channel in lookup_category.channels
             )
+        )
 
         print(ctx.guild.roles)
         print(dir(ctx))
@@ -63,9 +66,9 @@ class Dev_Commands:
             # print(type(error), dir(error))
             # print(error.args, error.__str__)
             embed = discord.Embed(
-                    description=str(error).replace('Channel', 'Category'),
-                    color=discord.Colour.red()
-                )
+                description=str(error).replace('Channel', 'Category'),
+                color=discord.Colour.red()
+            )
         await ctx.send(content='', embed=embed)
 
     @do_repeat.error

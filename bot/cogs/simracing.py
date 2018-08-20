@@ -2,11 +2,10 @@
 import os
 
 import aiohttp
-
-import bot.scrapper.vrs as scrapper
-
 import discord
 from discord.ext import commands
+
+import bot.scrapper.vrs as scrapper
 
 
 class VRS_Commands:
@@ -27,13 +26,12 @@ class VRS_Commands:
         # Retrieve setups categories
         setup_category = discord.utils.find(
             lambda c: c.name == "Setups", ctx.guild.categories
-            )
+        )
 
         # Send message
         await ctx.send(
             ','.join(channel.name for channel in setup_category.channels)
             .replace('_', r'\_'))
-
 
     @commands.command(name="flushsetups", aliases=['flushsets'], hidden=True)
     @commands.is_owner()
@@ -167,7 +165,7 @@ class VRS_Commands:
 
                                 # upload file if not exists
                                 if not await message_exists(
-                                       upload_channel, filename_on_discord):
+                                      upload_channel, filename_on_discord):
                                     upload_msg = (
                                         await upload_channel
                                         .send(content=filename_on_discord,

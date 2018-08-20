@@ -1,7 +1,6 @@
 import logging
 
 import aiohttp
-
 import discord
 from discord.ext import commands
 
@@ -46,8 +45,10 @@ class Configs_Commands:
     @conf.command(name='get', aliases=['retrieve'])
     @commands.is_owner()
     async def getparam(self, ctx, param):
-        """Return any bot parameter by its name 
-        (https://discordpy.readthedocs.io/en/rewrite/api.html#user)"""
+        """
+        Return any bot parameter by its name
+        (https://discordpy.readthedocs.io/en/rewrite/api.html#user)
+        """
         await ctx.send(str(getattr(self.bot.user, param)))
 
         # List params

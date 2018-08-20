@@ -1,7 +1,8 @@
-from discord.ext import commands
-import discord
-import shlex
 import logging
+import shlex
+
+import discord
+from discord.ext import commands
 
 log = logging.getLogger(__name__)
 
@@ -10,7 +11,7 @@ class Embed_Commands:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='embed', 
+    @commands.command(name='embed',
                       aliases=[
                           'embedtest',
                           'testembed',

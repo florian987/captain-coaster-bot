@@ -70,7 +70,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         loop = loop or asyncio.get_event_loop()
         async with aiohttp.ClientSession() as session:
             async with session.get(
-              "https://www.youtube.com/results?search_query=" + qry) as r:
+                    "https://www.youtube.com/results?search_query=" + qry) as r:
                 html = await r.read()
                 # print(html)
                 urls = []
@@ -82,7 +82,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                     return urls
                 else:
                     return urls[0]
-        
+
     @classmethod
     async def from_search(cls, query, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
@@ -90,7 +90,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         url = await cls.get_url(query)
         print(url)
         await cls.from_url(url, loop=None)
-        
+
         # data = await loop.run_in_executor(
         #   None, lambda: ytdl.extract_info(urls[0], download=not stream))
         # if 'entries' in data:

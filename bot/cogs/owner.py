@@ -22,14 +22,14 @@ class OwnerCog:
         if not cog.startswith("cogs"):
             cog = 'cogs.' + cog
         try:
-            self.bot.load_extension(cog)            
+            self.bot.load_extension(cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to load {cog}.")
             # await ctx.send(
             # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to load {cog} cog.",
-                description='{} - {}'.format(type(e).__name__, e),
+                description=f'{type(e).__name__} - {e}',
                 colour=discord.Color.red()
             )
         else:
@@ -56,7 +56,7 @@ class OwnerCog:
             # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to unload {cog} cog.",
-                description='{} - {}'.format(type(e).__name__, e),
+                description=f'{type(e).__name__} - {e}',
                 colour=discord.Color.red()
             )
         else:
@@ -84,7 +84,7 @@ class OwnerCog:
             # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to reload {cog} cog.",
-                description='{} - {}'.format(type(e).__name__, e),
+                description=f'{type(e).__name__} - {e}',
                 colour=discord.Color.red()
             )
         else:
@@ -102,7 +102,7 @@ class OwnerCog:
         await ctx.send(
             '```\n' + ", ".join(
                 [ext.split(".")[1] for ext in ctx.bot.extensions]
-                ) + '\n```')
+            ) + '\n```')
 
 
 def setup(bot):

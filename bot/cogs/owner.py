@@ -70,8 +70,10 @@ class OwnerCog:
     @commands.command(name='reload', hidden=True)
     @commands.is_owner()
     async def cog_reload(self, ctx, *, cog: str):
-        """Command which Reloads a Module.
-        Remember to use dot path. e.g: cogs.owner"""
+        """
+        Command which Reloads a Module.
+        Remember to use dot path. e.g: cogs.owner
+        """
 
         if not cog.startswith("cogs"):
             cog = 'cogs.' + cog
@@ -97,7 +99,9 @@ class OwnerCog:
     @commands.command(name='listcogs', hidden=True)
     @commands.is_owner()
     async def cog_list(self, ctx):
-        """Command which List loaded Modules."""
+        """
+        Command which List loaded Modules.
+        """
 
         await ctx.send(
             '```\n' + ", ".join(

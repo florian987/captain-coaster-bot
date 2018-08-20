@@ -9,7 +9,8 @@ RUN apk add --update docker \
                      jpeg-dev \
                      libxml2 libxml2-dev libxslt-dev \
                      zlib-dev \
-                     freetype-dev
+                     freetype-dev \
+                     git
 
 RUN pip install pipenv
 

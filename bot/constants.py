@@ -2,17 +2,12 @@
 import logging
 import os
 from collections.abc import Mapping
-from enum import Enum
 from pathlib import Path
-from typing import Dict, List
 
 import yaml
 from yaml.constructor import ConstructorError
 
 log = logging.getLogger(__name__)
-
-
-
 
 
 def _required_env_var_constructor(loader, node):
@@ -60,14 +55,16 @@ def _env_var_constructor(loader, node):
         value = loader.construct_sequence(node)
 
         if len(value) >= 2:
-            # If we have at least two values, then we have both a key and a default value
+            # If we have at least two values,
+            # then we have both a key and a default value
             default = value[1]
             key = value[0]
         else:
             # Otherwise, we just have a key
             key = value[0]
     except ConstructorError:
-        # This YAML node is a plain value rather than a list, so we just have a key
+        # This YAML node is a plain value rather than a list,
+        # so we just have a key
         value = loader.construct_scalar(node)
 
         key = str(value)
@@ -169,25 +166,20 @@ class YAMLGetter(type):
                 (cls.section, cls.subsection, name)
                 if cls.subsection is not None else (cls.section, name)
             )
-            log.critical(f"Tried accessing configuration variable at `{dotted_path}`, but it could not be found.")
+            log.critical(
+                f"Tried accessing configuration variable at `{dotted_path}`, "
+                "but it could not be found.")
             raise
 
     def __getitem__(cls, name):
         return cls.__getattr__(name)
 
 
-
-
-
-
-
-#class Reddit(metaclass=YAMLGetter):
+# class Reddit(metaclass=YAMLGetter):
 #    section = "reddit"#
 
-    #request_delay: int
-    #subreddits: list
-
-
+    # request_delay: int
+    # subreddits: list
 
 
 # Bot replies
@@ -240,4 +232,3 @@ ERROR_REPLIES = [
     "Are you trying to kill me?",
     "Noooooo!!"
 ]
-

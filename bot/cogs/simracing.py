@@ -116,7 +116,7 @@ class VRS_Commands:
                 activity=discord.Game(name='Lister les setups'))
 
             # Create webdriver
-            driver = scrapper.build_driver(headless=True)  
+            driver = scrapper.build_driver(headless=True)
 
             # Scrap VRS website and build cars infos
             iracing_cars = scrapper.build_cars_list(driver)
@@ -165,7 +165,9 @@ class VRS_Commands:
 
                                 # upload file if not exists
                                 if not await message_exists(
-                                      upload_channel, filename_on_discord):
+                                    upload_channel,
+                                    filename_on_discord
+                                ):
                                     upload_msg = (
                                         await upload_channel
                                         .send(content=filename_on_discord,

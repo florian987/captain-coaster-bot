@@ -1,0 +1,16 @@
+{
+    "log-file": "~/gitautodeploy.log",
+    "pid-file": "~/.gitautodeploy.pid",
+    "log-level": "INFO",
+  
+    "repositories": [
+      {
+        "url": "git@git.hsfactory.net:jeff/discord-bot.git",
+        "branch": "master",
+        "remote": "origin",
+        "path": "/opt/discord-bot",
+        "deploy": "echo deploying"
+      }
+    ]
+  }
+  

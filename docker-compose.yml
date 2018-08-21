@@ -10,6 +10,6 @@ git-autodeploy:
   ports:
     - 8080:8080
   volumes:
-    - ./git-auto-deploy.conf.json:/etc/git-auto-deploy.conf.json
+    - ./autodeploy/git-auto-deploy.conf.json:/etc/git-auto-deploy.conf.json
     - ./docker/deploy_rsa:/etc/git-auto-deploy/.ssh/id_rsa:r
     - ./datas/bot:/bot

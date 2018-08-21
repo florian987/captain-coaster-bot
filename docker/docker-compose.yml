@@ -1,8 +1,8 @@
 discord-bot:
   image: hub.hsfactory.net/jeff/discord-bot:latest
   restart: always
-  #volumes:
-  #  - ./datas/bot:/bot
+  volumes:
+    - /opt/discord-bot:/bot
 
 git-autodeploy:
   image: legerete/git-autodeploy
@@ -12,4 +12,4 @@ git-autodeploy:
   volumes:
     - ./git-auto-deploy.conf.json:/etc/git-auto-deploy.conf.json
     - ./deploy_rsa:/etc/git-auto-deploy/.ssh/id_rsa:ro
-  #  - ./datas/bot:/bot
+    - /opt/discord-bot:/opt/discord-bot

@@ -11,5 +11,5 @@ git-autodeploy:
     - 8080:8080
   volumes:
     - ./autodeploy/git-auto-deploy.conf.json:/etc/git-auto-deploy.conf.json
-    - ./docker/deploy_rsa:/etc/git-auto-deploy/.ssh/id_rsa:r
+    - ./docker/deploy_rsa:/etc/git-auto-deploy/.ssh/id_rsa:ro
     - ./datas/bot:/bot

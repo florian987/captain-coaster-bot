@@ -240,7 +240,9 @@ def build_cars_list(driver):
         node_span = car_elem.find_element_by_css_selector(
             "p:nth-of-type(1)").get_attribute("innerHTML")
         soup = BeautifulSoup(node_span, "html.parser")
-        for (span in soup.findAll("span", attrs={"data-vrs-widget-field": "packIdElement"})):
+        for span in soup.findAll(
+                "span", attrs={"data-vrs-widget-field": "packIdElement"}
+        ):
             node_id = span.text
 
         # Create car dict

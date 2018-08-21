@@ -73,8 +73,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             'Page.setDownloadBehavior', 
             {'behavior': 'allow', 'downloadPath': download_dir})
 
-    # Handle Firefox profile
-    elif browser == "Firefox":
+    elif browser == "Firefox":  # Handle Firefox profile
 
         # Build Firefox profile
         profile = webdriver.FirefoxProfile()

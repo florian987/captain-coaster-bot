@@ -10,10 +10,7 @@ import time
 import urllib
 
 from bs4 import BeautifulSoup
-
 from selenium import webdriver
-# from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.proxy import *
@@ -160,7 +157,7 @@ def wait_by_xpath(driver, xpath, retries=20):
         WebDriverWait(driver, retries).until(
             EC.presence_of_element_located((By.XPATH, xpath)))
     except Exception:
-        print("Unable to find element {} in page".format(xpath))
+        print(f"Unable to find element {xpath} in page")
 
 
 def wait_by_css(driver, css, retries=20):
@@ -172,7 +169,7 @@ def wait_by_css(driver, css, retries=20):
         WebDriverWait(driver, retries).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, css)))
     except Exception:
-        print("Unable to find element {} in page".format(css))
+        print(f"Unable to find element {css} in page")
 
 
 def wait_by_id(driver, id, retries=20):
@@ -184,7 +181,7 @@ def wait_by_id(driver, id, retries=20):
         WebDriverWait(driver, retries).until(
             EC.presence_of_element_located((By.ID, id)))
     except Exception:
-        print("Unable to find element {} in page".format(id))
+        print(f"Unable to find element {id} in page")
 
 
 def check_exists_by_xpath(driver, xpath):
@@ -203,31 +200,30 @@ def create_dirs(directory):
     Ensure a directory exists
     """
     if not os.path.exists(directory):
-        # print("|__ Creating unexisting directory: " + directory)
         os.makedirs(directory)
 
 
 def download_img(url, dest=None):
     """
-    Download an image weither specifying or not its destation
-    register to ./<filename> if dest is not set.
+    Download an image weither specifying or not its destination.
+
+    Register using filename from url. In cwd if dest is not set
     """
     # Set filename from url
     url_filename = url.split('/')[-1]
 
+    # Download in current working directory if dest is not set
     if dest is None:
         urllib.request.urlretrieve(url, url_filename)
+    # Download in specified directory
     else:
-        # If filename not in dest
+        # Set destination filename if not provided in dest
         if "." not in dest.split('/')[-1]:
             file_dest = os.path.join(dest, url_filename)
-
-        # If filename in dest
         else:
             file_dest = dest
 
-        # Download if not exists
-        if not os.path.isfile(file_dest):
+        if not os.path.isfile(file_dest):  # Download if not exists
             urllib.request.urlretrieve(url, file_dest)
 
 
@@ -298,11 +294,9 @@ def build_cars_list(driver):
         car['serie_path'] = os.path.join(car['season_path'], car['serie'])
         car['car_path'] = os.path.join(car['serie_path'], car['name'])
 
-        # Add car to cars list
-        cars.append(car)
+        cars.append(car)  # Add car to cars list
 
-    # Return cars list
-    return cars
+    return cars  # Return cars list
 
 
 def authenticate(driver):
@@ -318,7 +312,7 @@ def authenticate(driver):
         driver.find_element_by_class_name(".button-collapse").click()
         time.sleep(2)
 
-        # Dérouler menu
+        # Derouler menu
         driver.find_element_by_css_selector(
             'i.material-icons:nth-child(4)'
         ).click
@@ -358,6 +352,7 @@ def authenticate(driver):
         ).click()
 
         return True
+
     except Exception:
         return False
 
@@ -369,23 +364,19 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
     premium = authenticate(driver)
 
-    # Define list to iterate over
-    if not premium:
+    if not premium:  # Define list to iterate over
         cars_list = [item for item in cars_list if not item['premium']]
 
-    # Build datapacks
-    for car in cars_list:
+    for car in cars_list:  # Build datapacks
 
-        # Initialize datapacks list
-        car['datapacks'] = []
+        car['datapacks'] = []  # Initialize datapacks list
 
         # Only iterate over free cars
         if not car['premium']:
 
             print(f"|_ Building {car['serie']} - {car['name']} datapacks")
 
-            # Load car URL and wait Js load
-            driver.get(car['url'])
+            driver.get(car['url'])  # Load car URL and wait Js load
             wait_by_xpath(driver, f"//p[@class='base-info' "
                           "and text()=\"{car['name']}\"]")
 
@@ -394,13 +385,10 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                                  "'DataPackWeeksTable']/tbody/tr")
             for car_elem in car_elems:
 
-                # Create datapacks list
-                datapack = {}
-
+                datapack = {}  # Create datapack dict
                 datapack_path = ''
 
-                # Build datapack
-                try:
+                try:  # Build datapack
                     datapack['track'] = car_elem.find_elements_by_css_selector(
                         "td:nth-of-type(2) img"
                     )[0].get_attribute('title')
@@ -445,30 +433,24 @@ def build_datapacks_infos(driver, cars_list, premium=False):
             for datapack in car['datapacks']:
                 datapack['files'] = []
 
-                # Build desired paths
-                datapack_path = os.path.join(
+                datapack_path = os.path.join(  # Build desired paths
                     car['car_path'], datapack['track'])
-                # Create paths if needed
-                create_dirs(datapack_path)
 
-                # Load car URL and wait Js load
-                if "url" in datapack:
+                create_dirs(datapack_path)  # Create paths if needed
 
-                    # Load datapack url
-                    driver.get(datapack['url'])
+                if "url" in datapack:  # If datapack has url
 
-                    # Wait page to be loaded
-                    wait_by_xpath(driver, f"//span[text()=\""
+                    driver.get(datapack['url'])  # Load datapack url
+                    wait_by_xpath(driver, f"//span[text()=\""  # Wait page
                                   "{datapack['track']}\"]")
                     # print('page: ' + driver.current_url)
 
                     # Iterate over files
                     file_elements = iter_dom(driver, "//li[@data-vrs-widget="
                                              "'LIWrapper']/div/div/form/div/a")
-                    for file_element in file_elements:
 
-                        # Define extensions dict
-                        filetype = {
+                    for file_element in file_elements:
+                        filetype = {  # Define extensions dict
                             "olap": "hotlap",
                             "blap": "bestlap",
                             "rpy": "replay",
@@ -476,42 +458,37 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                             "sto": "setup"
                         }
 
-                        # Create file dict
-                        file = {}
+                        file = {}  # Create file dict
 
-                        # Set filename
+                        # Set file attributes
                         file['name'] = file_element.get_attribute('text')
-
-                        # Set filetype
                         file_extension = file['name'].split('.')[-1]
                         file["type"] = filetype.get(file_extension, "unknown")
-#
                         filepath_temp = os.path.join(
-                            download_dir, file['name'])
+                            download_dir, file['name']
+                        )
                         file['path'] = os.path.join(
-                            datapack_path, file['name'])
+                            datapack_path, file['name']
+                        )
 
-                        # Download Car image if needed
+                        # Download Car image
                         download_img(car['img_url'], car['car_path'])
-
-                        # Download Serie image if needed
+                        # Download Serie image
                         download_img(car['serie_img_url'], car['serie_path'])
 
                         # Download datapack file if not present
                         if not os.path.isfile(file['path']):
-                            # time.sleep(1)
                             try:
                                 file_element.click()
                             except Exception:
                                 print("Can not click")
-                            # time.sleep(1)
 
                             # Close modal License box if opened
                             try:
                                 ok_button = driver.find_element_by_xpath(
-                                    '/html/body/div[7]/div/div/div[3]/a[2]')
+                                    '/html/body/div[7]/div/div/div[3]/a[2]'
+                                )
                                 ok_button.click()
-                                # time.sleep(1)
                             except Exception as e:
                                 pass
 
@@ -525,6 +502,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                             shutil.move(filepath_temp, file['path'])
 
+                            # TODO per browser switch
                             # Wait file to be downloaded (Firefox)
                             # sleep_count = 0
                             # while os.path.isfile(filepath_temp + '.part')
@@ -542,7 +520,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                             #
                             #    #time.sleep(5)
 
-                        # Add file to datapck list
+                        # Add file to files list
                         datapack['files'].append(file)
 
     # pickle.dump(cars_list, open(settings.history_file,'wb'))
@@ -558,10 +536,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 if __name__ == '__main__':
 
     driver = build_driver()
-    # Create cars list
-    cars_list = build_cars_list(driver)
-    # Build cars datapacks
-    build_datapacks_infos(driver, cars_list)
+    cars_list = build_cars_list(driver)  # Create cars list
+    build_datapacks_infos(driver, cars_list)  # Build cars datapacks
 
     # with open ('data.json', 'w') as tempfile:
     #    json.dump(cars_list, tempfile)

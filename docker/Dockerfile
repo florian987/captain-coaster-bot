@@ -13,5 +13,4 @@ WORKDIR /bot
 RUN pipenv sync
 
 ENTRYPOINT ["/sbin/tini", "--"]
-#CMD ["pipenv", "run", "start"]
-CMD ["pipenv", "run", "python", "-m", "bot"]
+CMD ["pipenv", "run", "start"]

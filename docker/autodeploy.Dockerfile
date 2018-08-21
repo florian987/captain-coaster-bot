@@ -1,4 +1,5 @@
-FROM  gcr.io/google-appengine/python
+#FROM  gcr.io/google-appengine/python
+FROM python:3.6.6-alpine3.8
 
 RUN apt-get update && \
     apt-get -y install openssh-client
@@ -6,4 +7,4 @@ RUN apt-get update && \
 RUN mkdir $HOME/.ssh && chmod 600 $HOME/.ssh
 COPY deploy_rsa /root/.ssh/id_rsa
 
-ENTRYPOINT ["/env/bin/python", "-u", "GitAutoDeploy.py", "--ssh-keyscan"]
+ENTRYPOINT ["/usr/bin/python", "-u", "GitAutoDeploy.py", "--ssh-keyscan"]

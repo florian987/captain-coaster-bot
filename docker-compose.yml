@@ -5,7 +5,11 @@ discord-bot:
     - ./datas/bot:/bot
 
 git-autodeploy:
-  image: hub.hsfactory.net/jeff/discord-bot:git-autodeploy
+  image: legerete/git-autodeploy
   restart: always
+  ports:
+    - 8080:8080
   volumes:
+    - ./git-auto-deploy.conf.json:/etc/git-auto-deploy.conf.json
+    - ./docker/deploy_rsa:/etc/git-auto-deploy/.ssh/id_rsa:r
     - ./datas/bot:/bot

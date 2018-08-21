@@ -49,9 +49,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
     @classmethod
     async def from_url(cls, url, *, loop=None, stream=False):
-        """
-        Return a discord Audio object from youtube url
-        """
         loop = loop or asyncio.get_event_loop()
         data = await loop.run_in_executor(
             None, lambda: ytdl.extract_info(url, download=not stream))
@@ -67,10 +64,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
     # Placeholder
     @staticmethod
     async def get_url(qry, *, playlist=False, loop=None, stream=False):
-        """
-        Retrieve videos urls based on a query.
-        """
-        # TODO rewrite using youtube API
         loop = loop or asyncio.get_event_loop()
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -87,7 +80,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 else:
                     return urls[0]
 
-    @classmethod  # not working
+    @classmethod
     async def from_search(cls, query, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
         # self.from_url
@@ -111,9 +104,7 @@ class Youtube_Commands:
 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
-        """
-        Joins a voice channel
-        """
+        """Joins a voice channel"""
 
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
@@ -122,9 +113,7 @@ class Youtube_Commands:
 
     @commands.command()
     async def play(self, ctx, *, query):
-        """
-        Plays a file from the local filesystem
-        """
+        """Plays a file from the local filesystem"""
 
         source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(query))
         ctx.voice_client.play(
@@ -210,9 +199,7 @@ class Youtube_Commands:
                 # arg, loop=self.bot.loop, stream=False)
                 ctx.voice_client.play(
                     player, after=lambda e: print(
-                        'Player error: %s' % e
-                    ) if e else None
-                )
+                        'Player error: %s' % e) if e else None)
             # return
 
         await ctx.send('Now playing: {}'.format(player.title))

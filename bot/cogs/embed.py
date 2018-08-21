@@ -21,7 +21,9 @@ class Embed_Commands:
                           'mbd'])
     @commands.guild_only()
     async def testembed(self, ctx, *, args):
-        """A simple command which generate embeds using keywords.
+        """
+        A simple command which generate embeds using keywords.
+
         Named parameters:
             - title (str)
             - descr (str)
@@ -33,6 +35,7 @@ class Embed_Commands:
             - print_dict (bool)
             - footer_test (str)
             - footer_icon (url)
+
         Examples:
         /mbd title="titre";descr="description"
         /embd title="titre";descr="description";print_dict=True
@@ -76,13 +79,10 @@ class Embed_Commands:
 
             if img:
                 embed.set_image(url=img)
-
             if footer_text or footer_icon:
                 embed.set_footer(text=footer_text, icon_url=footer_icon)
-
             for key, value in kwargs.items():
                 embed.add_field(name=key, value=value, inline=True)
-
             if print_dict:
                 content = embed.to_dict()
 

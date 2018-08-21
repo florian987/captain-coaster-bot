@@ -15,7 +15,9 @@ class Default_Commands:
     @commands.command(name='calc', aliases=['calculate'])
     @commands.guild_only()
     async def calc(self, ctx, *, args):
-        """A simple command which does calculations.
+        """
+        A simple command which does calculations.
+
         Examples:
         /calc 6 * 4 -- multiply
         /calc 6 + 5 -- add

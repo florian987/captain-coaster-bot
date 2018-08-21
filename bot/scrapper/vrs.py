@@ -40,6 +40,10 @@ needed_dirs = [
 
 
 def build_driver(browser="Chrome", headless=True, proxy=None):
+    """
+    Build a selenium driver for the desired browser with its parameters
+    """
+    # TODO Implement firefox, waiting for selenium 3.14.0 to fix timeout
 
     # PROXY = "fw_in.bnf.fr:8080"
 
@@ -115,6 +119,9 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
 
 
 def iter_dom(driver, xpath):
+    """
+    Iterate over dom elements to avoid losing focus.
+    """
     def get_next_element(elems, idx):
         for i, element in enumerate(elems):
             # print("get elem : %s / %s / %s" % (i, idx, element))
@@ -145,7 +152,9 @@ def iter_dom(driver, xpath):
 
 
 def wait_by_xpath(driver, xpath, retries=20):
-    """Wait for xpath element to load"""
+    """
+    Wait for xpath element to load
+    """
     try:
         # element = WebDriverWait(driver, retries).until(
         WebDriverWait(driver, retries).until(
@@ -155,7 +164,9 @@ def wait_by_xpath(driver, xpath, retries=20):
 
 
 def wait_by_css(driver, css, retries=20):
-    """Wait for css element to load"""
+    """
+    Wait for css element to load
+    """
     try:
         # element = WebDriverWait(driver, retries).until(
         WebDriverWait(driver, retries).until(
@@ -165,7 +176,9 @@ def wait_by_css(driver, css, retries=20):
 
 
 def wait_by_id(driver, id, retries=20):
-    """Wait for element to load by ID"""
+    """
+    Wait for element to load by ID
+    """
     try:
         # element = WebDriverWait(driver, retries).until(
         WebDriverWait(driver, retries).until(
@@ -175,6 +188,9 @@ def wait_by_id(driver, id, retries=20):
 
 
 def check_exists_by_xpath(driver, xpath):
+    """
+    check if an element exists by its xpath
+    """
     try:
         driver.find_element_by_xpath(xpath)
     except NoSuchElementException:
@@ -183,12 +199,19 @@ def check_exists_by_xpath(driver, xpath):
 
 
 def create_dirs(directory):
+    """
+    Ensure a directory exists
+    """
     if not os.path.exists(directory):
         # print("|__ Creating unexisting directory: " + directory)
         os.makedirs(directory)
 
 
 def download_img(url, dest=None):
+    """
+    Download an image weither specifying or not its destation
+    register to ./<filename> if dest is not set.
+    """
     # Set filename from url
     url_filename = url.split('/')[-1]
 
@@ -209,22 +232,25 @@ def download_img(url, dest=None):
 
 
 def build_cars_list(driver):
-    """Build cars list from datapacks page"""
+    """
+    Build cars list from datapacks page
+    """
+
+    # Initialize cars array
+    cars = []
+
+    site_url = "https://virtualracingschool.appspot.com/#/DataPacks/"
 
     print("- Retrieving cars list ...")
-    driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
+    driver.get(site_url)
 
     # Wait JavaScript to load cars table
     wait_by_xpath(driver, "//table[@data-vrs-widget='tableWrapper']/tbody/tr")
 
     # Retrieve cars table
     car_row = driver.find_elements_by_xpath(
-        "//table[@data-vrs-widget='tableWrapper']/tbody/tr")
-
-    # Initialize cars array
-    cars = []
-
-    site_url = "https://virtualracingschool.appspot.com/#/DataPacks/"
+        "//table[@data-vrs-widget='tableWrapper']/tbody/tr"
+    )
 
     # Iterate over table car_elems
     for car_elem in car_row:
@@ -238,7 +264,9 @@ def build_cars_list(driver):
 
         # Get car ID
         node_span = car_elem.find_element_by_css_selector(
-            "p:nth-of-type(1)").get_attribute("innerHTML")
+            "p:nth-of-type(1)"
+        ).get_attribute("innerHTML")
+
         soup = BeautifulSoup(node_span, "html.parser")
         for span in soup.findAll(
                 "span", attrs={"data-vrs-widget-field": "packIdElement"}
@@ -278,8 +306,12 @@ def build_cars_list(driver):
 
 
 def authenticate(driver):
+    """
+    Authenticate using a Google account and return a boolean
+    """
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
     time.sleep(2)
+
     try:
         # Open menu
         wait_by_css(driver, ".button-collapse")
@@ -293,45 +325,47 @@ def authenticate(driver):
         time.sleep(2)
 
         # Click login button
-        # wait_by_css(driver, "//a[@class='KM1CN4-a-v']", 5)
-        # driver.find_element_by_class_name('KM1CN4-a-v').click
         driver.find_element_by_css_selector(
             'li.active > div:nth-child(2) > ul:nth-child(1) > li:nth-child(5)'
-            ' > a:nth-child(1) > span:nth-child(2)').click
+            ' > a:nth-child(1) > span:nth-child(2)'
+        ).click
+
         # click Login with google
         wait_by_id(driver, '#gwt-debug-googleLogin')
         driver.find_element_by_id('#gwt-debug-googleLogin').click
+
         # Type login
         wait_by_id(driver, 'identifierId')
         driver.find_element_by_id('identifierId').send_keys(google_email)
         driver.find_element_by_css_selector(
-            '#identifierNext > div:nth-child(2)').click()
+            '#identifierNext > div:nth-child(2)'
+        ).click()
 
+        # Type password
         wait_by_css(
             driver,
             '#password > div:nth-child(1) > div:nth-child(1) '
             '> div:nth-child(1) > input:nth-child(1)'
         )
+
         driver.find_element_by_css_selector(
             '#password > div:nth-child(1) > div:nth-child(1)'
             '> div:nth-child(1) > input:nth-child(1)'
         ).send_keys(google_password)
+
         driver.find_element_by_css_selector(
             '#passwordNext > div:nth-child(2)'
         ).click()
+
         return True
     except Exception:
         return False
 
 
 def build_datapacks_infos(driver, cars_list, premium=False):
-
-    # Auth
-    # wait_by_xpath(driver, "//span[text()='Login / Logout']]")
-    # driver.find_element_by_xpath("//a[@data-vrs-widget='MenuLink'][4]").click()
-
-    # wait_by_id(driver, "gwt-debug-googleLogin")
-    # driver.find_element_by_id("gwt-debug-googleLogin").click
+    """
+    Retrieve all available datapacks with infos and files
+    """
 
     premium = authenticate(driver)
 
@@ -388,15 +422,18 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                         # Open permalink box
                         car_elem.find_element_by_css_selector(
-                            "td:nth-of-type(6) a:nth-of-type(3)").click()
+                            "td:nth-of-type(6) a:nth-of-type(3)"
+                        ).click()
 
                         # Get datapack permalink
                         datapack['url'] = driver.find_element_by_css_selector(
-                            ".gwt-TextBox").get_attribute('value')
+                            ".gwt-TextBox"
+                        ).get_attribute('value')
 
                         # Close modal
                         driver.find_element_by_css_selector(
-                            ".KM1CN4-a-h a").click()
+                            ".KM1CN4-a-h a"
+                        ).click()
 
                     car['datapacks'].append(datapack)
 

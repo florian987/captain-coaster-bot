@@ -20,8 +20,8 @@ guild:
     channels:
         admins:            &ADMINS        365960823622991872
         news:                             479978283518394378
-        skins:             &TEAM          479584029537206272
-        team_setups:       &TEAM          464125961018015754
+        skins:             &SKINS         479584029537206272
+        team_setups:       &CUSTOM_SETS   464125961018015754
 
     categories:
         setups:            &SETUPS        242522534526246456
@@ -90,13 +90,13 @@ filter:
     # Censor doesn't apply to these
     channel_whitelist:
         - *ADMINS
-        - *TEAM
+        - *SKINS
 
     role_whitelist:
         - *ADMIN_ROLE
         - *PILOTE_ROLE
-        - *OWNER_ROLE
-        - *DEVOPS_ROLE # pr l'exemple
+        # - *OWNER_ROLE
+        # - *DEVOPS_ROLE # pr l'exemple
 
 
 keys:
@@ -152,58 +152,59 @@ urls:
     paste_service:   "https://paste.pydis.com/{key}"
 
 
-anti_spam:
-    # Clean messages that violate a rule.
-    clean_offending: true
-    ping_everyone: true
-
-    punishment:
-        role_id: *MUTED_ROLE
-        remove_after: 600
-
-    rules:
-        attachments:
-            interval: 10
-            max: 3
-
-        burst:
-            interval: 10
-            max: 7
-
-        burst_shared:
-            interval: 10
-            max: 20
-
-        chars:
-            interval: 5
-            max: 3_000
-
-        duplicates:
-            interval: 10
-            max: 3
-
-        discord_emojis:
-            interval: 10
-            max: 20
-
-        links:
-            interval: 10
-            max: 20
-
-        mentions:
-            interval: 10
-            max: 5
-
-        newlines:
-            interval: 10
-            max: 100
-
-        role_mentions:
-            interval: 10
-            max: 3
-
-
+#anti_spam:
+#    # Clean messages that violate a rule.
+#    clean_offending: true
+#    ping_everyone: true
+#
+#    punishment:
+#        role_id: *MUTED_ROLE
+#        remove_after: 600
+#
+#    rules:
+#        attachments:
+#            interval: 10
+#            max: 3
+#
+#        burst:
+#            interval: 10
+#            max: 7
+#
+#        burst_shared:
+#            interval: 10
+#            max: 20
+#
+#        chars:
+#            interval: 5
+#            max: 3_000
+#
+#        duplicates:
+#            interval: 10
+#            max: 3
+#
+#        discord_emojis:
+#            interval: 10
+#            max: 20
+#
+#        links:
+#            interval: 10
+#            max: 20
+#
+#        mentions:
+#            interval: 10
+#            max: 5
+#
+#        newlines:
+#            interval: 10
+#            max: 100
+#
+#        role_mentions:
+#            interval: 10
+#            max: 3
+#
+#
 reddit:
     request_delay: 60
     subreddits:
-        - 'r/Python'
+        - 'r/iracing'
+        - 'r/simracing'

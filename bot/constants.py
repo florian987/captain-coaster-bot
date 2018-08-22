@@ -1,8 +1,21 @@
+"""
+Loads bot configuration from YAML files.
+By default, this simply loads the default
+configuration located at `config-default.yml`.
+If a file called `config.yml` is found in the
+project directory, the default configuration
+is recursively updated with any settings from
+the custom configuration. Any settings left
+out in the custom user configuration will stay
+their default values from `config-default.yml`.
+"""
+
 
 import logging
 import os
 from collections.abc import Mapping
 from pathlib import Path
+from typing import List
 
 import yaml
 from yaml.constructor import ConstructorError
@@ -111,9 +124,9 @@ def _recursive_update(original, new):
             original[key] = new[key]
 
 
-if Path("config.yml").exists():
+if Path("config-constants.yml").exists():
     log.info("Found `config.yml` file, loading constants from it.")
-    with open("config.yml", encoding="UTF-8") as f:
+    with open("config-constants.yml", encoding="UTF-8") as f:
         user_config = yaml.safe_load(f)
     _recursive_update(_CONFIG_YAML, user_config)
 
@@ -175,11 +188,92 @@ class YAMLGetter(type):
         return cls.__getattr__(name)
 
 
-# class Reddit(metaclass=YAMLGetter):
-#    section = "reddit"#
+class Channels(metaclass=YAMLGetter):
+    section = "guild"
+    subsection = "channels"
 
-    # request_delay: int
-    # subreddits: list
+    admins: int
+    news: int
+    skins: int
+    team_setups: int
+
+
+class Categories(metaclass=YAMLGetter):
+    section = "guild"
+    subsection = "categories"
+
+    setups: int
+
+
+class Roles(metaclass=YAMLGetter):
+    section = "guild"
+    subsection = "roles"
+
+    admin: int
+    pilotes: int
+    moderator: int
+
+
+class Guild(metaclass=YAMLGetter):
+    section = "guild"
+
+    id: int
+    ignored: List[int]
+
+
+class Keys(metaclass=YAMLGetter):
+    section = "keys"
+
+    deploy_bot: str
+    deploy_site: str
+    omdb: str
+    site_api: str
+    youtube: str
+
+
+class Reddit(metaclass=YAMLGetter):
+    section = "reddit"
+
+    request_delay: int
+    subreddits: list
+
+
+class URLs(metaclass=YAMLGetter):
+    section = "urls"
+
+    bot_avatar: str
+    deploy: str
+    gitlab_bot_repo: str
+    omdb: str
+    site: str
+    site_api: str
+    site_facts_api: str
+    site_clean_api: str
+    site_hiphopify_api: str
+    site_idioms_api: str
+    site_logs_api: str
+    site_logs_view: str
+    site_names_api: str
+    site_quiz_api: str
+    site_schema: str
+    site_settings_api: str
+    site_special_api: str
+    site_tags_api: str
+    site_user_api: str
+    site_user_complete_api: str
+    site_infractions: str
+    site_infractions_user: str
+    site_infractions_type: str
+    site_infractions_by_id: str
+    site_infractions_user_type_current: str
+    site_infractions_user_type: str
+    status: str
+    paste_service: str
+
+
+# Paths
+BOT_DIR = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.abspath(os.path.join(BOT_DIR, os.pardir))
 
 
 # Bot replies

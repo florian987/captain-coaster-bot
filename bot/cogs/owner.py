@@ -16,8 +16,10 @@ class OwnerCog:
     @commands.command(name='load', hidden=True)
     @commands.is_owner()
     async def cog_load(self, ctx, *, cog: str):
-        """Command which Loads a Module.
-        Remember to use dot path. e.g: cogs.owner"""
+        """
+        Command which Loads a Module.
+        Remember to use dot path. e.g: cogs.owner
+        """
 
         if not cog.startswith("cogs"):
             cog = 'cogs.' + cog

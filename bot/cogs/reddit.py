@@ -4,12 +4,12 @@ import random
 import textwrap
 from datetime import datetime, timedelta
 
-from decorators import with_role
 from discord import Colour, Embed, TextChannel
 from discord.ext.commands import Bot, Context, group
 
 from bot.constants import Channels, ERROR_REPLIES, Reddit as RedditConfig, Roles
 from bot.converters import Subreddit
+from bot.decorators import with_role
 from bot.pagination import LinePaginator
 
 

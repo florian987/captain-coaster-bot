@@ -275,6 +275,7 @@ class URLs(metaclass=YAMLGetter):
 BOT_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.join(BOT_DIR, os.pardir))
 
+DEBUG_MODE = True if 'local' in os.environ.get("SITE_URL", "local") else False
 
 # Bot replies
 NEGATIVE_REPLIES = [

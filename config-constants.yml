@@ -1,7 +1,7 @@
 bot:
     prefixes:                  ['!', '/']
     help_prefix:               "bot."
-    token:       !REQUIRED_ENV "NDcwMTM2MzgzMzgyNjE4MTEy.DjR5_w.xy3XstdJdbRSpzKulOwIdFDf-xA"
+    token:       !REQUIRED_ENV 'BOT_TOKEN'
     default_activity:          "Commands: /help"
 
     cooldowns:

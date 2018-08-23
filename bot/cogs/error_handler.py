@@ -35,51 +35,47 @@ class CommandErrorHandler:
 
         # traceback.print_exception(
         #   type(error), error, error.__traceback__, file=sys.stderr)
+
+        owner = self.bot.get_user(self.bot.owner_id)
+        paginator = commands.Paginator(prefix="```py", suffix="```")
+
         traceback_msg = "".join(
             traceback.format_exception(
                 type(error), error, error.__traceback__
             )
         )
 
-        owner = self.bot.get_user(self.bot.owner_id)
+        # Create traceback pages
+        for line in traceback_msg.splitlines():
+            paginator.add_line(line)
 
+        # Create embed
         embed = discord.Embed(
             title="Fix ya shit",
             colour=discord.Colour.dark_red()
         )
-
         if ctx.guild:
             embed.add_field(
                 name="Guild",
                 value=ctx.guild
             )
-
         embed.add_field(
             name="Channel",
             value=f'#{ctx.channel}'
         )
-
         embed.add_field(
             name="Cog",
             value=f"{ctx.cog}"
         )
-
         embed.add_field(
             name="Command",
             value=f'```\n{ctx.message.content}\n```'
         )
-
         embed.add_field(
             name='error',
             value=f"```py\n{error}\n```",
             inline=False
         )
-
-        # traceback_embed = discord.Embed(
-        #    title = "Traceback",
-        #    colour = discord.Colour.dark_red()
-        # )
-
         if error.original:
             embed.add_field(
                 name='original',
@@ -87,9 +83,13 @@ class CommandErrorHandler:
                 inline=False
             )
 
-        await owner.send(content="", embed=embed)
-        # await owner.send(content="", embed=traceback_embed)
-        await owner.send(content=f"**Traceback**\n```py\n{traceback_msg}\n```")
+        print('-' * 20)
+        print(len(traceback_msg))
+
+        await owner.send(content="", embed=embed)  # Send error infos
+
+        for page in paginator.pages:  # Send paginated traceback
+            await owner.send(content=page)
 
         print('-' * 22)
         print(dir(error))

@@ -42,13 +42,13 @@ class Default_Commands:
     @commands.command(name='ping', aliases=['latency'])
     async def ping(self, ctx):
         """Get the bots latency"""
-        latency = self.bot.latency
-        latency = latency * 1000
+        latency = round(self.bot.latency * 1000)
 
         embed = discord.Embed(
             title="Pong!",
-            description=f"Latency = {latency}ms",
-            colour=ctx.author.colour)
+            description=f"{latency} ms",
+            colour=discord.Color.blue()
+        )
         # embed.set_author(icon_url=ctx.author.avatar_url,
         #                 name=str(ctx.author))
         log.info(f"{ctx.author} pinged me at {latency}ms")

@@ -22,7 +22,9 @@ class VRS_Commands:
     @commands.guild_only()
     # @commands.has_role(config['users'])
     async def get_channels(self, ctx):
-        """ Build setups channels list"""
+        """
+        Build setups channels list
+        """
         # Retrieve setups categories
         setup_category = discord.utils.find(
             lambda c: c.name == "Setups", ctx.guild.categories
@@ -36,7 +38,9 @@ class VRS_Commands:
     @commands.command(name="flushsetups", aliases=['flushsets'], hidden=True)
     @commands.is_owner()
     async def flush_setups(self, ctx):
-        """Flush VRS setups"""
+        """
+        Flush VRS setups
+        """
         # Retrieve setups categories
         setup_category = discord.utils.find(
             lambda c: c.name == "Setups", ctx.guild.categories)
@@ -66,7 +70,9 @@ class VRS_Commands:
     @commands.guild_only()
     # @commands.has_role(config['users'])
     async def setups(self, ctx):
-        """Retrieve cars setups from Virtual Racing School Website"""
+        """
+        Retrieve cars setups from VRS Website
+        """
 
         vrs_url = 'https://virtualracingschool.appspot.com/#/DataPacks'
         setups_category_name = "Setups"
@@ -97,7 +103,9 @@ class VRS_Commands:
 
         # TODO END THIS
         async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
-            """Ensure a channel exists and return it"""
+            """
+            Ensure a channel exists and return it
+            """
             chan_to_return = discord.utils.get(
                 ctx.guild.text_channels, name=chan, category=cat
             )
@@ -191,7 +199,9 @@ class VRS_Commands:
                         await serie_channel.send(content='', embed=embed)
 
         else:
-            """If VRS Offline"""
+            """
+            If VRS Offline
+            """
             title = "VRS Offline :("
             text = "Va falloir attendre mon mignon"
             colour = discord.Colour.red()

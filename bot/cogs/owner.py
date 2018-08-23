@@ -64,7 +64,7 @@ class OwnerCog:
                 value=f'```\n{ctx.message.content}\n```'
             )
 
-            #if e.original:
+            # if e.original:
             #    owner_embed.add_field(
             #        name='original',
             #        value=f"```py\n{e.original}\n```",

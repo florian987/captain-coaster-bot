@@ -153,7 +153,7 @@ class OwnerCog:
 
         await ctx.send(
             '```\n' + ", ".join(
-                [ext.split(".")[1] for ext in ctx.bot.extensions]
+                [ext.split(".")[2] for ext in ctx.bot.extensions]
             ) + '\n```')
 
 

@@ -11,7 +11,7 @@ class OwnerCog:
 
     def __init__(self, bot):
         self.bot = bot
-        self.owner = self.bot.get_user(self.bot.owner_id)
+        self.owner = bot.get_user(bot.owner_id)
         self.paginator = commands.Paginator(prefix="```py", suffix="```")
 
     # Hidden means it won't show up on the default help.
@@ -84,7 +84,7 @@ class OwnerCog:
         else:
             log.info(f"{ctx.author} loaded cog '{cog.strip('cogs.')}'.")
             embed = discord.Embed(
-                description=f"Cog `{cog.strip('cogs.')}` loaded.",
+                description=f"Cog `{cog.replace('cogs.', '')}` loaded.",
                 colour=discord.Colour.green())
             # await ctx.send('**`SUCCESS`**')
         await ctx.send(content='', embed=embed)

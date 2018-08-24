@@ -6,11 +6,13 @@ import discord
 from discord.ext import commands
 
 import bot.scrapper.vrs as scrapper
+# from bot.constants import Channels
 
 
-class VRS_Commands:
+class Simracing_Commands:
     def __init__(self, bot):
         self.bot = bot
+        self.skins_channel = None
 
     async def __local_check(self, ctx):
         return discord.utils.find(
@@ -55,7 +57,8 @@ class VRS_Commands:
             deleted = await channel.purge(check=is_me)
             if deleted:
                 await channel.send(
-                    f'Deleted {len(deleted)} message(s)')
+                    f'Deleted {len(deleted)} message(s)'
+                )
                 purged_channels += 1
                 purged_msgs += len(deleted)
 
@@ -218,6 +221,15 @@ class VRS_Commands:
         await self.bot.change_presence(
             activity=discord.Game(name='Enfiler des petits enfants'))
 
+    #@bot.event
+    #async def on_message(self, ctx):
+    #    if ctx.channel == self.skins_channel and ctx.message.attachments: 
+    #        for attachment in ctx.message.attachments:
+    #            await attachment.save()
+#
+    #async def on_ready(self):
+    #    self.skins_channel = self.bot.get_channel(Channels.skins)
+
 
 def setup(bot):
-    bot.add_cog(VRS_Commands(bot))
+    bot.add_cog(Simracing_Commands(bot))

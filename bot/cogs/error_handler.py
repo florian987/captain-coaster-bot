@@ -29,9 +29,12 @@ class CommandErrorHandler:
         self.bot = bot
 
     async def on_command_error(self, ctx, error):
-        """The event triggered when an error is raised while invoking a command.
+        """
+        The event triggered when an error is raised while invoking a command.
+        
         ctx   : Context
-        error : Exception"""
+        error : Exception
+        """
 
         # traceback.print_exception(
         #   type(error), error, error.__traceback__, file=sys.stderr)

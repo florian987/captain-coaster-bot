@@ -104,7 +104,7 @@ keys:
     deploy_site: !ENV "DEPLOY_SITE"
     omdb:        !ENV "OMDB_API_KEY"
     site_api:    !ENV "BOT_API_KEY"
-    youtube:     !ENV "AIzaSyCP-v2ZdW13M0fVS01f4NofD185nQQOYCs"
+    youtube:     !ENV ["YOUTUBE_API_KEY", "AIzaSyCP-v2ZdW13M0fVS01f4NofD185nQQOYCs"]
 
 
 rabbitmq:

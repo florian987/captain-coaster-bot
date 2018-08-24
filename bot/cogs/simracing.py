@@ -6,12 +6,14 @@ import discord
 from discord.ext import commands
 
 import bot.scrapper.vrs as scrapper
+# from bot.decorators import in_channel
 # from bot.constants import Channels
 
 
 class Simracing_Commands:
     def __init__(self, bot):
         self.bot = bot
+
         self.skins_channel = None
 
     async def __local_check(self, ctx):
@@ -221,7 +223,7 @@ class Simracing_Commands:
         await self.bot.change_presence(
             activity=discord.Game(name='Enfiler des petits enfants'))
 
-    #@bot.event
+    #@in_channel(self.skins_channel)
     #async def on_message(self, ctx):
     #    if ctx.channel == self.skins_channel and ctx.message.attachments: 
     #        for attachment in ctx.message.attachments:

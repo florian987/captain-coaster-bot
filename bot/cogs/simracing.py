@@ -1,34 +1,45 @@
 # import json
 import os
+import zipfile
 
 import aiohttp
 import discord
 from discord.ext import commands
 
+
 import bot.scrapper.vrs as scrapper
-# from bot.decorators import in_channel
 # from bot.constants import Channels
+# from bot.decorators import in_channel
 
 
-class Simracing_Commands:
+class Simracing:
     def __init__(self, bot):
         self.bot = bot
 
-        self.skins_channel = None
+# TODO replace with a minlevel local check, create decorator
+#    async def __local_check(self, ctx):
+#        return discord.utils.find(
+#            lambda r: r.name == 'Les Pilotes', ctx.author.roles
+#        )
 
-    async def __local_check(self, ctx):
-        return discord.utils.find(
-            lambda r: r.name == 'Les Pilotes', ctx.author.roles
-        )
+#    async def embed_attachment(self, file):
+#        """
+#        A helper method to generate embed from an attachment.
+#        """
+#
+#        dest = 'tmp'
+#
+#        zfile = zipfile.ZipFile(file.name)
+#        zfile.extractall(dest)
+#        for flatfile in dest:
+
 
     @commands.command(name="get_setup_channels",
                       aliases=["setup_chans", 'get_setups_chans'])
     @commands.guild_only()
     # @commands.has_role(config['users'])
     async def get_channels(self, ctx):
-        """
-        Build setups channels list
-        """
+        """Build setups channels list"""
         # Retrieve setups categories
         setup_category = discord.utils.find(
             lambda c: c.name == "Setups", ctx.guild.categories
@@ -96,9 +107,11 @@ class Simracing_Commands:
 
         async def message_exists(channel: discord.TextChannel, message):
             """Search message content in a defined channel"""
-            if await channel.history().get(content=message):
-                return True
-            return False
+            return bool(channel.history().get(content=message))
+            # old method
+            # if await channel.history().get(content=message):
+            #     return True
+            # return False
 
         # async def embed_exists(channel: discord.TextChannel, embed):
         #    """Search message content in a defined channel"""
@@ -221,17 +234,21 @@ class Simracing_Commands:
 
         # Change Bot Status
         await self.bot.change_presence(
-            activity=discord.Game(name='Enfiler des petits enfants'))
+            activity=discord.Game(name='Enfiler des petits enfants')
+        )
 
-    #@in_channel(self.skins_channel)
-    #async def on_message(self, ctx):
-    #    if ctx.channel == self.skins_channel and ctx.message.attachments: 
-    #        for attachment in ctx.message.attachments:
-    #            await attachment.save()
-#
-    #async def on_ready(self):
-    #    self.skins_channel = self.bot.get_channel(Channels.skins)
+#    @in_channel(Channels.skins)
+#    async def on_message(self, ctx):
+#        """
+#        Generate embed from uploaded skins
+#        """
+#        if ctx.channel == Channels.skins and ctx.message.attachments:
+#            for attachment in ctx.message.attachments:
+#                await attachment.save()
+#                zfile = zipfile.ZipFile(attachment.filename)
+#                zfile.extractall('tmp')
+#                # TODO create file converter help method
 
 
 def setup(bot):
-    bot.add_cog(Simracing_Commands(bot))
+    bot.add_cog(Simracing(bot))

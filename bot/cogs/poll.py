@@ -14,7 +14,7 @@ from emoji import UNICODE_EMOJI
 log = logging.getLogger(__name__)
 
 
-class Poll_Commands:
+class Poll:
     def __init__(self, bot):
         self.bot = bot
         self.std_emojis = [e for e in UNICODE_EMOJI if len(e) == 1]
@@ -22,7 +22,8 @@ class Poll_Commands:
     @commands.command(name='poll', aliases=['vote'])
     @commands.guild_only()
     async def poll(self, ctx: Context, *args: commands.clean_content):
-        """Start a poll.
+        """
+        Start a poll.
         Usage: /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
         """
 
@@ -106,4 +107,4 @@ class Poll_Commands:
 
 
 def setup(bot):
-    bot.add_cog(Poll_Commands(bot))
+    bot.add_cog(Poll(bot))

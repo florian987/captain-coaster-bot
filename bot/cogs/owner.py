@@ -11,6 +11,7 @@ class OwnerCog:
 
     def __init__(self, bot):
         self.bot = bot
+        
         self.owner = bot.get_user(bot.owner_id)
         self.paginator = commands.Paginator(prefix="```py", suffix="```")
 
@@ -82,7 +83,7 @@ class OwnerCog:
             print(traceback_msg)
 
         else:
-            log.info(f"{ctx.author} loaded cog '{cog.strip('cogs.')}'.")
+            log.info(f"{ctx.author} loaded cog '{cog.replace('cogs.', '')}'.")
             embed = discord.Embed(
                 description=f"Cog `{cog.replace('cogs.', '')}` loaded.",
                 colour=discord.Colour.green())
@@ -144,7 +145,7 @@ class OwnerCog:
             # await ctx.send('**`SUCCESS`**')
         await ctx.send(content='', embed=embed)
 
-    @commands.command(name='listcogs', hidden=True)
+    @commands.command(name='listcogs', hidden=True, aliases=['cogslist'])
     @commands.is_owner()
     async def cog_list(self, ctx):
         """

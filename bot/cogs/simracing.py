@@ -149,7 +149,8 @@ class Simracing:
 
             # Build datapacks infos
             cars_list = await self.bot.loop.run_in_executor(
-                None, scrapper.build_datapacks_infos, driver, iracing_cars)
+                None, scrapper.build_datapacks_infos, driver, iracing_cars
+            )
 
             # Change Bot Status
             await self.bot.change_presence(

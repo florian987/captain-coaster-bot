@@ -6,7 +6,7 @@ from weakref import WeakValueDictionary
 
 from discord import Colour
 from discord.ext import commands
-from discord.ext.commands import Context, Embed
+from discord.ext.commands import Context  # , Embed
 
 from bot.constants import ERROR_REPLIES
 

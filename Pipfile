@@ -16,6 +16,7 @@ emoji = "*"
 pyflakes = "==1.6.0"
 pynacl = "*"
 fuzzywuzzy = "*"
+pillow = "*"
 
 [dev-packages]
 pylint = "*"

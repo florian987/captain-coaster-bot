@@ -5,10 +5,10 @@ from ssl import CertificateError
 import discord
 from aiohttp import AsyncResolver, ClientConnectorError, ClientSession, TCPConnector
 from discord.ext.commands import BadArgument, Converter, UserConverter
-from fuzzywuzzy import fuzz
+#from fuzzywuzzy import fuzz
 
 from bot.constants import DEBUG_MODE, Keys, URLs
-from bot.utils import disambiguate
+#from bot.utils import disambiguate
 
 
 class Snake(Converter):

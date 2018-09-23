@@ -39,7 +39,8 @@ class CommandErrorHandler:
         # traceback.print_exception(
         #   type(error), error, error.__traceback__, file=sys.stderr)
 
-        owner = self.bot.get_user(self.bot.owner_id)
+        #owner = self.bot.get_user(self.bot.owner_id)
+        #self.bot.appinfo = await self.bot.application_info() # Store appinfos
         paginator = commands.Paginator(prefix="```py", suffix="```")
 
         traceback_msg = "".join(
@@ -89,10 +90,10 @@ class CommandErrorHandler:
         print('-' * 20)
         print(len(traceback_msg))
 
-        await owner.send(content="", embed=embed)  # Send error infos
+        await self.bot.appinfo.owner.send(content="", embed=embed)  # Send error infos
 
         for page in paginator.pages:  # Send paginated traceback
-            await owner.send(content=page)
+            await self.bot.appinfo.owner.send(content=page)
 
         print('-' * 22)
         print(dir(error))

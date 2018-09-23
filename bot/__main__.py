@@ -77,8 +77,11 @@ if __name__ == '__main__':
 
 
 @bot.event
-async def on_ready():
-    """http://discordpy.readthedocs.io/en/rewrite/api.html#discord.on_ready"""
+async def on_ready(self):
+    """
+    http://discordpy.readthedocs.io/en/rewrite/api.html#discord.on_ready
+    """
+    self.bot.appinfo = await self.bot.application_info() # Store appinfos
 
     print(
         (f"""\n\n

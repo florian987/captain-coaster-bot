@@ -2,6 +2,7 @@
 *.log
 data.json
 downloads/*
+docker/docker-compose.yml
 logs/*
 settings.json
 bot/scrapper/downloads/

@@ -1,0 +1,17 @@
+discord-bot:
+  image: hub.hsfactory.net/jeff/discord-bot:latest
+  restart: always
+  volumes:
+    - /opt/discord-bot:/bot
+  environment:
+    - BOT_TOKEN=""
+
+#git-autodeploy:
+#  image: legerete/git-autodeploy
+#  restart: always
+#  ports:
+#    - 8080:8080
+#  volumes:
+#    - ./git-auto-deploy.conf.json:/etc/git-auto-deploy.conf.json
+#    - ./deploy_rsa:/etc/git-auto-deploy/.ssh/id_rsa:ro
+#    - /opt/discord-bot:/opt/discord-bot

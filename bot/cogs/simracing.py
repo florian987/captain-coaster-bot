@@ -23,7 +23,7 @@ class Simracing:
 #        )
 
     @staticmethod
-    def extract_tga(file: discord.Attachment):
+    def extract_tga(archive: discord.Attachment):
         """
         A helper method to extract tga files from zip.
         """
@@ -31,12 +31,13 @@ class Simracing:
         tga_list = []
         dest = 'tmp'  # Extract destination
 
-        zfile = zipfile.ZipFile(file)
+        zfile = zipfile.ZipFile(archive)
         for file in zfile.namelist():
             if file.split('.')[1] == 'tga':
                 zfile.extract(file, dest)
                 tga_list.append(os.path.join(dest, file))
 
+        os.unlink(archive)
         return tga_list
 
     @staticmethod
@@ -45,8 +46,6 @@ class Simracing:
         A helper method to convert tga files to png.
         """
 
-        print(tga_file)
-
         png_file = tga_file.replace('.tga', '.png')
         # convert to png
         img = Image.open(tga_file)
@@ -54,6 +53,11 @@ class Simracing:
         os.unlink(tga_file)  # remove tga file
 
         return png_file
+
+    @staticmethod
+    def upload_and_delete(msg: discord.Message, file_to_process):
+        await msg.channel.send(file=discord.File(file_to_process))
+        os.unlink(file_to_process)  # remove pngfile
 
     @commands.command(name="get_setup_channels",
                       aliases=["setup_chans", 'get_setups_chans'])
@@ -269,30 +273,41 @@ class Simracing:
         """
         Generate embed from uploaded skins
         """
-#        if ctx.channel == Channels.skins and ctx.message.attachments:
-        if msg.attachments:
-            for attachment in msg.attachments:
-                print(attachment.filename)
-                file_ext = attachment.filename.split('.')[1]
-                if file_ext == 'zip':
-                    await attachment.save(attachment.filename)
-                    tga_files = await self.bot.loop.run_in_executor(
-                        None, self.extract_tga, attachment.filename
-                    )
-                    for tga in tga_files:
-                        png_file = await self.bot.loop.run_in_executor(
-                            None, self.tga_to_png, tga
-                        )
 
-                        await msg.channel.send(file=discord.File(png_file))
-                    os.unlink(attachment.filename) # remove downloaded file
-                elif file_ext == 'tga':
-                    await attachment.save(attachment.filename)
+        for attachment in msg.attachments:
+            # Get file extension
+            file_ext = attachment.filename.split('.')[1]
+
+            # Handle zip files
+            if file_ext == 'zip':
+                await attachment.save(attachment.filename)  # DL file
+
+                # Extract zipfiles
+                tga_files = await self.bot.loop.run_in_executor(
+                    None, self.extract_tga, attachment.filename
+                )
+
+                # Convert files
+                for tga_file in tga_files:
+
                     png_file = await self.bot.loop.run_in_executor(
-                        None, self.tga_to_png, attachment.filename
+                        None, self.tga_to_png, tga_file
                     )
-                    await msg.channel.send(file=discord.File(png_file))
-                    os.unlink(png_file)
+
+                    await upload_and_delete(msg, png_file)
+                    # await msg.channel.send(file=discord.File(png_file))
+                    # os.unlink(png_file)  # remove pngfile
+
+            # Handle tga files
+            elif file_ext == 'tga':
+                await attachment.save(attachment.filename)
+
+                png_file = await self.bot.loop.run_in_executor(
+                    None, self.tga_to_png, attachment.filename
+                )
+                await upload_and_delete(msg, png_file)
+                # await msg.channel.send(file=discord.File(png_file))
+                # os.unlink(png_file)
 
 
 def setup(bot):

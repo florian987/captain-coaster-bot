@@ -15,7 +15,9 @@ class Configs_Commands:
     @commands.group(name='conf', aliases=['config', 'settings'])
     @commands.is_owner()
     async def conf(self, ctx):
-        """Manage bot configuration"""
+        """
+        Manage bot configuration
+        """
         if ctx.invoked_subcommand is None:
             await ctx.send('Invalid config command passed...')
 
@@ -60,7 +62,9 @@ class Configs_Commands:
     @conf.group(name='set', aliases=['change'])
     @commands.is_owner()
     async def set(self, ctx):
-        """Change bot parameters"""
+        """
+        Change bot parameters
+        """
 
         if ctx.invoked_subcommand is None:
             await ctx.send('Invalid config command passed...')
@@ -73,14 +77,18 @@ class Configs_Commands:
                  aliases=['nick', 'pseudo', 'nickname', 'name'])
     @commands.is_owner()
     async def username(self, ctx, name):
-        """Change bot username"""
+        """
+        Change bot username
+        """
 
         await self.bot.user.edit(username=name)
 
     @set.command(name='avatar', aliases=['image', 'pic', 'profilepic'])
     @commands.is_owner()
     async def avatar(self, ctx, url):
-        """Change bot avatar"""
+        """
+        Change bot avatar
+        """
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
@@ -96,10 +104,12 @@ class Configs_Commands:
         if isinstance(error, commands.CommandInvokeError):
             await ctx.send("This parameter doesn't exists!")
         elif isinstance(error, commands.MissingRequiredArgument):
-            params_list = ([i for
-                            i in dir(self.bot.user) if not i.startswith('_')])
+            params_list = (
+                [i for i in dir(self.bot.user) if not i.startswith('_')]
+            )
             embed = discord.Embed(
-                description=f'```{", ".join(params_list)}```')
+                description=f'```{", ".join(params_list)}```'
+            )
             await ctx.send("Provide a parameter please sir!", embed=embed)
 
 

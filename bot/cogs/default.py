@@ -13,7 +13,6 @@ class Default_Commands:
         self.bot = bot
 
     @commands.command(name='calc', aliases=['calculate'])
-    @commands.guild_only()
     async def calc(self, ctx, *, args):
         """
         A simple command which does calculations.

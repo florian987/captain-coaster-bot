@@ -3,7 +3,7 @@ import traceback
 
 from discord.ext import commands
 
-from bot.utils.embed import build_embed
+from bot.utils.embedconverter import build_embed
 
 
 """
@@ -109,15 +109,15 @@ class CommandErrorHandler:
             paginator.add_line(line)
 
         # Create embed
-        embed = build_embed(
-            ctx,
+        embed = await build_embed(
+            ctx,  # embedconverter
             title="Fix ya shit.",
             colour="dark_red",
             requester=ctx.author,
             Channel=f'#{ctx.channel}',
             Cog=f"{ctx.cog}",
             Command=f'```\n{ctx.message.content}\n```',
-            Error=f"```py\n{error}\n```",
+            Error=f"```py\n{error}\n```"
         )
 
         if ctx.guild:

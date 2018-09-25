@@ -4,7 +4,7 @@ import shlex
 import discord
 from discord.ext import commands
 
-from bot.utils.embed import build_embed
+from bot.utils.embedconverter import build_embed
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class Embed_Commands:
             splitted_arg = arg.split("=")
             args_dict[splitted_arg[0]] = splitted_arg[1].strip('"').strip("'")
 
-        embed = build_embed(**args_dict)
+        embed = await build_embed(ctx, **args_dict)
         await ctx.send(embed=embed)
 
     #

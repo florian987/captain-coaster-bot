@@ -4,7 +4,6 @@ import discord
 def build_embed(**kwargs):
     """
     A simple helper class to help generating embeds.
-
     https://cdn.discordapp.com/attachments/84319995256905728/252292324967710721/embed.png
 
     Examples:

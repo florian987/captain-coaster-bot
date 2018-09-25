@@ -279,19 +279,20 @@ class Simracing:
                     tga_files = await self.bot.loop.run_in_executor(
                         None, self.extract_tga, attachment.filename
                     )
-
                     for tga in tga_files:
                         png_file = await self.bot.loop.run_in_executor(
                             None, self.tga_to_png, tga
                         )
 
                         await msg.channel.send(file=discord.File(png_file))
+                    os.unlink(attachment.filename) # remove downloaded file
                 elif file_ext == 'tga':
                     await attachment.save(attachment.filename)
                     png_file = await self.bot.loop.run_in_executor(
                         None, self.tga_to_png, attachment.filename
                     )
                     await msg.channel.send(file=discord.File(png_file))
+                    os.unlink(png_file)
 
 
 def setup(bot):

@@ -1,7 +1,6 @@
 import sys
 import traceback
 
-import discord
 from discord.ext import commands
 
 from bot.utils.embed import build_embed
@@ -111,6 +110,7 @@ class CommandErrorHandler:
 
         # Create embed
         embed = build_embed(
+            ctx,
             title="Fix ya shit.",
             colour="dark_red",
             requester=ctx.author,

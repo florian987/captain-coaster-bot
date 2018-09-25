@@ -54,10 +54,10 @@ class Simracing:
 
         return png_file
 
-    @staticmethod
-    def upload_and_delete(msg: discord.Message, file_to_process):
-        await msg.channel.send(file=discord.File(file_to_process))
-        os.unlink(file_to_process)  # remove pngfile
+    # @staticmethod
+    # async def upload_and_delete(msg: discord.Message, file_to_process):
+    #     await msg.channel.send(file=discord.File(file_to_process))
+    #     os.unlink(file_to_process)  # remove pngfile
 
     @commands.command(name="get_setup_channels",
                       aliases=["setup_chans", 'get_setups_chans'])
@@ -294,9 +294,9 @@ class Simracing:
                         None, self.tga_to_png, tga_file
                     )
 
-                    await upload_and_delete(msg, png_file)
-                    # await msg.channel.send(file=discord.File(png_file))
-                    # os.unlink(png_file)  # remove pngfile
+                    # await upload_and_delete(msg, png_file)
+                    await msg.channel.send(file=discord.File(png_file))
+                    os.unlink(png_file)  # remove pngfile
 
             # Handle tga files
             elif file_ext == 'tga':
@@ -305,9 +305,9 @@ class Simracing:
                 png_file = await self.bot.loop.run_in_executor(
                     None, self.tga_to_png, attachment.filename
                 )
-                await upload_and_delete(msg, png_file)
-                # await msg.channel.send(file=discord.File(png_file))
-                # os.unlink(png_file)
+                # await upload_and_delete(msg, png_file)
+                await msg.channel.send(file=discord.File(png_file))
+                os.unlink(png_file)
 
 
 def setup(bot):

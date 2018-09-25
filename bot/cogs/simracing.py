@@ -273,14 +273,12 @@ class Simracing:
         if msg.attachments:
             for attachment in msg.attachments:
                 print(attachment.filename)
-                if attachment.filename.split('.')[1] == 'zip':
+                file_ext = attachment.filename.split('.')[1]
+                if file_ext == 'zip':
                     await attachment.save(attachment.filename)
                     tga_files = await self.bot.loop.run_in_executor(
                         None, self.extract_tga, attachment.filename
                     )
-
-                    print('-' * 24)
-                    print(tga_files)
 
                     for tga in tga_files:
                         png_file = await self.bot.loop.run_in_executor(
@@ -288,6 +286,12 @@ class Simracing:
                         )
 
                         await msg.channel.send(file=discord.File(png_file))
+                elif file_ext == 'tga':
+                    await attachment.save(attachment.filename)
+                    png_file = await self.bot.loop.run_in_executor(
+                        None, self.tga_to_png, attachment.filename
+                    )
+                    await msg.channel.send(file=discord.File(png_file))
 
 
 def setup(bot):

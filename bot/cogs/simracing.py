@@ -8,10 +8,8 @@ from discord.ext import commands
 from PIL import Image
 
 import bot.scrapper.vrs as scrapper
-#from bot.constants import Channels
-#from bot.decorators import in_channel
-# from bot.constants import Channels
-# from bot.decorators import in_channel
+from bot.constants import Channels
+from bot.decorators import in_channel
 
 
 class Simracing:
@@ -266,7 +264,7 @@ class Simracing:
             activity=discord.Game(name='Enfiler des petits enfants')
         )
 
-#    @in_channel(Channels.skins)
+    @in_channel(Channels.skins)
     async def on_message(self, msg: discord.Message):
         """
         Generate embed from uploaded skins

@@ -124,9 +124,9 @@ def _recursive_update(original, new):
             original[key] = new[key]
 
 
-if Path("config-constants.yml").exists():
+if Path("config.yml").exists():
     log.info("Found `config.yml` file, loading constants from it.")
-    with open("config-constants.yml", encoding="UTF-8") as f:
+    with open("config.yml", encoding="UTF-8") as f:
         user_config = yaml.safe_load(f)
     _recursive_update(_CONFIG_YAML, user_config)
 
@@ -188,6 +188,16 @@ class YAMLGetter(type):
         return cls.__getattr__(name)
 
 
+# Dataclasses
+class Bot(metaclass=YAMLGetter):
+    section = "bot"
+
+    activity: str
+    cogs: list
+    help_prefix: str
+    token: str
+
+
 class Channels(metaclass=YAMLGetter):
     section = "guild"
     subsection = "channels"
@@ -229,6 +239,14 @@ class Keys(metaclass=YAMLGetter):
     omdb: str
     site_api: str
     youtube: str
+
+
+class Prefixes(metaclass=YAMLGetter):
+    section = "bot"
+    subsection = "prefixes"
+
+    guild: list
+    direct_message: list
 
 
 class Reddit(metaclass=YAMLGetter):

@@ -31,7 +31,6 @@ class CommandErrorHandler:
     async def on_command_error(self, ctx, error):
         """
         The event triggered when an error is raised while invoking a command.
-        
         ctx   : Context
         error : Exception
         """
@@ -39,8 +38,8 @@ class CommandErrorHandler:
         # traceback.print_exception(
         #   type(error), error, error.__traceback__, file=sys.stderr)
 
-        #owner = self.bot.get_user(self.bot.owner_id)
-        #self.bot.appinfo = await self.bot.application_info() # Store appinfos
+        # owner = self.bot.get_user(self.bot.owner_id)
+        # self.bot.appinfo = await self.bot.application_info() # Store appinfos
         paginator = commands.Paginator(prefix="```py", suffix="```")
 
         traceback_msg = "".join(
@@ -58,6 +57,9 @@ class CommandErrorHandler:
             title="Fix ya shit",
             colour=discord.Colour.dark_red()
         )
+
+        embed.add_field(name="Requester", value=ctx.author)
+
         if ctx.guild:
             embed.add_field(
                 name="Guild",
@@ -80,7 +82,7 @@ class CommandErrorHandler:
             value=f"```py\n{error}\n```",
             inline=False
         )
-        if error.original:
+        if hasattr(error, "original"):
             embed.add_field(
                 name='original',
                 value=f"```py\n{error.original}\n```",
@@ -129,7 +131,8 @@ class CommandErrorHandler:
         elif isinstance(error, commands.NoPrivateMessage):
             try:
                 return await ctx.author.send(
-                    f'{ctx.command} can not be used in Private Messages.')
+                    f'{ctx.command} can not be used in Private Messages.'
+                )
             except Exception:
                 pass
 
@@ -138,7 +141,8 @@ class CommandErrorHandler:
             # Check if the command being invoked is 'tag list'
             if ctx.command.qualified_name == 'tag list':
                 return await ctx.send(
-                    'I could not find that member. Please try again.')
+                    'I could not find that member. Please try again.'
+                )
 
         # All other Errors not returned come here...
         # And we can just print the default TraceBack.

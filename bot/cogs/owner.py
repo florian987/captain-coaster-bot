@@ -11,8 +11,6 @@ class OwnerCog:
 
     def __init__(self, bot):
         self.bot = bot
-        
-        self.owner = bot.get_user(bot.owner_id)
         self.paginator = commands.Paginator(prefix="```py", suffix="```")
 
     # Hidden means it won't show up on the default help.
@@ -72,13 +70,13 @@ class OwnerCog:
             #        inline=False
             #    )
 
-            await self.owner.send(content="", embed=owner_embed)
+            await self.bot.appinfo.owner.send(content="", embed=owner_embed)
 
             for line in traceback_msg.splitlines():  # Create traceback pages
                 self.paginator.add_line(line)
 
             while len(self.paginator.pages):  # Send paginated traceback
-                await self.owner.send(content=self.paginator.pages.pop(0))
+                await self.bot.appinfo.owner.send(content=self.paginator.pages.pop(0))
 
             print(traceback_msg)
 

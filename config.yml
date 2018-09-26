@@ -17,13 +17,14 @@ bot:
     cogs:
         - owner
         - default
-        - simracing
-        - embed
-        - dev
         - error_handler
         - config
-        - youtube
+        - dev
+        - embed
         - poll
+        - reddit
+        - simracing
+        - youtube
 
 
 

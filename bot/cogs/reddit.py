@@ -218,7 +218,7 @@ class Reddit:
                     time="week"
                 )
 
-                if subreddit.lower() == "r/python":
+                if subreddit.lower() == "r/iracing":
                     # Remove the oldest pins so that only 5 remain at most.
                     pins = await self.reddit_channel.pins()
 
@@ -238,7 +238,7 @@ class Reddit:
 
     @reddit_group.command(name="top")
     async def top_command(self, ctx: Context,
-                          subreddit: Subreddit = "r/Python"):
+                          subreddit: Subreddit = "r/iracing"):
         """
         Send the top posts of all time from a given subreddit.
         """
@@ -252,7 +252,7 @@ class Reddit:
 
     @reddit_group.command(name="daily")
     async def daily_command(self, ctx: Context,
-                            subreddit: Subreddit = "r/Python"):
+                            subreddit: Subreddit = "r/iracing"):
         """
         Send the top posts of today from a given subreddit.
         """
@@ -266,7 +266,7 @@ class Reddit:
 
     @reddit_group.command(name="weekly")
     async def weekly_command(self, ctx: Context,
-                             subreddit: Subreddit = "r/Python"):
+                             subreddit: Subreddit = "r/iracing"):
         """
         Send the top posts of this week from a given subreddit.
         """

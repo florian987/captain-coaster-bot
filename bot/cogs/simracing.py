@@ -300,7 +300,7 @@ class Simracing:
                     await msg.channel.send(file=discord.File(png_file))
                     os.unlink(png_file)  # remove pngfile
                     log.info(f"Preview generated {png_file} "
-                         f"- uploader: {msg.author}")
+                             f"- uploader: {msg.author}")
 
             # Handle tga files
             elif file_ext == 'tga':

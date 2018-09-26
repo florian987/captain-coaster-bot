@@ -1,4 +1,3 @@
-#FROM  gcr.io/google-appengine/python
 FROM python:3.6.6-alpine3.8
 
 RUN apt-get update && \

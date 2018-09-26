@@ -5,13 +5,3 @@ discord-bot:
     - /opt/discord-bot:/bot
   environment:
     - BOT_TOKEN="NDcwMTM2MzgzMzgyNjE4MTEy.DjR5_w.xy3XstdJdbRSpzKulOwIdFDf-xA"
-
-#git-autodeploy:
-#  image: legerete/git-autodeploy
-#  restart: always
-#  ports:
-#    - 8080:8080
-#  volumes:
-#    - ./git-auto-deploy.conf.json:/etc/git-auto-deploy.conf.json
-#    - ./deploy_rsa:/etc/git-auto-deploy/.ssh/id_rsa:ro
-#    - /opt/discord-bot:/opt/discord-bot

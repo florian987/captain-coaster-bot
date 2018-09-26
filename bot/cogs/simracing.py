@@ -8,7 +8,7 @@ from discord.ext import commands
 from PIL import Image
 
 import bot.scrapper.vrs as scrapper
-from bot.constants import Channels
+from bot.constants import Channels, Roles
 from bot.decorators import in_channel
 
 
@@ -62,7 +62,7 @@ class Simracing:
     @commands.command(name="get_setup_channels",
                       aliases=["setup_chans", 'get_setups_chans'])
     @commands.guild_only()
-    # @commands.has_role(config['users'])
+    @commands.with_role(Roles.pilotes)
     async def get_channels(self, ctx):
         """Build setups channels list"""
         # Retrieve setups categories
@@ -76,6 +76,7 @@ class Simracing:
             .replace('_', r'\_'))
 
     @commands.command(name="flushsetups", aliases=['flushsets'], hidden=True)
+    @commands.guild_only()
     @commands.is_owner()
     async def flush_setups(self, ctx):
         """
@@ -109,7 +110,7 @@ class Simracing:
 
     @commands.command(name="setups", aliases=["vrs-setups"])
     @commands.guild_only()
-    # @commands.has_role(config['users'])
+    @commands.with_role(Roles.pilotes)
     async def setups(self, ctx):
         """
         Retrieve cars setups from VRS Website
@@ -262,11 +263,6 @@ class Simracing:
                              name=str(self.bot.user.name)
                              )
             await ctx.send(content='', embed=embed)
-
-        # Change Bot Status
-        await self.bot.change_presence(
-            activity=discord.Game(name='Enfiler des petits enfants')
-        )
 
     @in_channel(Channels.skins)
     async def on_message(self, msg: discord.Message):

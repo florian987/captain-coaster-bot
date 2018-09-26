@@ -33,7 +33,7 @@ guild:
 
     channels:
         admins:            &ADMINS        365960823622991872
-        news:                             479978283518394378
+        news:                             462105315299819530
         skins:             &SKINS         479584029537206272
         team_setups:       &CUSTOM_SETS   464125961018015754
 

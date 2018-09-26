@@ -1,4 +1,4 @@
-# import json
+import logging
 import os
 import zipfile
 
@@ -10,6 +10,8 @@ from PIL import Image
 import bot.scrapper.vrs as scrapper
 from bot.constants import Channels, Roles
 from bot.decorators import in_channel
+
+log = logging.getLogger(__name__)
 
 
 class Simracing:
@@ -104,7 +106,12 @@ class Simracing:
         if purged_msgs > 0:
             await ctx.send(
                 f"Purged {purged_msgs} message(s) in "
-                "{purged_channels} channel(s).")
+                f"{purged_channels} channel(s)."
+            )
+            log.info(
+                f"Purged {purged_msgs} message(s) in "
+                f"{purged_channels} channel(s)."
+            )
         else:
             await ctx.send("Nothing to purge.")
 
@@ -123,12 +130,15 @@ class Simracing:
         setup_category = discord.utils.find(
             lambda c: c.name == setups_category_name, ctx.guild.categories)
 
+        log.info(f"{ctx.message.author} started a VRS setups gathering")
+
         # Check if VRS is online
         async def is_vrs_online():
             async with aiohttp.ClientSession() as session:
                 async with session.get(vrs_url) as r:
                     if r.status == 200:
                         return True
+                    log.error("VRS website offline, aborting.")
                     return False
 
         async def message_exists(channel: discord.TextChannel, message: discord.Message):
@@ -151,6 +161,7 @@ class Simracing:
             )
             if chan_to_return:
                 return chan_to_return
+            log.info(f"Creating channel '{chan}' in category '{cat}'.")
             return await ctx.guild.create_text_channel(name=chan, category=cat)
 
         # Build cars infos
@@ -238,8 +249,7 @@ class Simracing:
                                     f"({upload_msg.attachments[0].url})")
 
                         # TODO Validate this works
-                        # Send embed
-                        # if not await embed_exists(serie_channel, embed):
+                        log.info(f"Generated embed for {car['serie']} - {car['name']}.")
                         await serie_channel.send(content='', embed=embed)
 
         else:
@@ -289,6 +299,8 @@ class Simracing:
                     # await upload_and_delete(msg, png_file)
                     await msg.channel.send(file=discord.File(png_file))
                     os.unlink(png_file)  # remove pngfile
+                    log.info(f"Preview generated {png_file} "
+                         f"- uploader: {msg.author}")
 
             # Handle tga files
             elif file_ext == 'tga':
@@ -300,6 +312,8 @@ class Simracing:
                 # await upload_and_delete(msg, png_file)
                 await msg.channel.send(file=discord.File(png_file))
                 os.unlink(png_file)
+                log.info(f"Preview generated {png_file} "
+                         f"- uploader: {msg.author}")
 
 
 def setup(bot):

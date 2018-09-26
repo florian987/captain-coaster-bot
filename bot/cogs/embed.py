@@ -18,18 +18,6 @@ class Embed_Commands:
         """
         A simple command which generate embeds using keywords.
 
-        Named parameters:
-            - title (str)
-            - descr (str)
-            - colour (int)
-            - img (url)
-            - author_icon (url)
-            - author_name (str)
-            - author_url (url)
-            - print_dict (bool)
-            - footer_text (str)
-            - footer_icon (url)
-
         Examples:
         /mbd title="titre" descr="description"
         /embd title="titre" descr="description" print_dict=True

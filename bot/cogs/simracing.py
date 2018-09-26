@@ -9,7 +9,7 @@ from PIL import Image
 
 import bot.scrapper.vrs as scrapper
 from bot.constants import Channels, Roles
-from bot.decorators import in_channel
+from bot.decorators import in_channel, with_role
 
 log = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class Simracing:
     @commands.command(name="get_setup_channels",
                       aliases=["setup_chans", 'get_setups_chans'])
     @commands.guild_only()
-    @commands.with_role(Roles.pilotes)
+    @with_role(Roles.pilotes)
     async def get_channels(self, ctx):
         """Build setups channels list"""
         # Retrieve setups categories
@@ -117,7 +117,7 @@ class Simracing:
 
     @commands.command(name="setups", aliases=["vrs-setups"])
     @commands.guild_only()
-    @commands.with_role(Roles.pilotes)
+    @with_role(Roles.pilotes)
     async def setups(self, ctx):
         """
         Retrieve cars setups from VRS Website

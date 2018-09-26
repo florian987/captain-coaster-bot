@@ -10,8 +10,10 @@ RUN pip install pipenv
 COPY . /bot
 WORKDIR /bot
 
-RUN pipenv sync
+RUN pipenv install --deploy --system
+# RUN pipenv sync
 
 ENTRYPOINT ["/sbin/tini", "--"]
 #CMD ["pipenv", "run", "start"]
-CMD ["pipenv", "run", "python", "-m", "bot"]
+CMD ["python", "-m", "bot"]
+# CMD ["pipenv", "run", "python", "-m", "bot"]

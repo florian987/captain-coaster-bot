@@ -131,13 +131,9 @@ class Simracing:
                         return True
                     return False
 
-        async def message_exists(channel: discord.TextChannel, message):
+        async def message_exists(channel: discord.TextChannel, message: discord.Message):
             """Search message content in a defined channel"""
             return bool(channel.history().get(content=message))
-            # old method
-            # if await channel.history().get(content=message):
-            #     return True
-            # return False
 
         # async def embed_exists(channel: discord.TextChannel, embed):
         #    """Search message content in a defined channel"""

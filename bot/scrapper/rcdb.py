@@ -12,16 +12,15 @@ def build_driver(browser="Chrome", headless=True):
     """
     Build a selenium driver for the desired browser with its parameters
     """
-    # TODO Implement firefox, waiting for selenium 3.14.0 to fix timeout
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("prefs",
-                                    {"safebrowsing.enabled": False})
+    # Build Firefox profile
+    profile = webdriver.FirefoxProfile()
+
     if headless:
         options.add_argument('headless')
         options.add_argument('disable-gpu')
 
     # Build Chrome driver
-    driver = webdriver.Chrome(chrome_options=options)
+    driver = webdriver.Firefox(profile)
     driver.set_page_load_timeout(90)
 
     return driver

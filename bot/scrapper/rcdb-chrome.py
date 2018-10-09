@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -12,16 +13,11 @@ def build_driver(headless=True):
     """
     Build a selenium driver for the desired browser with its parameters
     """
-    # TODO Implement firefox, waiting for selenium 3.14.0 to fix timeout
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("prefs",
-                                    {"safebrowsing.enabled": False})
+    # Build Firefox profile
+    options = Options()
     if headless:
-        options.add_argument('headless')
-        options.add_argument('disable-gpu')
-
-    # Build Chrome driver
-    driver = webdriver.Chrome(chrome_options=options)
+        options.add_argument("--headless")
+    driver = webdriver.Firefox(firefox_options=options)
     driver.set_page_load_timeout(90)
 
     return driver
@@ -125,7 +121,7 @@ def build_coaster(driver, search):
     coaster_infos['maker'] = maker.get_attribute('innerHTML')
     coaster_infos['maker_page'] = maker.get_attribute('href')
     coaster_infos['model'] = ', '.join([i.get_attribute('innerHTML') for i in model])
-
+    
     # Tracks
     tracks = driver.find_elements_by_xpath(
         '//*[@id="statTable"]/tbody/tr'
@@ -152,6 +148,7 @@ def build_coaster(driver, search):
         else:
             coaster_infos[k] = v
 
+    driver.close()
     return coaster_infos
 
 
@@ -159,3 +156,4 @@ if __name__ == '__main__':
     driver = build_driver(headless=False)
     search = 'shambhala'
     print(build_coaster(driver, search))
+    driver.close()

@@ -10,7 +10,7 @@ RUN apk add --update zlib-dev
 RUN apk add --update freetype-dev
 RUN apk add --update opus-dev
 RUN apk add --update ffmpeg
-RUN apk add --update firefox-esr-dev
+RUN apk add --update chromium-chromedriver
 
 RUN pip install pipenv
 
@@ -18,9 +18,6 @@ RUN mkdir /bot
 COPY Pipfile /bot
 COPY Pipfile.lock /bot
 WORKDIR /bot
-
-COPY geckodriver /usr/local/bin/geckodriver
-RUN chmod +x /usr/local/bin/geckodriver
 
 ENV LIBRARY_PATH=/lib:/usr/lib
 ENV PIPENV_VENV_IN_PROJECT=1

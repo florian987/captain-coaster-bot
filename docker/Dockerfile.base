@@ -1,7 +1,5 @@
 FROM python:3.6-alpine3.7
 
-COPY bot/scrapper/chromedriver /usr/local/bin/chromedriver
-
 RUN apk add --update tini
 RUN apk add --update build-base
 RUN apk add --update libffi-dev
@@ -19,6 +17,8 @@ RUN mkdir /bot
 COPY Pipfile /bot
 COPY Pipfile.lock /bot
 WORKDIR /bot
+
+COPY bot/scrapper/chromedriver /usr/local/bin/chromedriver
 
 ENV LIBRARY_PATH=/lib:/usr/lib
 ENV PIPENV_VENV_IN_PROJECT=1

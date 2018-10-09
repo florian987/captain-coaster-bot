@@ -18,7 +18,7 @@ class RollerCoasters:
         self.bot = bot
 
     @commands.command(name="rcdb", aliases=[])
-    @commands.guild_only()
+    # @commands.guild_only()
     # @with_role(Roles.pilotes)
     async def rcdb_infos(self, ctx, search):
         """Retrieve infos from rcdb"""

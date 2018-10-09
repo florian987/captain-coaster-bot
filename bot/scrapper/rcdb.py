@@ -1,4 +1,4 @@
-    import re
+import re
 
 from bs4 import BeautifulSoup
 from selenium import webdriver

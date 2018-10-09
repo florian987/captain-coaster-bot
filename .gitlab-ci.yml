@@ -16,8 +16,6 @@ stages:
   - build
 
 test:
-  tags:
-  - docker
 
   stage: test
 
@@ -26,8 +24,6 @@ test:
     - pipenv run lint --exit-zero 
 
 build:
-  tags:
-  - docker
 
   services:
     - docker:dind

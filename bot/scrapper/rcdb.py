@@ -4,19 +4,21 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-def build_driver(browser="Chrome", headless=True):
+def build_driver(headless=True):
     """
     Build a selenium driver for the desired browser with its parameters
     """
     # Build Firefox profile
     profile = webdriver.FirefoxProfile()
+    options = Options()
 
     if headless:
-        options.add_argument('headless')
+        options.add_argument('--headless')
         options.add_argument('disable-gpu')
 
     # Build Chrome driver
@@ -151,10 +153,12 @@ def build_coaster(driver, search):
         else:
             coaster_infos[k] = v
 
-    print(coaster_infos)
+    driver.close()
+    return coaster_infos
 
 
 if __name__ == '__main__':
     driver = build_driver(headless=False)
     search = 'shambhala'
-    build_coaster(driver, search)
+    print(build_coaster(driver, search))
+    driver.close()

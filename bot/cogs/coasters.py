@@ -32,7 +32,7 @@ class RollerCoasters:
                     return False
 
         # Build cars infos
-        if rcdb_online():
+        if await rcdb_online():
 
             # Create webdriver
             driver = rcdb.build_driver(headless=True)

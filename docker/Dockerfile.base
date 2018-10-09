@@ -18,8 +18,8 @@ COPY Pipfile /bot
 COPY Pipfile.lock /bot
 WORKDIR /bot
 
-COPY bot/scrapper/chromedriver /usr/local/bin/chromedriver
-RUN chmod +x /usr/local/bin/chromedriver
+COPY bot/scrapper/chromedriver /lib/chromedriver
+RUN chmod +x /lib/chromedriver
 
 ENV LIBRARY_PATH=/lib:/usr/lib
 ENV PIPENV_VENV_IN_PROJECT=1

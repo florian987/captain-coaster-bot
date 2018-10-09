@@ -1,4 +1,4 @@
-import re
+    import re
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -14,15 +14,10 @@ def build_driver(headless=True):
     Build a selenium driver for the desired browser with its parameters
     """
     # Build Firefox profile
-    profile = webdriver.FirefoxProfile()
     options = Options()
-
     if headless:
-        options.add_argument('--headless')
-        options.add_argument('disable-gpu')
-
-    # Build Chrome driver
-    driver = webdriver.Firefox(profile)
+        options.add_argument("--headless")
+    driver = webdriver.Firefox(firefox_options=options)
     driver.set_page_load_timeout(90)
 
     return driver

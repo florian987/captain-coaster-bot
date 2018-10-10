@@ -10,6 +10,7 @@ RUN apk add --update zlib-dev
 RUN apk add --update freetype-dev
 RUN apk add --update opus-dev
 RUN apk add --update ffmpeg
+RUN apk add --update chromium
 RUN apk add --update chromium-chromedriver
 
 RUN pip install pipenv

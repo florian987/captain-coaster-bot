@@ -16,6 +16,7 @@ def build_driver(headless=True, log_path=None):
     if headless:
         options.add_argument('headless')
         options.add_argument('disable-gpu')
+        options.add_argument('no-sandbox')
 
     # Build Chrome driver
     driver = webdriver.Chrome(chrome_options=options, service_log_path=log_path)

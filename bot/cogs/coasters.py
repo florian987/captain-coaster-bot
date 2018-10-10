@@ -31,13 +31,10 @@ class RollerCoasters:
                     log.error("RCDB website offline, aborting.")
                     return False
 
-        # Build cars infos
         if rcdb_online():
-
             # Create webdriver
             driver = rcdb.build_driver(
                 headless=True, log_path='chromedriver.log')
-
             coaster_infos = await self.bot.loop.run_in_executor(
                 None, rcdb.build_coaster, driver, search
             )

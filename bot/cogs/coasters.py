@@ -39,7 +39,7 @@ class RollerCoasters:
                 None, rcdb.build_coaster, driver, search
             )
 
-            embed = build_embed(
+            embed = await build_embed(
                 ctx,
                 title=coaster_infos.pop('name'),
                 colour='blue'
@@ -54,7 +54,7 @@ class RollerCoasters:
 
         else:
             """If rcdb offline"""
-            embed = discord.Embed(
+            embed = await discord.Embed(
                 title="RCDB Offline :(",
                 description="Va falloir attendre mon mignon",
                 colour=discord.Colour.red()

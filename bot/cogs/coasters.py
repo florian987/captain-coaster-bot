@@ -32,10 +32,11 @@ class RollerCoasters:
                     return False
 
         # Build cars infos
-        if await rcdb_online():
+        if rcdb_online():
 
             # Create webdriver
-            driver = rcdb.build_driver(headless=True)
+            driver = rcdb.build_driver(
+                headless=True, log_path='chromedriver.log')
 
             coaster_infos = await self.bot.loop.run_in_executor(
                 None, rcdb.build_coaster, driver, search

@@ -1,93 +1,7 @@
 import re
 
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-
-
-def build_driver(headless=True):
-    """
-    Build a selenium driver for the desired browser with its parameters
-    """
-    # TODO Implement firefox, waiting for selenium 3.14.0 to fix timeout
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option("prefs",
-                                    {"safebrowsing.enabled": False})
-    if headless:
-        options.add_argument('headless')
-        options.add_argument('disable-gpu')
-
-    # Build Chrome driver
-    driver = webdriver.Chrome(chrome_options=options)
-    driver.set_page_load_timeout(90)
-
-    return driver
-
-
-def check_exists_by_xpath(driver, xpath):
-    """check if an element exists by its xpath"""
-    try:
-        driver.find_element_by_xpath(xpath)
-    except NoSuchElementException:
-        return False
-    return True
-
-
-def wait_by_id(driver, id, retries=20):
-    """
-    Wait for element to load by ID
-    """
-    try:
-        WebDriverWait(driver, retries).until(
-            EC.presence_of_element_located((By.ID, id)))
-    except Exception:
-        print(f"Unable to find element {id} in page")
-        return False
-    return True
-
-
-def iter_dom(driver, xpath):
-    """
-    Iterate over dom elements to avoid losing focus.
-    """
-    def get_next_element(elems, idx):
-        for i, element in enumerate(elems):
-            if i == idx:
-                return element
-
-    current_idx = 0
-    has_elements = True
-    while has_elements:
-        elements = driver.find_elements_by_xpath(xpath)
-        try:
-            elem = get_next_element(elements, current_idx)
-            if elem:
-                yield elem
-        except Exception as e:
-            elements = driver.find_elements_by_xpath(xpath)
-            elem = get_next_element(elements, current_idx)
-            if elem:
-                yield elem
-
-        if elem:
-            current_idx += 1
-        else:
-            has_elements = False
-
-
-def wait_by_xpath(driver, xpath, retries=20):
-    """
-    Wait for xpath element to load
-    """
-    try:
-        # element = WebDriverWait(driver, retries).until(
-        WebDriverWait(driver, retries).until(
-            EC.presence_of_element_located((By.XPATH, xpath)))
-    except Exception:
-        print(f"Unable to find element {xpath} in page")
+from bot.scrapper.selen_helper import build_driver, wait_by_xpath
 
 
 def build_coaster(driver, search):
@@ -115,16 +29,21 @@ def build_coaster(driver, search):
     coaster_infos['park_url'] = park_infos.get_attribute('href')
 
     # Opening status
-    coaster_infos['open'] = driver.find_element_by_xpath('//*[@id="feature"]/a').get_attribute('innerHTML').lower() == "ouvert"
-    coaster_infos['opening_date'] = re.findall('\d{1,2}\/\d{1,2}\/\d{4}', driver.find_element_by_xpath('//*[@id="feature"]').text)[0]
+    coaster_infos['open'] = driver.find_element_by_xpath(
+        '//*[@id="feature"]/a').get_attribute('innerHTML').lower() == "ouvert"
+    coaster_infos['opening_date'] = re.findall(
+        '\d{1,2}\/\d{1,2}\/\d{4}', driver.find_element_by_xpath(
+            '//*[@id="feature"]').text)[0]
 
     # Builder / Model
-    make_model = driver.find_element_by_xpath('//*[@id="feature"]/div[2]').find_elements_by_css_selector('a')
+    make_model = driver.find_element_by_xpath(
+        '//*[@id="feature"]/div[2]').find_elements_by_css_selector('a')
     maker = make_model[0]
     model = make_model[1:]
     coaster_infos['maker'] = maker.get_attribute('innerHTML')
     coaster_infos['maker_page'] = maker.get_attribute('href')
-    coaster_infos['model'] = ', '.join([i.get_attribute('innerHTML') for i in model])
+    coaster_infos['model'] = ', '.join(
+        [i.get_attribute('innerHTML') for i in model])
 
     # Tracks
     tracks = driver.find_elements_by_xpath(
@@ -142,13 +61,16 @@ def build_coaster(driver, search):
             coaster_infos[k] = v
 
     # Details
-    details = driver.find_elements_by_xpath('//*[@id="article"]/div/section[4]/table/tbody/tr')
+    details = driver.find_elements_by_xpath(
+        '//*[@id="article"]/div/section[4]/table/tbody/tr')
     for tr in details:
         k = tr.find_elements_by_css_selector('td')[0].get_attribute('innerHTML')
         v = tr.find_elements_by_css_selector('td')[1].get_attribute('innerHTML')
         if k.lower() == 'installer:':
-            coaster_infos['Installer'] = tr.find_element_by_css_selector('a').get_attribute('text')
-            coaster_infos['Installer_page'] = tr.find_element_by_css_selector('a').get_attribute('href')
+            coaster_infos['Installer'] = tr.find_element_by_css_selector(
+                'a').get_attribute('text')
+            coaster_infos['Installer_page'] = tr.find_element_by_css_selector(
+                'a').get_attribute('href')
         else:
             coaster_infos[k] = v
 

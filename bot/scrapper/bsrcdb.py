@@ -1,42 +1,43 @@
 import re
+import urllib3
 
 from bs4 import BeautifulSoup
 try:
     from bot.scrapper.selen_helper import build_driver, wait_by_xpath
 except ModuleNotFoundError:
     from selen_helper import build_driver, wait_by_xpath
+
+
+def build_coaster(search):
+    url = 'https://rcdb.com'
+    http = urllib3.PoolManager()
+    reponse = http.request('GET', f'{url}/qs.htm?qs={search}')
+    soup = BeautifulSoup(reponse.data, 'html.parser')
+
+    coaster_infos = {}
+
+
+    # Get 'feature' div
+    feature = soup.find('div', {'id': 'feature'})
+    scroll = feature.find('div', {'class': 'scroll'})
+    coaster_infos['name'] = scroll.find('h1').text  # Coaster name
+    coaster_infos['park'] = scroll.find('a').text
+    # Build Location
+    loc = []
+    for link in scroll.findAll('a')[1:]:
+        loc.append(link.text)
+    coaster_infos['location'] = ', '.join(loc)
+    # Get operating
+    opening_dates = feature.find_next('a').text
+
+    print(coaster_infos)
+    print(opening_dates)
     
 
-def build_coaster(driver, search):
-    url = f'https://rcdb.com/qs.htm?qs={search}'
-    coaster_infos = {}
-    driver.get(url)
-    wait_by_xpath(driver, '//*[@id="article"]/div/section[5]')  # Loading
 
-    # Name & location
-    main = driver.find_element_by_xpath(
-        '//*[@id="feature"]/div[1]'
-    )
-    # Coaster name
-    coaster_infos['name'] = main.find_element_by_css_selector('h1').get_attribute('innerHTML')
-    # Location
-    sln_location_list = main.find_elements_by_css_selector('a')[1:]
-    loc_list = []  # tmplist
-    for item in sln_location_list:
-        loc_list.append(item.get_attribute('innerHTML'))
-    coaster_infos['location'] = ', '.join(loc_list)
 
-    # Park infos
-    park_infos = driver.find_element_by_xpath('//*[@id="feature"]/div[1]/a[1]')
-    coaster_infos['park'] = park_infos.get_attribute('innerHTML')
-    coaster_infos['park_url'] = park_infos.get_attribute('href')
 
-    # Opening status
-    coaster_infos['open'] = driver.find_element_by_xpath(
-        '//*[@id="feature"]/a').get_attribute('innerHTML').lower() == "ouvert"
-    coaster_infos['opening_date'] = re.findall(
-        '\d{1,2}\/\d{1,2}\/\d{4}', driver.find_element_by_xpath(
-            '//*[@id="feature"]').text)[0]
+
 
     # Builder / Model
     make_model = driver.find_element_by_xpath(
@@ -81,6 +82,5 @@ def build_coaster(driver, search):
 
 
 if __name__ == '__main__':
-    driver = build_driver(headless=False)
     search = 'shambhala'
-    print(build_coaster(driver, search))
+    print(build_coaster(search))

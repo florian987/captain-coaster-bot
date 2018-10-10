@@ -40,6 +40,7 @@ class RollerCoasters:
             )
 
             embed = build_embed(
+                ctx,
                 title=coaster_infos.pop('name'),
                 colour='blue'
             )

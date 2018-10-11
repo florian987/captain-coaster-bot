@@ -81,7 +81,8 @@ class RollerCoasters:
                             elif type(v) == dict:
                                 embed.add_field(name=k, value=v['name'])
 
-                        await ctx.message.author.send(embed=embed)
+                        # await ctx.message.author.send(embed=embed)
+                        await ctx.send(embed=embed)
 
     @commands.command(name="rcdb", aliases=[])
     @commands.guild_only()

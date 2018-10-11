@@ -72,7 +72,8 @@ class RollerCoasters:
                         embed = await build_embed(
                             ctx,
                             title=coaster_infos.pop('name'),
-                            colour='blue'
+                            colour='blue',
+                            # url=cc + '/' + coaster_infos.pop('@id')
                         )
                         for k, v in coaster_infos.items():
                             if type(v) == int or type(v) == str and not k.startswith('@'):

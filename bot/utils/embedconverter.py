@@ -15,6 +15,7 @@ async def build_embed(ctx, **kwargs):
     descr = kwargs.pop('description', None)
     colour = kwargs.pop('colour', discord.Embed.Empty)
     img = kwargs.pop('img', None)
+    url = kwargs.pop('url', None)
     author_icon = kwargs.pop('author_icon', discord.Embed.Empty)
     author_name = kwargs.pop('author_name', None)
     author_url = kwargs.pop('author_url', discord.Embed.Empty)
@@ -28,6 +29,9 @@ async def build_embed(ctx, **kwargs):
 
     if descr:
         embed.description = descr
+
+    if url:
+        embed.url = url
 
     if colour:
         try:

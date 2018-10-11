@@ -29,12 +29,12 @@ bot:
 
 
 guild:
-    id: 267624335836053506
+    id: 499966076575285248
 
     channels:
         admins:            &ADMINS        365960823622991872
         news:                             462105315299819530
-        skins:             &SKINS         479584029537206272
+        skins:             &SKINS         500021178614808578
         team_setups:       &CUSTOM_SETS   464125961018015754
 
     categories:
@@ -43,8 +43,8 @@ guild:
     ignored: [*ADMINS]
 
     roles:
-        admin:             &ADMIN_ROLE    477360039422722059
-        pilotes:           &PILOTE_ROLE   409416496733880320
+        admin:             &ADMIN_ROLE    499979692456280074
+        pilotes:           &PILOTE_ROLE   499998283586863122
         moderator:         &MOD_ROLE      267629731250176001 # gardé pr l'exemple
 
 

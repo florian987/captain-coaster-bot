@@ -29,20 +29,20 @@ class RollerCoasters:
 
     @group(name='cc', aliases=['captaincoaster'], invoke_without_command=True)
     # @commands.guild_only()
-    async def cc_group(self, ctx: Context, *, search=None):
+    async def cc_group(self, ctx: Context, *, query=None):
         """
         Retrieve infos from Captain Coaster
         """
 
-        if search is None:
+        if query is None:
             await ctx.invoke(self.bot.get_command("help"), "cc")
         else:
-            await ctx.invoke(self.bot.get_command("cc_group cc_search"), search)
+            await ctx.invoke(self.bot.get_command("cc search"), search=query)
 
     @cc_group.command(name="list", aliases=[])
     # @commands.guild_only()
     async def cc_list(self, ctx):
-        """Get a coaster infos from Captain Coaster"""
+        """Get coasters list from Captain Coaster"""
         cc = 'https://captaincoaster.com'
         if self.is_online(cc):            
             json_paginator = commands.Paginator(prefix="```json", suffix="```")
@@ -50,9 +50,7 @@ class RollerCoasters:
                 headers = {'X-AUTH-TOKEN': f'{Keys.captaincoaster}'}
                 async with session.get(f'{cc}/api/coasters', headers=headers) as r:
                     json_body = await r.json()
-                    print(type(json_body['hydra:member']))
                     for coaster in json_body['hydra:member']:
-                        print(type(coaster))
                         json_paginator.add_line(json.dumps(coaster))
                     for page in json_paginator.pages:
                         await ctx.message.author.send(content=page)
@@ -65,7 +63,10 @@ class RollerCoasters:
         if self.is_online(cc):
             async with aiohttp.ClientSession() as session:
                 headers = {'X-AUTH-TOKEN': f'{Keys.captaincoaster}'}
-                async with session.get(f'{cc}/api/coasters?name={search}', headers=headers) as r:
+                async with session.get(
+                    f'{cc}/api/coasters?name={search}',
+                    headers=headers
+                ) as r:
                     json_body = await r.json()
                     for coaster_infos in json_body['hydra:member']:
                         embed = await build_embed(
@@ -78,8 +79,8 @@ class RollerCoasters:
                                 embed.add_field(name=k, value=v)
                             elif type(v) == dict:
                                 embed.add_field(name=k, value=v['name'])
-                        await ctx.message.author.send(embed=embed)
 
+                        await ctx.message.author.send(embed=embed)
 
     @commands.command(name="rcdb", aliases=[])
     @commands.guild_only()

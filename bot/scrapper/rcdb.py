@@ -81,6 +81,6 @@ def build_coaster(driver, search):
 
 
 if __name__ == '__main__':
-    driver = build_driver(headless=False)
+    driver = build_driver(headless=False, log_path='logs/chromedriver.log')
     search = 'shambhala'
     print(build_coaster(driver, search))

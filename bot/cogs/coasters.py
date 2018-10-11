@@ -37,7 +37,7 @@ class RollerCoasters:
         if search is None:
             await ctx.invoke(self.bot.get_command("help"), "cc")
         else:
-            await ctx.invoke(self.bot.get_command("cc_search"), ctx, "f'{search}'")
+            await ctx.invoke(self.bot.get_command("cc_group cc_search"), search)
 
     @cc_group.command(name="list", aliases=[])
     # @commands.guild_only()

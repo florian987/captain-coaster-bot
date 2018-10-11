@@ -2,7 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 try:
-    from bot.scrapper.selen_helper import build_driver, wait_by_xpath
+    from scrapper.selen_helper import build_driver, wait_by_xpath
 except ModuleNotFoundError:
     from selen_helper import build_driver, wait_by_xpath
     

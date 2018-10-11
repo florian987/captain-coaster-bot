@@ -4,7 +4,7 @@ import aiohttp
 import discord
 from discord.ext import commands
 
-import bot.scrapper.rcdb as rcdb
+import scrapper.rcdb as rcdb
 from bot.constants import Channels, Roles
 from bot.decorators import in_channel, with_role
 from bot.utils.embedconverter import build_embed

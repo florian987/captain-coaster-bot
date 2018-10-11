@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from PIL import Image
 
-import bot.scrapper.vrs as scrapper
+import scrapper.vrs as scrapper
 from bot.constants import Channels, Roles
 from bot.decorators import in_channel, with_role
 

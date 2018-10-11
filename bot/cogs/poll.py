@@ -23,8 +23,7 @@ class Poll:
     @commands.guild_only()
     async def poll(self, ctx: Context, *args: commands.clean_content):
         """
-        Start a poll.
-        Usage: /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
+        /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
         """
 
         # Delete original message

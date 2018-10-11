@@ -114,11 +114,12 @@ filter:
 
 
 keys:
-    deploy_bot:  !ENV "DEPLOY_BOT_KEY"
-    deploy_site: !ENV "DEPLOY_SITE"
-    omdb:        !ENV "OMDB_API_KEY"
-    site_api:    !ENV "BOT_API_KEY"
-    youtube:     !ENV ["YOUTUBE_API_KEY", "AIzaSyCP-v2ZdW13M0fVS01f4NofD185nQQOYCs"]
+    captaincoaster:         !ENV ["CAPTAIN_COASTER_KEY", "76c3ce74-5349-4cac-b334-166bf66f50fe"]
+    deploy_bot:             !ENV "DEPLOY_BOT_KEY"
+    deploy_site:            !ENV "DEPLOY_SITE"
+    omdb:                   !ENV "OMDB_API_KEY"
+    site_api:               !ENV "BOT_API_KEY"
+    youtube:                !ENV ["YOUTUBE_API_KEY", "AIzaSyCP-v2ZdW13M0fVS01f4NofD185nQQOYCs"]
 
 
 rabbitmq:

@@ -2,11 +2,12 @@ import logging
 
 import aiohttp
 import discord
+import json
 from discord.ext import commands
+from discord.ext.commands import Context, group
 
 import scrapper.rcdb as rcdb
-from bot.constants import Channels, Roles
-from bot.decorators import in_channel, with_role
+from bot.constants import Keys
 from bot.utils.embedconverter import build_embed
 
 
@@ -17,28 +18,82 @@ class RollerCoasters:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="rcdb", aliases=[])
+    async def is_online(self, site):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(site) as r:
+                if r.status != 503:
+                    return True
+                log.error(f'Requested website {site} is offline.')
+                return False
+
+
+    @group(name='cc', aliases=['captaincoaster'], invoke_without_command=True)
     # @commands.guild_only()
+    async def cc_group(self, ctx: Context, *, search=None):
+        """
+        Retrieve infos from Captain Coaster
+        """
+
+        if search is None:
+            await ctx.invoke(self.bot.get_command("help"), "cc")
+        else:
+            await ctx.invoke(self.bot.get_command("cc_search"), ctx, "f'{search}'")
+
+    @cc_group.command(name="list", aliases=[])
+    # @commands.guild_only()
+    async def cc_list(self, ctx):
+        """Get a coaster infos from Captain Coaster"""
+        cc = 'https://captaincoaster.com'
+        if self.is_online(cc):            
+            json_paginator = commands.Paginator(prefix="```json", suffix="```")
+            async with aiohttp.ClientSession() as session:
+                headers = {'X-AUTH-TOKEN': f'{Keys.captaincoaster}'}
+                async with session.get(f'{cc}/api/coasters', headers=headers) as r:
+                    json_body = await r.json()
+                    print(type(json_body['hydra:member']))
+                    for coaster in json_body['hydra:member']:
+                        print(type(coaster))
+                        json_paginator.add_line(json.dumps(coaster))
+                    for page in json_paginator.pages:
+                        await ctx.message.author.send(content=page)
+
+    @cc_group.command(name="search", aliases=['infos', 'getinfos', 'get_infos'])
+    # @commands.guild_only()
+    async def cc_search(self, ctx, *, search):
+        """Search coaster infos from Captain Coaster"""
+        cc = 'https://captaincoaster.com'
+        if self.is_online(cc):
+            async with aiohttp.ClientSession() as session:
+                headers = {'X-AUTH-TOKEN': f'{Keys.captaincoaster}'}
+                async with session.get(f'{cc}/api/coasters?name={search}', headers=headers) as r:
+                    json_body = await r.json()
+                    for coaster_infos in json_body['hydra:member']:
+                        embed = await build_embed(
+                            ctx,
+                            title=coaster_infos.pop('name'),
+                            colour='blue'
+                        )
+                        for k, v in coaster_infos.items():
+                            if type(v) == int or type(v) == str and not k.startswith('@'):
+                                embed.add_field(name=k, value=v)
+                            elif type(v) == dict:
+                                embed.add_field(name=k, value=v['name'])
+                        await ctx.message.author.send(embed=embed)
+
+
+    @commands.command(name="rcdb", aliases=[])
+    @commands.guild_only()
     # @with_role(Roles.pilotes)
     async def rcdb_infos(self, ctx, search):
-        """Retrieve infos from rcdb"""
-        # Check if RCDB is online
-        async def rcdb_online():
-            async with aiohttp.ClientSession() as session:
-                async with session.get('https://rcdb.com') as r:
-                    if r.status == 200:
-                        return True
-                    log.error("RCDB website offline, aborting.")
-                    return False
+        """Try to retrieve infos from rcdb (experimental)"""
 
-        if rcdb_online():
+        if self.is_online('https://rcdb.com'):
             # Create webdriver
             driver = rcdb.build_driver(
                 headless=True, log_path='logs/chromedriver.log')
             coaster_infos = await self.bot.loop.run_in_executor(
                 None, rcdb.build_coaster, driver, search
             )
-
             embed = await build_embed(
                 ctx,
                 title=coaster_infos.pop('name'),
@@ -49,11 +104,8 @@ class RollerCoasters:
                     embed.add_field(name=k, value=v)
                 elif type(v) is list:
                     embed.add_field(name=k, value=', '.join(v))
-
             await ctx.send(embed=embed)
-
         else:
-            """If rcdb offline"""
             embed = await discord.Embed(
                 title="RCDB Offline :(",
                 description="Va falloir attendre mon mignon",

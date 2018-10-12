@@ -23,17 +23,15 @@ class Simracing:
         """A helper method to extract tga files from zip."""
 
         tga_list = []
-        # dest = 'tmp'  # Extract destination
 
         zfile = zipfile.ZipFile(archive)
-        
         for file in zfile.namelist():
             if file.split('.')[1] == 'tga':
                 zfile.extract(file)
                 tga_list.append(file)
-
         zfile.close()
         os.unlink(archive)
+
         return tga_list
 
     @staticmethod
@@ -113,9 +111,7 @@ class Simracing:
     @commands.guild_only()
     @with_role(Roles.pilotes)
     async def setups(self, ctx):
-        """
-        Retrieve cars setups from VRS Website
-        """
+        """Retrieve cars setups from VRS Website"""
 
         vrs_url = 'https://virtualracingschool.appspot.com/#/DataPacks'
         setups_category_name = "Setups"
@@ -180,7 +176,7 @@ class Simracing:
             cars_list = await self.bot.loop.run_in_executor(
                 None, scrapper.build_datapacks_infos, driver, iracing_cars
             )
-            await ctx.send(content='Datapcks ended')
+            await ctx.send(content='Datapacks ended')
 
             # Change Bot Status
             await self.bot.change_presence(
@@ -191,8 +187,8 @@ class Simracing:
 
                 # Create serie channel name
                 serie_channel_name = car['serie'].replace(' ', '-').lower()
-                serie_channel = await ensure_channel_exists(serie_channel_name,
-                                                            setup_category)
+                serie_channel = await ensure_channel_exists(
+                    serie_channel_name, setup_category)
 
                 for datapack in car['datapacks']:
                     if datapack['files']:
@@ -222,14 +218,11 @@ class Simracing:
 
                                 # upload file if not exists
                                 if not await message_exists(
-                                    upload_channel,
-                                    filename_on_discord
-                                ):
+                                        upload_channel, filename_on_discord):
                                     upload_msg = (
-                                        await upload_channel
-                                        .send(content=filename_on_discord,
-                                            file=discord.File(file['path']))
-                                    )
+                                        await upload_channel.send(
+                                            content=filename_on_discord,
+                                            file=discord.File(file['path'])))
                                 else:
                                     upload_msg = (
                                         await upload_channel
@@ -247,21 +240,15 @@ class Simracing:
                         await serie_channel.send(content='', embed=embed)
 
         else:
-            """
-            If VRS Offline
-            """
-            title = "VRS Offline :("
-            text = "Va falloir attendre mon mignon"
-            colour = discord.Colour.red()
-
+            """If VRS Offline"""
             embed = discord.Embed(
-                title=title,
-                description=text,
-                colour=colour
+                title="VRS Offline :(",
+                description="Va falloir attendre mon mignon",
+                colour=discord.Colour.red()
             )
-            embed.set_author(icon_url=self.bot.user.avatar_url,
-                            name=str(self.bot.user.name)
-                            )
+            embed.set_author(
+                icon_url=self.bot.user.avatar_url, name=str(self.bot.user.name))
+
             await ctx.send(content='', embed=embed)
 
     @in_channel(Channels.skins)

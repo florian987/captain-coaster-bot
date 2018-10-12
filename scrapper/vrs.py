@@ -25,13 +25,14 @@ google_email = "adelargem@gmail.com"
 google_password = "AerhEHa3654G!gre"
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-download_dir = os.path.join(script_dir, "downloads")
+DL_DIR = os.path.join(script_dir, "downloads")
 log_dir = os.path.join(script_dir, "logs")
 gecko_log_path = os.path.join(log_dir, "geckodriver.log")
-
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+DL_DIR = os.path.join(ROOT_DIR, 'tmp')
 
 needed_dirs = [
-    download_dir,
+    DL_DIR,
     log_dir
 ]
 
@@ -52,7 +53,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
     if browser == "Chrome":
         options = webdriver.ChromeOptions()
         options.add_experimental_option("prefs", {
-            "download.default_directory": download_dir,
+            "download.default_directory": DL_DIR,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing.enabled": False
@@ -63,7 +64,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             # Not tested
             options.add_argument('disable-gpu')
 
-            # download_path = download_dir
+            download_path = DL_DIR
 
         # Build Chrome driver
         driver = webdriver.Chrome(chrome_options=options)
@@ -71,7 +72,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
         # Add devtools command to allow download
         driver.execute_cdp_cmd(
             'Page.setDownloadBehavior', 
-            {'behavior': 'allow', 'downloadPath': download_dir})
+            {'behavior': 'allow', 'downloadPath': DL_DIR})
 
     elif browser == "Firefox":  # Handle Firefox profile
 
@@ -81,8 +82,8 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             'browser.download.folderList', 2)  # custom location
         profile.set_preference(
             'browser.download.manager.showWhenStarting', False)
-        profile.set_preference('browser.download.dir', download_dir)
-        profile.set_preference('browser.download.downloadDir', download_dir)
+        profile.set_preference('browser.download.dir', DL_DIR)
+        profile.set_preference('browser.download.downloadDir', DL_DIR)
         profile.set_preference(
             'browser.helperApps.neverAsk.saveToDisk', 'application/zip')
         profile.set_preference(
@@ -289,7 +290,7 @@ def build_cars_list(driver):
         car['id'] = node_id
         car['url'] = site_url + node_id
         car['premium'] = car_premium
-        car['season_path'] = os.path.join(download_dir, car['season'])
+        car['season_path'] = os.path.join(DL_DIR, car['season'])
         car['serie_path'] = os.path.join(car['season_path'], car['serie'])
         car['car_path'] = os.path.join(car['serie_path'], car['name'])
 
@@ -464,7 +465,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                         file_extension = file['name'].split('.')[-1]
                         file["type"] = filetype.get(file_extension, "unknown")
                         filepath_temp = os.path.join(
-                            download_dir, file['name']
+                            DL_DIR, file['name']
                         )
                         file['path'] = os.path.join(
                             datapack_path, file['name']
@@ -524,7 +525,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
     # pickle.dump(cars_list, open(settings.history_file,'wb'))
 
-    with open(os.path.join(download_dir, 'data.json'), 'w') as tempfile:
+    with open(os.path.join(DL_DIR, 'data.json'), 'w') as tempfile:
         json.dump(cars_list, tempfile)
 
     driver.close()

@@ -1,3 +1,5 @@
+import os
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -10,9 +12,16 @@ def build_driver(headless=True, log_path=None):
     Build a selenium driver for the desired browser with its parameters
     """
     # TODO Implement firefox, waiting for selenium 3.14.0 to fix timeout
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    DL_DIR = os.path.join(ROOT_DIR, 'tmp')
+    
     options = webdriver.ChromeOptions()
-    options.add_experimental_option("prefs",
-                                    {"safebrowsing.enabled": False})
+    options.add_experimental_option("prefs", {
+        "download.default_directory": DL_DIR,
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "safebrowsing.enabled": False
+    })
     if headless:
         options.add_argument('headless')
         options.add_argument('disable-gpu')
@@ -20,6 +29,11 @@ def build_driver(headless=True, log_path=None):
 
     # Build Chrome driver
     driver = webdriver.Chrome(chrome_options=options, service_log_path=log_path)
+    # Add devtools command to allow download
+    driver.execute_cdp_cmd('Page.setDownloadBehavior', {
+        'behavior': 'allow',
+        'downloadPath': DL_DIR
+    })
     driver.set_page_load_timeout(90)
 
     return driver

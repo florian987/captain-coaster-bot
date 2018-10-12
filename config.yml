@@ -15,6 +15,7 @@ bot:
         message_limit: 10000
     
     cogs:
+        - coasters
         - owner
         - default
         - error_handler

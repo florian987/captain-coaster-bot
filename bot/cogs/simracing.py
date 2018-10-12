@@ -16,45 +16,36 @@ log = logging.getLogger(__name__)
 
 class Simracing:
     def __init__(self, bot):
-        self.bot = bot
 
-# TODO replace with a minlevel local check, create decorator
-#    async def __local_check(self, ctx):
-#        return discord.utils.find(
-#            lambda r: r.name == 'Les Pilotes', ctx.author.roles
-#        )
+        @staticmethod
+        def extract_tga(archive: discord.Attachment):
+            """A helper method to extract tga files from zip."""
 
-    @staticmethod
-    def extract_tga(archive: discord.Attachment):
-        """
-        A helper method to extract tga files from zip.
-        """
+            tga_list = []
+            dest = 'tmp'  # Extract destination
 
-        tga_list = []
-        dest = 'tmp'  # Extract destination
+            zfile = zipfile.ZipFile(archive)
+            for file in zfile.namelist():
+                if file.split('.')[1] == 'tga':
+                    zfile.extract(file, dest)
+                    tga_list.append(os.path.join(dest, file))
 
-        zfile = zipfile.ZipFile(archive)
-        for file in zfile.namelist():
-            if file.split('.')[1] == 'tga':
-                zfile.extract(file, dest)
-                tga_list.append(os.path.join(dest, file))
+            os.unlink(archive)
+            return tga_list
 
-        os.unlink(archive)
-        return tga_list
+        @staticmethod
+        def tga_to_png(tga_file: discord.File):
+            """
+            A helper method to convert tga files to png.
+            """
 
-    @staticmethod
-    def tga_to_png(tga_file: discord.File):
-        """
-        A helper method to convert tga files to png.
-        """
+            png_file = tga_file.replace('.tga', '.png')
+            # convert to png
+            img = Image.open(tga_file)
+            img.save(png_file)
+            os.unlink(tga_file)  # remove tga file
 
-        png_file = tga_file.replace('.tga', '.png')
-        # convert to png
-        img = Image.open(tga_file)
-        img.save(png_file)
-        os.unlink(tga_file)  # remove tga file
-
-        return png_file
+            return png_file
 
     # @staticmethod
     # async def upload_and_delete(msg: discord.Message, file_to_process):

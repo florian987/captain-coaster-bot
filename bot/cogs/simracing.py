@@ -16,36 +16,39 @@ log = logging.getLogger(__name__)
 
 class Simracing:
     def __init__(self, bot):
+        self.bot = bot
 
-        @staticmethod
-        def extract_tga(archive: discord.Attachment):
-            """A helper method to extract tga files from zip."""
+    @staticmethod
+    def extract_tga(archive: discord.Attachment):
+        """A helper method to extract tga files from zip."""
 
-            tga_list = []
-            dest = 'tmp'  # Extract destination
+        tga_list = []
+        # dest = 'tmp'  # Extract destination
 
-            zfile = zipfile.ZipFile(archive)
-            for file in zfile.namelist():
-                if file.split('.')[1] == 'tga':
-                    zfile.extract(file, dest)
-                    tga_list.append(os.path.join(dest, file))
+        zfile = zipfile.ZipFile(archive)
+        
+        for file in zfile.namelist():
+            if file.split('.')[1] == 'tga':
+                zfile.extract(file)
+                tga_list.append(file)
 
-            os.unlink(archive)
-            return tga_list
+        zfile.close()
+        os.unlink(archive)
+        return tga_list
 
-        @staticmethod
-        def tga_to_png(tga_file: discord.File):
-            """
-            A helper method to convert tga files to png.
-            """
+    @staticmethod
+    def tga_to_png(tga_file: discord.File):
+        """
+        A helper method to convert tga files to png.
+        """
 
-            png_file = tga_file.replace('.tga', '.png')
-            # convert to png
-            img = Image.open(tga_file)
-            img.save(png_file)
-            os.unlink(tga_file)  # remove tga file
+        png_file = tga_file.replace('.tga', '.png')
+        # convert to png
+        img = Image.open(tga_file)
+        img.save(png_file)
+        os.unlink(tga_file)  # remove tga file
 
-            return png_file
+        return png_file
 
     # @staticmethod
     # async def upload_and_delete(msg: discord.Message, file_to_process):
@@ -53,7 +56,7 @@ class Simracing:
     #     os.unlink(file_to_process)  # remove pngfile
 
     @commands.command(name="get_setup_channels",
-                      aliases=["setup_chans", 'get_setups_chans'])
+                    aliases=["setup_chans", 'get_setups_chans'])
     @commands.guild_only()
     @with_role(Roles.pilotes)
     async def get_channels(self, ctx):
@@ -209,7 +212,7 @@ class Simracing:
 
                             # Check file size limit before upload (8Mb)
                             if round(os.path.getsize(
-                                     file['path']) / 1024) < 8192:
+                                    file['path']) / 1024) < 8192:
 
                                 # Set the filename for upload channel
                                 filename_on_discord = (
@@ -225,7 +228,7 @@ class Simracing:
                                     upload_msg = (
                                         await upload_channel
                                         .send(content=filename_on_discord,
-                                              file=discord.File(file['path']))
+                                            file=discord.File(file['path']))
                                     )
                                 else:
                                     upload_msg = (
@@ -257,8 +260,8 @@ class Simracing:
                 colour=colour
             )
             embed.set_author(icon_url=self.bot.user.avatar_url,
-                             name=str(self.bot.user.name)
-                             )
+                            name=str(self.bot.user.name)
+                            )
             await ctx.send(content='', embed=embed)
 
     @in_channel(Channels.skins)
@@ -290,6 +293,7 @@ class Simracing:
                     # await upload_and_delete(msg, png_file)
                     await msg.channel.send(file=discord.File(png_file))
                     os.unlink(png_file)  # remove pngfile
+                    #os.unlink(attachment.filename)  # remove zipfile
                     log.info(f"Preview generated {png_file} "
                              f"- uploader: {msg.author}")
 

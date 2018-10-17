@@ -31,7 +31,9 @@ class RollerCoasters:
             'length': 'Longueur',
             'inversionsNumber': "Inversion",
             'manufacturer': 'Constructeur',
-            'status': 'Etat'
+            'status': 'Etat',
+            'park': "Parc",
+            'rank': "Classement"
         }
 
     async def is_online(self, site):
@@ -84,24 +86,23 @@ class RollerCoasters:
         if self.is_online(URLs.captain_coaster):
             json_body = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?name={search}')
             if json_body['hydra:totalItems'] == 1:
-                for coaster_infos in json_body['hydra:member']:
-                    coaster_infos.pop('id')
-                    embed = await build_embed(
-                        ctx,
-                        title=coaster_infos.pop('name'),
-                        colour='blue'
-                    )
-                    embed.set_thumbnail(url='https://captaincoaster.com/images/coasters/' + coaster_infos.pop('mainImage')['path'])
-                    for k, v in coaster_infos.items():
-                        # Fields mapping
-                        if k in self.mapping:
-                            k = self.mapping[k]
+                json_body['hydra:member'][0].pop('id')
+                embed = await build_embed(
+                    ctx,
+                    title=json_body['hydra:member'][0].pop('name'),
+                    colour='blue'
+                )
+                embed.set_thumbnail(url='https://captaincoaster.com/images/coasters/' + json_body['hydra:member'][0].pop('mainImage')['path'])
+                for k, v in json_body['hydra:member'][0].items():
+                    # Fields mapping
+                    if k in self.mapping:
+                        k = self.mapping[k]
 
-                        # Add fields to embed
-                        if type(v) == int or type(v) == str and not k.startswith('@'):
-                            embed.add_field(name=k, value=v)
-                        elif type(v) == dict:
-                            embed.add_field(name=k, value=v['name'])
+                    # Add fields to embed
+                    if type(v) == int or type(v) == str and not k.startswith('@'):
+                        embed.add_field(name=k, value=v)
+                    elif type(v) == dict:
+                        embed.add_field(name=k, value=v['name'])
 
                 await ctx.send(embed=embed)
 

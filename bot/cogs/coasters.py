@@ -17,6 +17,15 @@ log = logging.getLogger(__name__)
 class RollerCoasters:
     def __init__(self, bot):
         self.bot = bot
+        self.mapping = {
+            'materialType': 'Matériaux',
+            'speed': 'Vitesse',
+            'height': 'Hauteur',
+            'length': 'Longueur'
+            'inversionsNumber': "Nbre d'inversion",
+            'manufacturer': 'Constructeur',
+            'status': 'Etat'
+        }
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:
@@ -25,7 +34,6 @@ class RollerCoasters:
                     return True
                 log.error(f'Requested website {site} is offline.')
                 return False
-
 
     @group(name='cc', aliases=['captaincoaster'], invoke_without_command=True)
     # @commands.guild_only()
@@ -69,6 +77,7 @@ class RollerCoasters:
                 ) as r:
                     json_body = await r.json()
                     for coaster_infos in json_body['hydra:member']:
+                        coaster_infos.pop('id')
                         embed = await build_embed(
                             ctx,
                             title=coaster_infos.pop('name'),
@@ -76,6 +85,12 @@ class RollerCoasters:
                             # url=cc + '/' + coaster_infos.pop('@id')
                         )
                         for k, v in coaster_infos.items():
+                            # Fields mapping
+                            if k in self.mapping:
+                                k = self.mapping[k]
+
+                            #Add fields to embed
+                            
                             if type(v) == int or type(v) == str and not k.startswith('@'):
                                 embed.add_field(name=k, value=v)
                             elif type(v) == dict:

@@ -70,8 +70,7 @@ class Configs_Commands:
             await ctx.send('Invalid config command passed...')
             return
 
-        log.info(f"{ctx.author} changed {ctx.command.name} parameter to "
-                 f"{ctx.command.parameter}")
+        log.info(f"{ctx.author} changed {ctx.command.name} parameter")
 
     @set.command(name='username',
                  aliases=['nick', 'pseudo', 'nickname', 'name'])

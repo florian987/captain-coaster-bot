@@ -52,7 +52,7 @@ class RollerCoasters:
     async def cc_list(self, ctx):
         """Get coasters list from Captain Coaster"""
         cc = 'https://captaincoaster.com'
-        if self.is_online(cc):            
+        if self.is_online(cc):
             json_paginator = commands.Paginator(prefix="```json", suffix="```")
             async with aiohttp.ClientSession() as session:
                 headers = {'X-AUTH-TOKEN': f'{Keys.captaincoaster}'}
@@ -76,28 +76,49 @@ class RollerCoasters:
                     headers=headers
                 ) as r:
                     json_body = await r.json()
-                    for coaster_infos in json_body['hydra:member']:
-                        coaster_infos.pop('id')
-                        embed = await build_embed(
-                            ctx,
-                            title=coaster_infos.pop('name'),
-                            colour='blue',
-                            # url=cc + '/' + coaster_infos.pop('@id')
-                        )
-                        for k, v in coaster_infos.items():
-                            # Fields mapping
-                            if k in self.mapping:
-                                k = self.mapping[k]
+                    if len(json_body['hydra:member']) == 1:
+                        for coaster_infos in json_body['hydra:member']:
+                            coaster_infos.pop('id')
+                            embed = await build_embed(
+                                ctx,
+                                title=coaster_infos.pop('name'),
+                                colour='blue',
+                                # url=cc + '/' + coaster_infos.pop('@id')
+                            )
+                            for k, v in coaster_infos.items():
+                                # Fields mapping
+                                if k in self.mapping:
+                                    k = self.mapping[k]
 
-                            #Add fields to embed
-                            
-                            if type(v) == int or type(v) == str and not k.startswith('@'):
-                                embed.add_field(name=k, value=v)
-                            elif type(v) == dict:
-                                embed.add_field(name=k, value=v['name'])
+                                # Add fields to embed
+                                if type(v) == int or type(v) == str and not k.startswith('@'):
+                                    embed.add_field(name=k, value=v)
+                                elif type(v) == dict:
+                                    embed.add_field(name=k, value=v['name'])
 
-                        # await ctx.message.author.send(embed=embed)
-                        await ctx.send(embed=embed)
+                            # await ctx.message.author.send(embed=embed)
+                            message = await ctx.send(embed=embed)
+                    # elif len(json_body['hydra:member']) > 1:
+                    #     # Build emojis list
+                    #     used_emojis = []
+                    #     guild_emojis = [(e for e in self.bot.emojis if e.guild == ctx.guild and not e.managed)]
+                    #     allowed_emojis = guild_emojis + self.std_emojis
+# 
+                    #     embed = await build_embed(ctx, title="Tu parles de quel coaster ?", colour='gold')
+# 
+                    #     for coaster in json_body['hydra:member']:
+                    #         chosen_emoji = random.choice([e for e in allowed_emojis if e not in used_emojis])
+                    #         embed.add_field(
+                    #             name=f"{coaster['name']} ({coaster['park']})", value=chosen_emoji, inline=True)
+                    #         used_emojis.append(chosen_emoji)
+# 
+                    #     message = await ctx.send(embed=embed)
+# 
+                    #     def check(m):
+                    #         return m.author == ctx.message.author and m.channel == channel
+# 
+                    else:
+                        await ctx.send(content="Aucun coaster trouvé")
 
     @commands.command(name="rcdb", aliases=[])
     @commands.guild_only()

@@ -92,7 +92,10 @@ class RollerCoasters:
                     title=json_body['hydra:member'][0].pop('name'),
                     colour='blue'
                 )
-                embed.set_thumbnail(url='https://captaincoaster.com/images/coasters/' + json_body['hydra:member'][0].pop('mainImage')['path'])
+                
+                embed.set_thumbnail(
+                    url=f"{URLs.captain_coaster}/images/coasters/{json_body['hydra:member'][0].pop('mainImage')['path']}")
+
                 for k, v in json_body['hydra:member'][0].items():
                     # Fields mapping
                     if k in self.mapping:
@@ -139,7 +142,9 @@ class RollerCoasters:
                 except asyncio.TimeoutError:
                     await message.delete()
                 else:
-                    json_body = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?id={emojis_association[reaction.emoji]}')
+                    json_body = await self.json_infos(
+                        f'{URLs.captain_coaster}/api/coasters?id={emojis_association[reaction.emoji]}')
+
                     for coaster_infos in json_body['hydra:member']:
                         coaster_infos.pop('id')
                         embed = await build_embed(
@@ -151,7 +156,8 @@ class RollerCoasters:
                             author_url=ctx.author.avatar_url
                         )
 
-                        embed.set_thumbnail(url=f"{URLs.captain_coaster}/images/coasters/{coaster_infos.pop('mainImage')['path']}")
+                        embed.set_thumbnail(
+                            url=f"{URLs.captain_coaster}/images/coasters/{coaster_infos.pop('mainImage')['path']}")
 
                         for k, v in coaster_infos.items():
                             # Fields mapping

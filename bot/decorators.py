@@ -62,6 +62,15 @@ def in_channel(channel_id: int):
         return check
     return commands.check(predicate)
 
+def in_channel_or_dm(channel_id: int):
+    async def predicate(ctx: Context):
+        check = ctx.channel.id == channel_id or ctx.guild is None
+        log.debug(f"{ctx.author} tried to call the '{ctx.command.name}' "
+                  "command. "
+                  f"The result of the in_channel check was {check}")
+        return check
+    return commands.check(predicate)
+
 
 # PlaceHolder, need constants
 def locked():

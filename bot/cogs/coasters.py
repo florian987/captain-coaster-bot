@@ -14,7 +14,7 @@ from emoji import UNICODE_EMOJI
 import scrapper.rcdb as rcdb
 from bot.constants import Keys, URLs
 from bot.utils.embedconverter import build_embed
-from bot.decorators import in_channel
+from bot.decorators import in_channel, in_channel_or_dm
 
 
 log = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class RollerCoasters:
                 return await r.json()
 
     @group(name='cc', aliases=['captaincoaster'], invoke_without_command=True)
-    #@in_channel(473760830505091072)
+    @in_channel_or_dm(473760830505091072)
     async def cc_group(self, ctx: Context, *, query=None):
         """
         Retrieve infos from Captain Coaster
@@ -92,7 +92,7 @@ class RollerCoasters:
                     title=json_body['hydra:member'][0].pop('name'),
                     colour='blue'
                 )
-                
+
                 embed.set_thumbnail(
                     url=f"{URLs.captain_coaster}/images/coasters/{json_body['hydra:member'][0].pop('mainImage')['path']}")
 

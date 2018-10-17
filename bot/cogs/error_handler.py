@@ -49,7 +49,7 @@ class CommandErrorHandler:
         if hasattr(ctx.command, 'on_error'):
             return
 
-        ignored = (commands.CommandNotFound, commands.UserInputError)
+        ignored = (commands.CommandNotFound, commands.UserInputError, commands.CheckFailure)
 
         # Allows us to check for original exceptions raised
         # and sent to CommandInvokeError.

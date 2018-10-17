@@ -162,6 +162,7 @@ urls:
     status: !ENV "STATUS_URL"
 
     # Misc URLs
+    captain_coaster: "https://captaincoaster.com"
     bot_avatar:      "https://raw.githubusercontent.com/discord-python/branding/master/logos/logo_circle/logo_circle.png"
     gitlab_bot_repo: "https://gitlab.com/python-discord/projects/bot"
     omdb:            "http://omdbapi.com"

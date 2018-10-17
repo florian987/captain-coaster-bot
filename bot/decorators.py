@@ -56,7 +56,7 @@ def without_role(*role_ids: int):
 def in_channel(channel_id: int):
     async def predicate(ctx: Context):
         check = ctx.channel.id == channel_id
-        log.debug(f"{ctx.auhtor} tried to call the '{ctx.command.name}' "
+        log.debug(f"{ctx.author} tried to call the '{ctx.command.name}' "
                   "command. "
                   f"The result of the in_channel check was {check}")
         return check

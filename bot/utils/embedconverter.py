@@ -8,7 +8,7 @@ async def build_embed(ctx, **kwargs):
     https://cdn.discordapp.com/attachments/84319995256905728/252292324967710721/embed.png
 
     Examples:
-    build_embed(titre="Title", descr="Description")
+    build_embed(title="Title", descr="Description")
     """
 
     title = kwargs.pop('title', None)

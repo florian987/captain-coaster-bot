@@ -50,6 +50,32 @@ class RollerCoasters:
             async with session.get(url, headers=headers) as r:
                 return await r.json()
 
+    async def coaster_embed(self, ctx, coaster_json):
+        """
+        Helper method to build Coasters infos from CC json
+        """
+        coaster_json.pop('id')
+        embed = await build_embed(
+            ctx,
+            title=coaster_json.pop('name'),
+            colour='blue'
+        )
+        embed.set_thumbnail(
+            url=f"{URLs.captain_coaster}/images/coasters/{coaster_json.pop('mainImage')['path']}")
+        for k, v in coaster_json.items():
+            # Fields mapping
+            if k in self.mapping:
+                k = self.mapping[k]
+            # Add fields to embed
+            if type(v) == int or type(v) == str and not k.startswith('@'):
+                embed.add_field(name=k, value=v)
+            elif type(v) == dict:
+                embed.add_field(name=k, value=v['name'])
+        return embed
+
+
+
+
     @group(name='cc', aliases=['captaincoaster'], invoke_without_command=True)
     @in_channel_or_dm(473760830505091072)
     async def cc_group(self, ctx: Context, *, query=None):
@@ -86,27 +112,7 @@ class RollerCoasters:
         if self.is_online(URLs.captain_coaster):
             json_body = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?name={search}')
             if json_body['hydra:totalItems'] == 1:
-                json_body['hydra:member'][0].pop('id')
-                embed = await build_embed(
-                    ctx,
-                    title=json_body['hydra:member'][0].pop('name'),
-                    colour='blue'
-                )
-
-                embed.set_thumbnail(
-                    url=f"{URLs.captain_coaster}/images/coasters/{json_body['hydra:member'][0].pop('mainImage')['path']}")
-
-                for k, v in json_body['hydra:member'][0].items():
-                    # Fields mapping
-                    if k in self.mapping:
-                        k = self.mapping[k]
-
-                    # Add fields to embed
-                    if type(v) == int or type(v) == str and not k.startswith('@'):
-                        embed.add_field(name=k, value=v)
-                    elif type(v) == dict:
-                        embed.add_field(name=k, value=v['name'])
-
+                embed = await self.coaster_embed(ctx, json_body['hydra:member'][0])
                 await ctx.send(embed=embed)
 
             elif 1 < json_body['hydra:totalItems'] <= 20:
@@ -122,7 +128,7 @@ class RollerCoasters:
                     # Pick a random emoji and add choice to embed
                     chosen_emoji = random.choice([e for e in allowed_emojis if e not in emojis_association.keys()])
                     embed.add_field(
-                        name=f"{coaster['name']} ({coaster['id']})",
+                        name=f"{coaster['name']} ({coaster['park']['name']})",
                         value=chosen_emoji, inline=True)  # TODO replace id with park
 
                     emojis_association[chosen_emoji] = coaster['id']  # Add choice association to dict
@@ -144,32 +150,7 @@ class RollerCoasters:
                 else:
                     json_body = await self.json_infos(
                         f'{URLs.captain_coaster}/api/coasters?id={emojis_association[reaction.emoji]}')
-
-                    for coaster_infos in json_body['hydra:member']:
-                        coaster_infos.pop('id')
-                        embed = await build_embed(
-                            ctx,
-                            title=coaster_infos.pop('name'),
-                            colour='blue',
-                            author_name=ctx.author.name,
-                            author_icon=ctx.author.avatar_url,
-                            author_url=ctx.author.avatar_url
-                        )
-
-                        embed.set_thumbnail(
-                            url=f"{URLs.captain_coaster}/images/coasters/{coaster_infos.pop('mainImage')['path']}")
-
-                        for k, v in coaster_infos.items():
-                            # Fields mapping
-                            if k in self.mapping:
-                                k = self.mapping[k]
-
-                            # Add fields to embed
-                            if type(v) == int or type(v) == str and not k.startswith('@'):
-                                embed.add_field(name=k, value=v)
-                            elif type(v) == dict:
-                                embed.add_field(name=k, value=v['name'])
-
+                    embed = await self.coaster_embed(ctx, json_body['hydra:member'][0])
                     try:
                         await ctx.message.delete()
                     except:

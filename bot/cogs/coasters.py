@@ -9,9 +9,6 @@ from discord import errors
 from discord.ext import commands
 from discord.ext.commands import Context, group
 
-from emoji import UNICODE_EMOJI
-# http://unicode.org/Public/emoji/3.0/emoji-data.txt
-
 import scrapper.rcdb as rcdb
 from bot.utils.discord_emojis import emojis as dis_emojis
 from bot.constants import Keys, URLs
@@ -170,6 +167,20 @@ class RollerCoasters:
                 await ctx.send(content=f"Trop de résultats ({json_body['hydra:totalItems']}).")
             else:
                 await ctx.send(content="Aucun coaster trouvé.")
+
+    @cc_group.command(name="game", aliases=['play', 'jeu'])
+    async def cc_play(self, ctx):
+        """
+        Get a random image from CC and users should guess it
+        """
+        if self.is_online(URLs.captain_coaster):
+            images = []
+            datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
+            for image in datas["hydra:member"]:
+                # f"{URLs.captain_coaster}/images/coasters/{coaster_json.pop('mainImage')['path']}"
+                images.append(image)
+            
+
 
     @commands.command(name="rcdb", aliases=[])
     @commands.guild_only()

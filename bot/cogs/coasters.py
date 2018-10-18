@@ -5,6 +5,7 @@ import asyncio
 import discord
 import json
 import random
+from discord import errors
 from discord.ext import commands
 from discord.ext.commands import Context, group
 
@@ -12,9 +13,10 @@ from emoji import UNICODE_EMOJI
 # http://unicode.org/Public/emoji/3.0/emoji-data.txt
 
 import scrapper.rcdb as rcdb
+from bot.utils.discord_emojis import emojis as dis_emojis
 from bot.constants import Keys, URLs
 from bot.utils.embedconverter import build_embed
-from bot.decorators import in_channel, in_channel_or_dm
+from bot.decorators import in_channel_or_dm
 
 
 log = logging.getLogger(__name__)
@@ -23,13 +25,13 @@ log = logging.getLogger(__name__)
 class RollerCoasters:
     def __init__(self, bot):
         self.bot = bot
-        self.std_emojis = [e for e in UNICODE_EMOJI if len(e) == 1]
+        self.std_emojis = dis_emojis()
         self.mapping = {
             'materialType': 'Type',
             'speed': 'Vitesse',
             'height': 'Hauteur',
             'length': 'Longueur',
-            'inversionsNumber': "Inversion",
+            'inversionsNumber': "Inversions",
             'manufacturer': 'Constructeur',
             'status': 'Etat',
             'park': "Parc",
@@ -54,27 +56,28 @@ class RollerCoasters:
         """
         Helper method to build Coasters infos from CC json
         """
-        coaster_json.pop('id')
+        coaster_json.pop('id')  # Remove useless id info
+
         embed = await build_embed(
             ctx,
             title=coaster_json.pop('name'),
-            colour='blue'
+            colour='blue',
+            author_icon=ctx.author.avatar_url,
+            author_name=ctx.author.name
         )
-        embed.set_thumbnail(
-            url=f"{URLs.captain_coaster}/images/coasters/{coaster_json.pop('mainImage')['path']}")
-        for k, v in coaster_json.items():
-            # Fields mapping
+
+        if coaster_json['mainImage'] is not None:
+            embed.set_thumbnail(
+                url=f"{URLs.captain_coaster}/images/coasters/{coaster_json.pop('mainImage')['path']}")
+
+        for k, v in coaster_json.items():  # Fields mapping
             if k in self.mapping:
                 k = self.mapping[k]
-            # Add fields to embed
-            if type(v) == int or type(v) == str and not k.startswith('@'):
+            if type(v) == int or type(v) == str and not k.startswith('@'):  # Add fields to embed
                 embed.add_field(name=k, value=v)
             elif type(v) == dict:
                 embed.add_field(name=k, value=v['name'])
         return embed
-
-
-
 
     @group(name='cc', aliases=['captaincoaster'], invoke_without_command=True)
     @in_channel_or_dm(473760830505091072)
@@ -89,7 +92,6 @@ class RollerCoasters:
             await ctx.invoke(self.bot.get_command("cc search"), search=query)
 
     @cc_group.command(name="list", aliases=[])
-    # @commands.guild_only()
     async def cc_list(self, ctx):
         """
         Get coasters list from Captain Coaster
@@ -103,7 +105,6 @@ class RollerCoasters:
                 await ctx.message.author.send(content=page)
 
     @cc_group.command(name="search", aliases=['infos', 'getinfos', 'get_infos'])
-    # @commands.guild_only()
     async def cc_search(self, ctx, *, search):
         """
         Search coaster infos from Captain Coaster
@@ -113,6 +114,13 @@ class RollerCoasters:
             json_body = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?name={search}')
             if json_body['hydra:totalItems'] == 1:
                 embed = await self.coaster_embed(ctx, json_body['hydra:member'][0])
+                if ctx.guild is not None:
+                    try:
+                        await ctx.message.delete()
+                    except errors.Forbidden:
+                        print('-' * 12)
+                        print('JAIPALDROI')
+                        pass
                 await ctx.send(embed=embed)
 
             elif 1 < json_body['hydra:totalItems'] <= 20:
@@ -124,17 +132,13 @@ class RollerCoasters:
                 # Create selection embed
                 embed = await build_embed(ctx, title="Tu parles de quel coaster ?", colour='gold')
                 for coaster in json_body['hydra:member']:
-
-                    # Pick a random emoji and add choice to embed
+                    # Pick a random emoji and add choice to embed/dict
                     chosen_emoji = random.choice([e for e in allowed_emojis if e not in emojis_association.keys()])
                     embed.add_field(
                         name=f"{coaster['name']} ({coaster['park']['name']})",
-                        value=chosen_emoji, inline=True)  # TODO replace id with park
-
-                    emojis_association[chosen_emoji] = coaster['id']  # Add choice association to dict
-
-                # Send embed
-                message = await ctx.send(embed=embed)
+                        value=chosen_emoji, inline=True)
+                    emojis_association[chosen_emoji] = coaster['id']                
+                message = await ctx.send(embed=embed)  # Send embed
 
                 # Add reaction to embed
                 for emoji in emojis_association.keys():
@@ -151,16 +155,19 @@ class RollerCoasters:
                     json_body = await self.json_infos(
                         f'{URLs.captain_coaster}/api/coasters?id={emojis_association[reaction.emoji]}')
                     embed = await self.coaster_embed(ctx, json_body['hydra:member'][0])
-                    try:
-                        await ctx.message.delete()
-                    except:
-                        pass
+                    if ctx.guild is not None:
+                        try:
+                            await ctx.message.delete()
+                        except errors.Forbidden:
+                            print('-' * 12)
+                            print('JAIPALDROI')
+                            pass
 
                     await message.delete()
                     await ctx.send(embed=embed)
 
             elif json_body['hydra:totalItems'] > 20:
-                await ctx.send(content="Trop de résultats.")
+                await ctx.send(content=f"Trop de résultats ({json_body['hydra:totalItems']}).")
             else:
                 await ctx.send(content="Aucun coaster trouvé.")
 

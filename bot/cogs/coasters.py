@@ -111,9 +111,11 @@ class RollerCoasters:
         embed = ""
 
         if self.is_online(URLs.captain_coaster):
-            json_body = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?name={search}')
+            json_body = await self.json_infos(
+                f'{URLs.captain_coaster}/api/coasters?name={search}')
             if json_body['hydra:totalItems'] == 1:
-                embed = await self.coaster_embed(ctx, json_body['hydra:member'][0])
+                embed = await self.coaster_embed(
+                    ctx, json_body['hydra:member'][0])
                 if ctx.guild is not None:
                     try:
                         await ctx.message.delete()
@@ -130,14 +132,15 @@ class RollerCoasters:
                 allowed_emojis = guild_emojis + self.std_emojis
 
                 # Create selection embed
-                embed = await build_embed(ctx, title="Tu parles de quel coaster ?", colour='gold')
+                embed = await build_embed(
+                    ctx, title="Tu parles de quel coaster ?", colour='gold')
                 for coaster in json_body['hydra:member']:
                     # Pick a random emoji and add choice to embed/dict
                     chosen_emoji = random.choice([e for e in allowed_emojis if e not in emojis_association.keys()])
                     embed.add_field(
                         name=f"{coaster['name']} ({coaster['park']['name']})",
                         value=chosen_emoji, inline=True)
-                    emojis_association[chosen_emoji] = coaster['id']                
+                    emojis_association[chosen_emoji] = coaster['id']
                 message = await ctx.send(embed=embed)  # Send embed
 
                 # Add reaction to embed
@@ -148,13 +151,15 @@ class RollerCoasters:
                     return user == ctx.message.author and reaction.emoji in emojis_association.keys()
 
                 try:
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=10.0, check=sender_react)
+                    reaction, user = await self.bot.wait_for(
+                        'reaction_add', timeout=10.0, check=sender_react)
                 except asyncio.TimeoutError:
                     await message.delete()
                 else:
                     json_body = await self.json_infos(
                         f'{URLs.captain_coaster}/api/coasters?id={emojis_association[reaction.emoji]}')
-                    embed = await self.coaster_embed(ctx, json_body['hydra:member'][0])
+                    embed = await self.coaster_embed(
+                        ctx, json_body['hydra:member'][0])
                     if ctx.guild is not None:
                         try:
                             await ctx.message.delete()
@@ -167,10 +172,10 @@ class RollerCoasters:
                     await ctx.send(embed=embed)
 
             elif json_body['hydra:totalItems'] > 20:
-                await ctx.send(content=f"Trop de résultats ({json_body['hydra:totalItems']}).")
+                await ctx.send(
+                    content=f"Trop de résultats ({json_body['hydra:totalItems']}).")
             else:
                 await ctx.send(content="Aucun coaster trouvé.")
-            
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
     async def cc_play(self, ctx):
@@ -180,52 +185,107 @@ class RollerCoasters:
         if self.is_online(URLs.captain_coaster):
 
             # Build images list
-            images = []
             datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
-            random_page = random.randint(1, int(datas["hydra:view"]["hydra:last"].split('=')[1]))
-            datas = await self.json_infos(f'{URLs.captain_coaster}/api/images?page={random_page}')
-            
+            random_page = random.randint(
+                1, int(datas["hydra:view"]["hydra:last"].split('=')[1]))
+            datas = await self.json_infos(
+                f'{URLs.captain_coaster}/api/images?page={random_page}')
+
             # Pick random image
             chosen_image = random.choice(datas["hydra:member"])
-            coaster_infos = await self.json_infos(URLs.captain_coaster + chosen_image['coaster'])
+            coaster_infos = await self.json_infos(
+                URLs.captain_coaster + chosen_image['coaster'])
 
             # Send image to discord
             await ctx.send(embed=await build_embed(
                 ctx,
-                title="De quel coaster s'agit-il ?",
+                title="De quel coaster et quel parc s'agit-il ?",
                 colour='gold',
                 img=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}"
             ))
-            #await ctx.send(content=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}")
 
             # Set valid answers
-            valid_answers = [
+            coaster_answers = [
                 coaster_infos['name'].lower(),
                 coaster_infos['name'].replace(' ', '').lower()
             ]
 
-            def answer(m):
-                    return m.content.lower() in valid_answers
+            park_answers = [
+                coaster_infos['park']['name'].lower(),
+                coaster_infos['park']['name'].replace(' ', '').lower()
+            ]
+
+            def park_answers(m):
+                return m.content.lower() in park_answers
+
+            def coaster_answers(m):
+                return m.content.lower() in coaster_answers
 
             try:
-                msg = await self.bot.wait_for('message', timeout=300.0, check=answer)
+                msg = await self.bot.wait_for(
+                    'message', timeout=300.0, check=park_answers or coaster_answers)
+                
             except asyncio.TimeoutError:
-                #await ctx.send(content=random.choice(CC_TAUNT))
                 embed = await build_embed(
                     ctx,
                     colour='red',
                     title=random.choice(CC_TAUNT),
                     description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
+                await ctx.send(embed=embed)
             else:
-                embed = await build_embed(
-                    ctx,
-                    colour='green',
-                    title=f'Bravo {msg.author}!',
-                    description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
+                if m.content.lower() in coaster_answers:
+                    embed = await build_embed(
+                        ctx,
+                        colour='green',
+                        title=f'Bravo {msg.author}, tu as trouvé le nom du coaster!')
+                        #description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
+                    await ctx.send(embed=embed)
 
-            await ctx.send(embed=embed)
+                    try:
+                        msg2 = await self.bot.wait_for(
+                            'message', timeout=60.0, check=park_answers)
+                    except asyncio.TimeoutError:
+                        embed = await build_embed(
+                            ctx,
+                            colour='red',
+                            title=random.choice(CC_TAUNT),
+                            description=f"Ce coaster se situe à {coaster_infos['park']['name']}")
+                        await ctx.send(embed=embed)
+                    else:
+                        embed = await build_embed(
+                            ctx,
+                            colour='green',
+                            title=f'Bravo {msg.author}, tu as trouvé la localisation du coaster!')
+                        await ctx.send(embed=embed)
+                else:
+                    embed = await build_embed(
+                        ctx,
+                        colour='green',
+                        title=f'Bravo {msg.author}, tu as trouvé le Parc! Saurez vous trouver son nom ?')
+                        #description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
+                    await ctx.send(embed=embed)
 
-            
+                    try:
+                        msg2 = await self.bot.wait_for(
+                            'message', timeout=60.0, check=coaster_answers)
+                    except asyncio.TimeoutError:
+                        embed = await build_embed(
+                            ctx,
+                            colour='red',
+                            title=random.choice(CC_TAUNT),
+                            description=f"Il s'agissait de {coaster_infos['name']}")
+                        await ctx.send(embed=embed)
+                    else:
+                        embed = await build_embed(
+                            ctx,
+                            colour='green',
+                            title=f'Bravo {msg.author}!')
+                        await ctx.send(embed=embed)
+
+
+            #await ctx.send(embed=embed)
+
+
 
 
     @commands.command(name="rcdb", aliases=[])

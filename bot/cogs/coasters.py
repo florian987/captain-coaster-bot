@@ -214,7 +214,7 @@ class RollerCoasters:
             except asyncio.TimeoutError:
                 content = random.choice(CC_TAUNT)
             else:
-                embed = build_embed(
+                embed = await build_embed(
                     ctx,
                     color='green',
                     title=f'Bravo {msg.author}!',

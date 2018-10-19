@@ -121,7 +121,7 @@ class RollerCoasters:
                         print('-' * 12)
                         print('JAIPALDROI')
                         pass
-                #await ctx.send(embed=embed)
+                await ctx.send(embed=embed)
 
             elif 1 < json_body['hydra:totalItems'] <= 20:
                 emojis_association = {}
@@ -164,16 +164,13 @@ class RollerCoasters:
                             pass
 
                     await message.delete()
-                    #await ctx.send(embed=embed)
+                    await ctx.send(embed=embed)
 
             elif json_body['hydra:totalItems'] > 20:
-                #await ctx.send(content=f"Trop de résultats ({json_body['hydra:totalItems']}).")
-               content=f"Trop de résultats ({json_body['hydra:totalItems']})."
+                await ctx.send(content=f"Trop de résultats ({json_body['hydra:totalItems']}).")
             else:
-                #await ctx.send(content="Aucun coaster trouvé.")
-                content="Aucun coaster trouvé."
+                await ctx.send(content="Aucun coaster trouvé.")
             
-            await ctx.send(embed=embed, content=content)
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
     async def cc_play(self, ctx):
@@ -181,8 +178,6 @@ class RollerCoasters:
         Get a random image from CC and users should guess it
         """
         if self.is_online(URLs.captain_coaster):
-            content = ""
-            embed = ""
 
             # Build images list
             images = []
@@ -212,7 +207,7 @@ class RollerCoasters:
             try:
                 msg = await self.bot.wait_for('message', timeout=15.0, check=answer)
             except asyncio.TimeoutError:
-                content = random.choice(CC_TAUNT)
+                await ctx.send(content=random.choice(CC_TAUNT))
             else:
                 embed = await build_embed(
                     ctx,
@@ -220,7 +215,7 @@ class RollerCoasters:
                     title=f'Bravo {msg.author}!',
                     description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
 
-            await ctx.send(embed=embed, content=content)
+                await ctx.send(embed=embed)
 
             
 

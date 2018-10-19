@@ -181,16 +181,12 @@ class RollerCoasters:
 
             # Build images list
             images = []
-            page = 1
             datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
-            while page < int(datas["hydra:view"]["hydra:last"].split('=')[1]):
-                datas = await self.json_infos(f'{URLs.captain_coaster}/api/images?page={page}')
-                for image in datas["hydra:member"]:
-                    images.append(image)
-                page += 1
+            random_page = random.randint(1, int(datas["hydra:view"]["hydra:last"].split('=')[1]))
+            datas = await self.json_infos(f'{URLs.captain_coaster}/api/images?page={random_page}')
             
             # Pick random image
-            chosen_image = random.choice(images)
+            chosen_image = random.choice(datas["hydra:member"])
             coaster_infos = await self.json_infos(f"{URLs.captain_coaster}{chosen_image['coaster']}")
 
             # Send image to discord

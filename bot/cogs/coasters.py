@@ -190,7 +190,6 @@ class RollerCoasters:
             datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
             while page < datas["hydra:view"]["hydra:last"].split('=')[1]:
                 for image in datas["hydra:member"]:
-                    # f"{URLs.captain_coaster}/images/coasters/{coaster_json.pop('mainImage')['path']}"
                     images.append(image)
                 page += 1
             
@@ -217,7 +216,7 @@ class RollerCoasters:
             else:
                 embed = build_embed(
                     ctx,
-                    color='green'
+                    color='green',
                     title=f'Bravo {msg.author}!',
                     descr=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
 

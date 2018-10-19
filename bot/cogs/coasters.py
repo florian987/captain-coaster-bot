@@ -208,7 +208,13 @@ class RollerCoasters:
             try:
                 msg = await self.bot.wait_for('message', timeout=15.0, check=answer)
             except asyncio.TimeoutError:
-                await ctx.send(content=random.choice(CC_TAUNT))
+                #await ctx.send(content=random.choice(CC_TAUNT))
+                embed = await build_embed(
+                    ctx,
+                    colour='red',
+                    title=f'Losers!',
+                    description=random.choice(CC_TAUNT),
+                    Réponse=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
             else:
                 embed = await build_embed(
                     ctx,
@@ -216,7 +222,7 @@ class RollerCoasters:
                     title=f'Bravo {msg.author}!',
                     description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
 
-                await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
             
 

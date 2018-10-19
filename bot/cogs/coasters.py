@@ -216,9 +216,9 @@ class RollerCoasters:
             else:
                 embed = await build_embed(
                     ctx,
-                    color='green',
+                    colour='green',
                     title=f'Bravo {msg.author}!',
-                    descr=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
+                    description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
 
             await ctx.send(embed=embed, content=content)
 

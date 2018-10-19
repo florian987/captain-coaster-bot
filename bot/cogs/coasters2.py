@@ -225,7 +225,7 @@ class RollerCoasters:
             while valid_park_answers or valid_coaster_answers:
                 try:
                     msg = await self.bot.wait_for(
-                        'message', timeout=300.0, check=both_answers)
+                        'message', timeout=120.0, check=both_answers)
 
                 except asyncio.TimeoutError:
                     embed = await build_embed(

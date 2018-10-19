@@ -221,64 +221,37 @@ class RollerCoasters:
             def coaster_answers(m):
                 return m.content.lower() in valid_coaster_answers
 
-            try:
-                msg = await self.bot.wait_for(
-                    'message', timeout=300.0, check=both_answers)
+            while valid_park_answers and valid_coaster_answers:
+                try:
+                    msg = await self.bot.wait_for(
+                        'message', timeout=300.0, check=both_answers)
 
-            except asyncio.TimeoutError:
-                embed = await build_embed(
-                    ctx,
-                    colour='red',
-                    title=random.choice(CC_TAUNT),
-                    description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
-                await ctx.send(embed=embed)
-            else:
-                if coaster_answers(msg):
+                except asyncio.TimeoutError:
                     embed = await build_embed(
                         ctx,
-                        colour='green',
-                        title=f'Bravo {msg.author}, tu as trouvé le nom du coaster! Saurez vous trouver sa localisation ?')
+                        colour='red',
+                        title=random.choice(CC_TAUNT),
+                        description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
                     await ctx.send(embed=embed)
-
-                    try:
-                        msg2 = await self.bot.wait_for(
-                            'message', timeout=60.0, check=park_answers)
-                    except asyncio.TimeoutError:
-                        embed = await build_embed(
-                            ctx,
-                            colour='red',
-                            title=random.choice(CC_TAUNT),
-                            description=f"Ce coaster se situe à {coaster_infos['park']['name']}")
-                        await ctx.send(embed=embed)
-                    else:
-                        embed = await build_embed(
-                            ctx,
-                            colour='green',
-                            title=f'Bravo {msg.author}, tu as trouvé la localisation du coaster!')
-                        await ctx.send(embed=embed)
+                    break
+                    
                 else:
-                    embed = await build_embed(
-                        ctx,
-                        colour='green',
-                        title=f'Bravo {msg.author}, tu as trouvé le Parc! Saurez vous trouver son nom ?')
-                    await ctx.send(embed=embed)
-
-                    try:
-                        msg2 = await self.bot.wait_for(
-                            'message', timeout=60.0, check=coaster_answers)
-                    except asyncio.TimeoutError:
-                        embed = await build_embed(
-                            ctx,
-                            colour='red',
-                            title=random.choice(CC_TAUNT),
-                            description=f"Il s'agissait de {coaster_infos['name']}")
-                        await ctx.send(embed=embed)
+                    if coaster_answers(msg):                        
+                        titre = f'Bravo {msg.author}, tu as trouvé le nom du coaster!"
+                        if not valid_park_answers:
+                            titre += " Saurez vous trouver sa localisation ?'
+                        
                     else:
-                        embed = await build_embed(
-                            ctx,
-                            colour='green',
-                            title=f'Bravo {msg.author}!')
-                        await ctx.send(embed=embed)
+                        titre = f'Bravo {msg.author}, tu as trouvé le Parc!'
+                        if not valid_park_answers:
+                            titre += " Saurez vous trouver son nom ?'
+
+                    embed = await build_embed(ctx, colour='green', title=titre)
+
+                    await ctx.send(embed=embed)
+                    valid_park_answers = []
+
+            # Bravo de fin
 
 
             #await ctx.send(embed=embed)

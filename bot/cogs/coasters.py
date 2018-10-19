@@ -216,7 +216,8 @@ class RollerCoasters:
 
                 valid_park_answers = [
                     coaster_infos['park']['name'].lower(),
-                    coaster_infos['park']['name'].replace(' ', '').lower()
+                    coaster_infos['park']['name'].replace(' ', '').lower(),
+                    coaster_infos['park']['name'].replace(' ', '').replace("'","").lower(),
                 ]
 
                 def both_answers(m):

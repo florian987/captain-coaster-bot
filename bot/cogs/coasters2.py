@@ -180,6 +180,7 @@ class RollerCoasters:
         Get a random image from CC and users should guess it
         """
         if self.is_online(URLs.captain_coaster):
+            await ctx.message.delete()
 
             # Build images list
             datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
@@ -240,13 +241,13 @@ class RollerCoasters:
                         valid_coaster_answers = []
                         titre = f'Bravo {msg.author}, tu as trouvé le nom du coaster!"
                         if not valid_park_answers:
-                            titre += " Saurez vous trouver sa localisation ?'
+                            titre += "\nSaurez vous trouver sa localisation ?'
 
                     else:
                         valid_park_answers = []
                         titre = f'Bravo {msg.author}, tu as trouvé le Parc!'
                         if not valid_park_answers:
-                            titre += " Saurez vous trouver son nom ?'
+                            titre += "\nSaurez vous trouver son nom ?'
 
                     embed = await build_embed(ctx, colour='green', title=titre)
 

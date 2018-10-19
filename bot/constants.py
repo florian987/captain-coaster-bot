@@ -350,5 +350,24 @@ CC_TAUNT = [
     "On est chez les disney fans ici ?",
     "J'en ai marre des lambdas ...",
     "Vous voulez pas visiter autre chose que le parc Spirou ?",
-    "Faut sortir un peu les nerds ..."
+    "Faut sortir un peu les nerds ...",
+    "Vous avez laissé quelque neurones sur Goudurix ?",
+    "La culture ici c'est un peu comme Mirapolis ... une légende.",
+    "Si c'est bleu c'est Mack ?' Bah voyons...",
+    "Eh ben, c'est plus calme qu'un 15 Août au Parc Spirou, par ici..."
+    "Ça se dit coasterfan, et ça reconnait pas un coaster chinois pourri ? Non mais allô, quoi...",
+    "Personne ? Vous êtes moins fiables que Lightning Rod, en fait...",
+    "Et c'est le point qui s'envole, comme le technicien d'Hyperion...",
+    "Oui, c'est pas un coaster facile à reconnaître. Tu t'es cru sur Ameworld, là, ou quoi ?",
+    "Aussi efficaces que les opérateurs de Port Aventura... Non mais sérieux...",
+    "AIRRR TIME'S UPPP. Désolé, j'ai oublié de prendre mes cachets.",
+    "Hello les riders, c'est Angie et Barbara Gourde ! Voici la bonne réponse :",
+    "Vous devriez avoir honte, enfiler un caleçon rouge et tourner des vidéos sur votre lit en guise de châtiment",
+    "En même temps, avec tes 41 coasters, avoue que t'étais mal barré...",
+    "Comme CanCanCoaster, vous faites les beaux de l'extérieur, mais quand il s'agit de passer aux choses sérieuses, il n'y a plus grand-chose...",
+    "Vous avez la gueule de bois, ou quoi ? Rassurez-moi, on est pas sur Bieres'n'Parks...?",
+    "Dites-vous que pour chaque coaster pourri non trouvé, un petit lutin de l'équipe a sacrifié 5 minutes de sa vie à le rentrer manuellement dans la base...",
+    "Bon, si vous continuez sur cette lignée, on va finir plus rouillés que le lift de The Monster... ON SE REVEILLE !",
+    "Le bon parc était Quanching... Xuixing... Quiching... Oh, et puis merde, de toute façon, les chinois c'est tous les mêmes.",
+    "A chaque coaster non trouvé, un chaton meurt dans le monde. Ou le parking de Disney augmente de 5€. Au choix."
 ]

@@ -349,5 +349,5 @@ ERROR_REPLIES = [
 CC_TAUNT = [
     "On est chez les disney fans ici ?",
     "J'en ai marre des lambdas ...",
-    "Vous voulez pas visiter autre chose quele parc Spirou ?"
+    "Vous voulez pas visiter autre chose que le parc Spirou ?"
 ]

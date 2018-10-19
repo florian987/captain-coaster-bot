@@ -234,14 +234,14 @@ class RollerCoasters:
                         description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
                     await ctx.send(embed=embed)
                     break
-                    
+
                 else:
-                    if coaster_answers(msg):   
-                        valid_coaster_answers = []                     
+                    if coaster_answers(msg):
+                        valid_coaster_answers = []
                         titre = f'Bravo {msg.author}, tu as trouvé le nom du coaster!"
                         if not valid_park_answers:
                             titre += " Saurez vous trouver sa localisation ?'
-                        
+
                     else:
                         valid_park_answers = []
                         titre = f'Bravo {msg.author}, tu as trouvé le Parc!'

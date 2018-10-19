@@ -205,21 +205,21 @@ class RollerCoasters:
             ))
 
             # Set valid answers
-            coaster_answers = [
+            valid_coaster_answers = [
                 coaster_infos['name'].lower(),
                 coaster_infos['name'].replace(' ', '').lower()
             ]
 
-            park_answers = [
+            valid_park_answers = [
                 coaster_infos['park']['name'].lower(),
                 coaster_infos['park']['name'].replace(' ', '').lower()
             ]
 
             def park_answers(m):
-                return m.content.lower() in park_answers
+                return m.content.lower() in valid_park_answers
 
             def coaster_answers(m):
-                return m.content.lower() in coaster_answers
+                return m.content.lower() in valid_coaster_answers
 
             try:
                 msg = await self.bot.wait_for(

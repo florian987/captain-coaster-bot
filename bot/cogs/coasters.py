@@ -23,6 +23,7 @@ class RollerCoasters:
     def __init__(self, bot):
         self.bot = bot
         self.std_emojis = dis_emojis()
+        self.game_in_progress = False
         self.mapping = {
             'materialType': 'Type',
             'speed': 'Vitesse',
@@ -179,109 +180,89 @@ class RollerCoasters:
         """
         Get a random image from CC and users should guess it
         """
+
         if self.is_online(URLs.captain_coaster):
-
-            # Build images list
-            datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
-            random_page = random.randint(
-                1, int(datas["hydra:view"]["hydra:last"].split('=')[1]))
-            datas = await self.json_infos(
-                f'{URLs.captain_coaster}/api/images?page={random_page}')
-
-            # Pick random image
-            chosen_image = random.choice(datas["hydra:member"])
-            coaster_infos = await self.json_infos(
-                URLs.captain_coaster + chosen_image['coaster'])
-
-            # Send image to discord
-            await ctx.send(embed=await build_embed(
-                ctx,
-                title="De quel coaster et quel parc s'agit-il ?",
-                colour='gold',
-                img=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}"
-            ))
-
-            # Set valid answers
-            valid_coaster_answers = [
-                coaster_infos['name'].lower(),
-                coaster_infos['name'].replace(' ', '').lower()
-            ]
-
-            valid_park_answers = [
-                coaster_infos['park']['name'].lower(),
-                coaster_infos['park']['name'].replace(' ', '').lower()
-            ]
-
-            def both_answers(m):
-                return m.content.lower() in valid_park_answers or m.content.lower() in valid_coaster_answers
-
-            def park_answers(m):
-                return m.content.lower() in valid_park_answers
-
-            def coaster_answers(m):
-                return m.content.lower() in valid_coaster_answers
-
-            try:
-                msg = await self.bot.wait_for(
-                    'message', timeout=120.0, check=both_answers)
-
-            except asyncio.TimeoutError:
-                embed = await build_embed(
-                    ctx,
-                    colour='red',
-                    title=random.choice(CC_TAUNT),
-                    description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
-                await ctx.send(embed=embed)
+            await ctx.message.delete()
+            if self.game_in_progress:
+                await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
             else:
-                if coaster_answers(msg):
-                    embed = await build_embed(
-                        ctx,
-                        colour='green',
-                        title=f'Bravo {msg.author}, tu as trouvé le nom du coaster! Saurez vous trouver sa localisation ?')
-                    await ctx.send(embed=embed)
+                self.game_in_progress = True
 
+                # Build images list
+                datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
+                random_page = random.randint(
+                    1, int(datas["hydra:view"]["hydra:last"].split('=')[1]))
+                datas = await self.json_infos(
+                    f'{URLs.captain_coaster}/api/images?page={random_page}')
+
+                # Pick random image
+                chosen_image = random.choice(datas["hydra:member"])
+                coaster_infos = await self.json_infos(
+                    URLs.captain_coaster + chosen_image['coaster'])
+
+                # Send image to discord
+                await ctx.send(embed=await build_embed(
+                    ctx,
+                    title="De quel coaster et quel parc s'agit-il ?",
+                    colour='gold',
+                    img=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}"
+                ))
+
+                # Set valid answers
+                valid_coaster_answers = [
+                    coaster_infos['name'].lower(),
+                    coaster_infos['name'].replace(' ', '').lower()
+                ]
+
+                valid_park_answers = [
+                    coaster_infos['park']['name'].lower(),
+                    coaster_infos['park']['name'].replace(' ', '').lower()
+                ]
+
+                def both_answers(m):
+                    return m.content.lower() in valid_park_answers or m.content.lower() in valid_coaster_answers
+
+                def park_answers(m):
+                    return m.content.lower() in valid_park_answers
+
+                def coaster_answers(m):
+                    return m.content.lower() in valid_coaster_answers
+
+                while valid_park_answers or valid_coaster_answers:
                     try:
-                        msg2 = await self.bot.wait_for(
-                            'message', timeout=60.0, check=park_answers)
+                        msg = await self.bot.wait_for(
+                            'message', timeout=120.0, check=both_answers)
+
                     except asyncio.TimeoutError:
                         embed = await build_embed(
                             ctx,
                             colour='red',
                             title=random.choice(CC_TAUNT),
-                            description=f"Ce coaster se situe à {coaster_infos['park']['name']}")
+                            description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
                         await ctx.send(embed=embed)
+                        break
+
                     else:
-                        embed = await build_embed(
-                            ctx,
-                            colour='green',
-                            title=f'Bravo {msg.author}, tu as trouvé la localisation du coaster!')
-                        await ctx.send(embed=embed)
-                else:
-                    embed = await build_embed(
-                        ctx,
-                        colour='green',
-                        title=f'Bravo {msg.author}, tu as trouvé le Parc! Saurez vous trouver son nom ?')
-                    await ctx.send(embed=embed)
+                        if coaster_answers(msg):
+                            valid_coaster_answers = []
+                            titre = f"Bravo {msg.author}, tu as trouvé le coaster! ({coaster_infos['name']})"
+                            if valid_park_answers:
+                                titre += "\nSaurez vous trouver son Parc ?"
 
-                    try:
-                        msg2 = await self.bot.wait_for(
-                            'message', timeout=60.0, check=coaster_answers)
-                    except asyncio.TimeoutError:
-                        embed = await build_embed(
-                            ctx,
-                            colour='red',
-                            title=random.choice(CC_TAUNT),
-                            description=f"Il s'agissait de {coaster_infos['name']}")
+                        else:
+                            valid_park_answers = []
+                            titre = f"Bravo {msg.author}, tu as trouvé le Parc! ({coaster_infos['park']['name']})"
+                            if valid_coaster_answers:
+                                titre += "\nSaurez vous trouver le coaster ?"
+
+                        embed = await build_embed(ctx, colour='green', title=titre)
+
                         await ctx.send(embed=embed)
-                    else:
-                        embed = await build_embed(
-                            ctx,
-                            colour='green',
-                            title=f'Bravo {msg.author}!')
-                        await ctx.send(embed=embed)
+                self.game_in_progress = False
+                # await ctx.send(embed=buil)
 
 
-            #await ctx.send(embed=embed)
+                #await ctx.send(embed=embed)
 
 
 

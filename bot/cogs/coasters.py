@@ -184,6 +184,7 @@ class RollerCoasters:
             page = 1
             datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
             while page < int(datas["hydra:view"]["hydra:last"].split('=')[1]):
+                datas = await self.json_infos(f'{URLs.captain_coaster}/api/images?page={page}')
                 for image in datas["hydra:member"]:
                     images.append(image)
                 page += 1

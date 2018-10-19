@@ -184,7 +184,10 @@ class RollerCoasters:
         if self.is_online(URLs.captain_coaster):
             await ctx.message.delete()
             if self.game_in_progress:
-                await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
+                try:
+                    await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
+                except errors.Forbidden:
+                    pass
             else:
                 self.game_in_progress = True
 

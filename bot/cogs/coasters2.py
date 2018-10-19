@@ -221,7 +221,7 @@ class RollerCoasters:
             def coaster_answers(m):
                 return m.content.lower() in valid_coaster_answers
 
-            while valid_park_answers and valid_coaster_answers:
+            while valid_park_answers or valid_coaster_answers:
                 try:
                     msg = await self.bot.wait_for(
                         'message', timeout=300.0, check=both_answers)

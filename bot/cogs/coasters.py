@@ -212,6 +212,9 @@ class RollerCoasters:
                 coaster_infos['park']['name'].replace(' ', '').lower()
             ]
 
+            def both_answers(m):
+                return m.content.lower() in valid_park_answers or m.content.lower() in valid_coaster_answers
+
             def park_answers(m):
                 return m.content.lower() in valid_park_answers
 
@@ -220,7 +223,7 @@ class RollerCoasters:
 
             try:
                 msg = await self.bot.wait_for(
-                    'message', timeout=300.0, check=park_answers or coaster_answers)
+                    'message', timeout=300.0, check=both_answers)
 
             except asyncio.TimeoutError:
                 embed = await build_embed(
@@ -314,9 +317,8 @@ class RollerCoasters:
                 description="Va falloir attendre mon mignon",
                 colour=discord.Colour.red()
             )
-            embed.set_author(icon_url=self.bot.user.avatar_url,
-                             name=str(self.bot.user.name)
-                             )
+            embed.set_author(
+                icon_url=self.bot.user.avatar_url, name=str(self.bot.user.name))
             await ctx.send(content='', embed=embed)
 
 

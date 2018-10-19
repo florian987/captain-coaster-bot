@@ -198,6 +198,9 @@ class RollerCoasters:
             chosen_image = random.choice(images)
             coaster_infos = await self.json_infos(f"{URLs.captain_coaster}{chosen_image['coaster']}")
 
+            # Send image to discord
+            await ctx.send(content=f"{URLs.captain_coaster}/images/coasters/{image['path']}")
+
             # Set valid answers
             valid_answers = [
                 coaster_infos['name'].lower(),

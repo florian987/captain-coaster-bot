@@ -107,9 +107,6 @@ class RollerCoasters:
         Search coaster infos from Captain Coaster
         """
 
-        content = ""
-        embed = ""
-
         if self.is_online(URLs.captain_coaster):
             json_body = await self.json_infos(
                 f'{URLs.captain_coaster}/api/coasters?name={search}')
@@ -224,7 +221,7 @@ class RollerCoasters:
             try:
                 msg = await self.bot.wait_for(
                     'message', timeout=300.0, check=park_answers or coaster_answers)
-                
+
             except asyncio.TimeoutError:
                 embed = await build_embed(
                     ctx,
@@ -233,7 +230,7 @@ class RollerCoasters:
                     description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
                 await ctx.send(embed=embed)
             else:
-                if m.content.lower() in coaster_answers:
+                if msg.content.lower() in coaster_answers:
                     embed = await build_embed(
                         ctx,
                         colour='green',

@@ -191,9 +191,12 @@ class RollerCoasters:
 
             # Send image to discord
             await ctx.send(embed=await build_embed(
-                ctx, title="De quel coaster s'agit-il ?", colour='gold'
+                ctx,
+                title="De quel coaster s'agit-il ?",
+                colour='gold',
+                img=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}"
             ))
-            await ctx.send(content=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}")
+            #await ctx.send(content=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}")
 
             # Set valid answers
             valid_answers = [

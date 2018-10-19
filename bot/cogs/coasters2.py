@@ -236,12 +236,14 @@ class RollerCoasters:
                     break
                     
                 else:
-                    if coaster_answers(msg):                        
+                    if coaster_answers(msg):   
+                        valid_coaster_answers = []                     
                         titre = f'Bravo {msg.author}, tu as trouvé le nom du coaster!"
                         if not valid_park_answers:
                             titre += " Saurez vous trouver sa localisation ?'
                         
                     else:
+                        valid_park_answers = []
                         titre = f'Bravo {msg.author}, tu as trouvé le Parc!'
                         if not valid_park_answers:
                             titre += " Saurez vous trouver son nom ?'
@@ -249,8 +251,6 @@ class RollerCoasters:
                     embed = await build_embed(ctx, colour='green', title=titre)
 
                     await ctx.send(embed=embed)
-                    valid_park_answers = []
-
             # Bravo de fin
 
 

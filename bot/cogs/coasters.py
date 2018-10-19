@@ -190,6 +190,9 @@ class RollerCoasters:
             coaster_infos = await self.json_infos(URLs.captain_coaster + chosen_image['coaster'])
 
             # Send image to discord
+            await ctx.send(embed=await build_embed(
+                ctx, title="De quel coaster s'agit-il ?", colour='gold'
+            ))
             await ctx.send(content=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}")
 
             # Set valid answers

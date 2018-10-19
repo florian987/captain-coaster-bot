@@ -230,7 +230,7 @@ class RollerCoasters:
                     description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
                 await ctx.send(embed=embed)
             else:
-                if msg.content.lower() in coaster_answers:
+                if msg.content.lower() in valid_coaster_answers:
                     embed = await build_embed(
                         ctx,
                         colour='green',

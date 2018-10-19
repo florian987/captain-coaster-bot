@@ -187,7 +187,7 @@ class RollerCoasters:
             
             # Pick random image
             chosen_image = random.choice(datas["hydra:member"])
-            coaster_infos = await self.json_infos(f"{URLs.captain_coaster}{chosen_image['coaster']}")
+            coaster_infos = await self.json_infos(URLs.captain_coaster + chosen_image['coaster'])
 
             # Send image to discord
             await ctx.send(content=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}")
@@ -202,15 +202,14 @@ class RollerCoasters:
                     return m.content.lower() in valid_answers
 
             try:
-                msg = await self.bot.wait_for('message', timeout=15.0, check=answer)
+                msg = await self.bot.wait_for('message', timeout=300.0, check=answer)
             except asyncio.TimeoutError:
                 #await ctx.send(content=random.choice(CC_TAUNT))
                 embed = await build_embed(
                     ctx,
                     colour='red',
-                    title=f'Losers!',
-                    description=random.choice(CC_TAUNT),
-                    Réponse=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
+                    title=random.choice(CC_TAUNT),
+                    description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
             else:
                 embed = await build_embed(
                     ctx,

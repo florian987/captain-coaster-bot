@@ -196,7 +196,7 @@ class RollerCoasters:
             
             # Pick random image
             chosen_image = random.choice(images)
-            coaster_infos = await self.json_infos(f'{URLs.captain_coaster}{chosen_image['coaster']}')
+            coaster_infos = await self.json_infos(f"{URLs.captain_coaster}{chosen_image['coaster']}")
 
             # Set valid answers
             valid_answers = [

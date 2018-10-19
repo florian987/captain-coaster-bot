@@ -239,20 +239,20 @@ class RollerCoasters:
                 else:
                     if coaster_answers(msg):
                         valid_coaster_answers = []
-                        titre = f"Bravo {msg.author}, tu as trouvé le nom du coaster!"
-                        if not valid_park_answers:
-                            titre += "\nSaurez vous trouver sa localisation ?"
+                        titre = f"Bravo {msg.author}, tu as trouvé le coaster! ({coaster_infos['name']})"
+                        if valid_park_answers:
+                            titre += "\nSaurez vous trouver son Parc ?"
 
                     else:
                         valid_park_answers = []
-                        titre = f'Bravo {msg.author}, tu as trouvé le Parc!'
-                        if not valid_park_answers:
-                            titre += "\nSaurez vous trouver son nom ?"
+                        titre = f'Bravo {msg.author}, tu as trouvé le Parc! ({coaster_infos['park']['name']})'
+                        if valid_coaster_answers:
+                            titre += "\nSaurez vous trouver le coaster ?"
 
                     embed = await build_embed(ctx, colour='green', title=titre)
 
                     await ctx.send(embed=embed)
-            # Bravo de fin
+            # await ctx.send(embed=buil)
 
 
             #await ctx.send(embed=embed)

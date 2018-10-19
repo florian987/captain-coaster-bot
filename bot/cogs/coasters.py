@@ -11,7 +11,7 @@ from discord.ext.commands import Context, group
 
 import scrapper.rcdb as rcdb
 from bot.utils.discord_emojis import emojis as dis_emojis
-from bot.constants import Keys, URLs
+from bot.constants import Keys, URLs, CC_TAUNT
 from bot.utils.embedconverter import build_embed
 from bot.decorators import in_any_channel_or_dm
 
@@ -210,7 +210,7 @@ class RollerCoasters:
             try:
                 msg = await self.bot.wait_for('message', timeout=15.0, check=answer)
             except asyncio.TimeoutError:
-                content = "On est chez les Disney fans ici?"
+                content = random.choice(CC_TAUNT)
             else:
                 embed = build_embed(
                     ctx,

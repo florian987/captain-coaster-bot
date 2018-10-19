@@ -345,3 +345,9 @@ ERROR_REPLIES = [
     "Are you trying to kill me?",
     "Noooooo!!"
 ]
+
+CC_TAUNT = [
+    "On est chez les disney fans ici ?",
+    "J'en ai marre des lambdas ...",
+    "Vous voulez pas visiter autre chose quele parc Spirou ?
+]

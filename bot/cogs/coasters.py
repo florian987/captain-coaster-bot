@@ -182,7 +182,7 @@ class RollerCoasters:
                 await ctx.send(content="Aucun coaster trouvé.")
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
-    async def cc_play(self, ctx):
+    async def cc_play(self, ctx, difficulty=easy):
         """
         Get a random image from CC and users should guess it
         """
@@ -215,7 +215,9 @@ class RollerCoasters:
                     ctx,
                     title="De quel coaster et quel parc s'agit-il ?",
                     colour='gold',
-                    img=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}"
+                    img=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}",
+                    author_icon=ctx.author.avatar_url,
+                    author_name=ctx.author.name
                 ))
 
                 # Set valid answers

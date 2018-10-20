@@ -369,5 +369,6 @@ CC_TAUNT = [
     "Dites-vous que pour chaque coaster pourri non trouvé, un petit lutin de l'équipe a sacrifié 5 minutes de sa vie à le rentrer manuellement dans la base...",
     "Bon, si vous continuez sur cette lignée, on va finir plus rouillés que le lift de The Monster... ON SE REVEILLE !",
     "Le bon parc était Quanching... Xuixing... Quiching... Oh, et puis merde, de toute façon, les chinois c'est tous les mêmes.",
-    "A chaque coaster non trouvé, un chaton meurt dans le monde. Ou le parking de Disney augmente de 5€. Au choix."
+    "A chaque coaster non trouvé, un chaton meurt dans le monde. Ou le parking de Disney augmente de 5€. Au choix.",
+    "Toujours pas trouvé ? Votre cerveau est plus mou que le launch de Blue Fire"
 ]

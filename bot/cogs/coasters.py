@@ -20,6 +20,10 @@ log = logging.getLogger(__name__)
 
 
 class RollerCoasters:
+    """Interract with Captain Coaster API"""
+
+    HEADERS = {'X-AUTH-TOKEN': Keys.captaincoaster}
+
     def __init__(self, bot):
         self.bot = bot
         self.std_emojis = dis_emojis()
@@ -33,7 +37,10 @@ class RollerCoasters:
             'manufacturer': 'Constructeur',
             'status': 'Etat',
             'park': "Parc",
-            'rank': "Classement"
+            'rank': "Classement",
+            'validDuels': "Duels",
+            "totalRatings": "Votes",
+            "score": "Score"
         }
 
     async def is_online(self, site):
@@ -46,8 +53,7 @@ class RollerCoasters:
 
     async def json_infos(self, url):
         async with aiohttp.ClientSession() as session:
-            headers = {'X-AUTH-TOKEN': f'{Keys.captaincoaster}'}
-            async with session.get(url, headers=headers) as r:
+            async with session.get(url, headers=self.HEADERS) as r:
                 return await r.json()
 
     async def coaster_embed(self, ctx, coaster_json):
@@ -182,7 +188,8 @@ class RollerCoasters:
         """
 
         if self.is_online(URLs.captain_coaster):
-            await ctx.message.delete()
+            if ctx.guild is not None:
+                await ctx.message.delete()
             if self.game_in_progress:
                 try:
                     await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
@@ -249,13 +256,13 @@ class RollerCoasters:
                     else:
                         if coaster_answers(msg):
                             valid_coaster_answers = []
-                            titre = f"Bravo {msg.author}, tu as trouvé le coaster! ({coaster_infos['name']})"
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le coaster! ({coaster_infos['name']})"
                             if valid_park_answers:
                                 titre += "\nSaurez vous trouver son Parc ?"
 
                         else:
                             valid_park_answers = []
-                            titre = f"Bravo {msg.author}, tu as trouvé le Parc! ({coaster_infos['park']['name']})"
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le Parc! ({coaster_infos['park']['name']})"
                             if valid_coaster_answers:
                                 titre += "\nSaurez vous trouver le coaster ?"
 

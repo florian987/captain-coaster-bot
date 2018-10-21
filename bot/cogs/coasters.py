@@ -235,14 +235,14 @@ class RollerCoasters:
 
                 # Set valid answers
                 valid_coaster_answers = [
-                    coaster['name'].strip.lower(),
-                    coaster['name'].strip.replace(' ', '').lower()
+                    coaster['name'].strip().lower(),
+                    coaster['name'].strip().replace(' ', '').lower()
                 ]
 
                 valid_park_answers = [
-                    coaster['park']['name'].strip.lower(),
-                    coaster['park']['name'].strip.replace(' ', '').lower(),
-                    coaster['park']['name'].strip.replace(' ', '').replace("'","").lower(),
+                    coaster['park']['name'].strip().lower(),
+                    coaster['park']['name'].strip().replace(' ', '').lower(),
+                    coaster['park']['name'].strip().replace(' ', '').replace("'","").lower(),
                 ]
 
                 def both_answers(m):

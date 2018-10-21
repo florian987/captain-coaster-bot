@@ -5,6 +5,8 @@ import asyncio
 import discord
 import json
 import random
+import unidecode
+import re
 from discord import errors
 from discord.ext import commands
 from discord.ext.commands import Context, group
@@ -189,12 +191,14 @@ class RollerCoasters:
         """
 
         lvl_map = {
-            'easy': '[gt]=85',
-            'medium': '[between]=35..85',
-            'hard': '[lt]=35'
+            'easy': '[gt]=10',
+            'medium': '[between]=1..10',
+            'hard': '[lt]=1'
         }
 
-        
+        if difficulty not in lvl_map:
+            await ctx.send(content="Erreur de frappe ? On lance en mode facile.")
+            difficulty = 'easy'
 
         if self.is_online(URLs.captain_coaster):
             if ctx.guild is not None:
@@ -233,28 +237,29 @@ class RollerCoasters:
                 # Send image to discord
                 question = await ctx.send(embed=embed_question)
 
-                # Set valid answers
-                valid_coaster_answers = [
-                    coaster['name'].strip().lower(),
-                    coaster['name'].strip().replace(' ', '').lower()
-                ]
-
-                valid_park_answers = [
-                    coaster['park']['name'].strip().lower(),
-                    coaster['park']['name'].strip().replace(' ', '').lower(),
-                    coaster['park']['name'].strip().replace(' ', '').replace("'","").lower(),
-                ]
+                def normalize(string):
+                    return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace(' ', '').replace("'s","").replace("'", "").replace("-", "").replace(":","")))
 
                 def both_answers(m):
-                    return m.content.strip().lower() in valid_park_answers or m.content.strip().lower() in valid_coaster_answers
+                    return normalize(m.content) == normalize(coaster['park']['name']) or normalize(m.content) == normalize(coaster['name'])
 
                 def park_answers(m):
-                    return m.content.strip().lower() in valid_park_answers
+                    return normalize(m.content) == normalize(coaster['park']['name'])
 
                 def coaster_answers(m):
-                    return m.content.strip().lower() in valid_coaster_answers
+                    return normalize(m.content) == normalize(coaster['name'])
 
-                while valid_park_answers or valid_coaster_answers:
+                def on_the_park_way(m):
+                    return normalize(m.content) in normalize(coaster['park']['name'])
+
+                def on_the_coaster_way(m):
+                    return normalize(m.content) in normalize(coaster['name'])
+
+                park_found = False
+                coaster_found = False
+
+                while not park_found or not coaster_found:     
+
                     try:
                         msg = await self.bot.wait_for(
                             'message', timeout=120.0, check=both_answers)
@@ -270,19 +275,19 @@ class RollerCoasters:
 
                     else:
                         if coaster_answers(msg):
-                            valid_coaster_answers = []
+                            coaster_found = True
                             titre = f"Bravo {msg.author.name}, tu as trouvé le coaster! ({coaster['name']})"
                             embed_question = embed_question.add_field(name="Coaster", value=f"{coaster['name']} ({msg.author.name})")
                             await question.edit(embed=embed_question)
-                            if valid_park_answers:
+                            if not park_found:
                                 titre += "\nSaurez vous trouver son Parc ?"
 
                         else:
-                            valid_park_answers = []
+                            park_found = True
                             titre = f"Bravo {msg.author.name}, tu as trouvé le Parc! ({coaster['park']['name']})"
                             embed_question = embed_question.add_field(name="Parc", value=f"{coaster['park']['name']} ({msg.author.name})")
                             await question.edit(embed=embed_question)
-                            if valid_coaster_answers:
+                            if not coaster_found:
                                 titre += "\nSaurez vous trouver le coaster ?"
 
                         embed = await build_embed(ctx, colour='green', title=titre)

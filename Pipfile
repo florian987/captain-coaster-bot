@@ -18,6 +18,7 @@ pynacl = "*"
 fuzzywuzzy = "*"
 pillow = "*"
 aiodns = "*"
+unidecode = "*"
 
 [dev-packages]
 pylint = "*"
@@ -27,6 +28,7 @@ pylint = "*"
 "flake8-string-format" = "*"
 "flake8-tidy-imports" = "*"
 "flake8-todo" = "*"
+unidecode = "*"
 
 [requires]
 python_version = "3.6"

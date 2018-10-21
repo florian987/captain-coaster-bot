@@ -354,7 +354,7 @@ CC_TAUNT = [
     "Vous avez laissé quelque neurones sur Goudurix ?",
     "La culture ici c'est un peu comme Mirapolis ... une légende.",
     "Si c'est bleu c'est Mack ?' Bah voyons...",
-    "Eh ben, c'est plus calme qu'un 15 Août au Parc Spirou, par ici..."
+    "Eh ben, c'est plus calme qu'un 15 Août au Parc Spirou, par ici...",
     "Ça se dit coasterfan, et ça reconnait pas un coaster chinois pourri ? Non mais allô, quoi...",
     "Personne ? Vous êtes moins fiables que Lightning Rod, en fait...",
     "Et c'est le point qui s'envole, comme le technicien d'Hyperion...",

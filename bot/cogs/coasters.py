@@ -28,6 +28,7 @@ class RollerCoasters:
         self.bot = bot
         self.std_emojis = dis_emojis()
         self.game_in_progress = False
+        self.game_in_progress = {}
         self.mapping = {
             'materialType': 'Type',
             'speed': 'Vitesse',
@@ -182,64 +183,76 @@ class RollerCoasters:
                 await ctx.send(content="Aucun coaster trouvé.")
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
-    async def cc_play(self, ctx, difficulty=easy):
+    async def cc_play(self, ctx, difficulty='easy'):
         """
         Get a random image from CC and users should guess it
         """
 
+        lvl_map = {
+            'easy': '[gt]=85',
+            'medium': '[between]=35..85',
+            'hard': '[lt]=35'
+        }
+
+        
+
         if self.is_online(URLs.captain_coaster):
             if ctx.guild is not None:
                 await ctx.message.delete()
-            if self.game_in_progress:
-                try:
-                    await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
-                except errors.Forbidden:
-                    pass
+                
+            if ctx.channel.id in self.game_in_progress and self.game_in_progress[ctx.channel.id]:
+                    try:
+                        await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
+                    except errors.Forbidden:
+                        pass
+
             else:
-                self.game_in_progress = True
+                self.game_in_progress[ctx.channel.id] = True
 
                 # Build images list
-                datas = await self.json_infos(f'{URLs.captain_coaster}/api/images')
-                random_page = random.randint(
-                    1, int(datas["hydra:view"]["hydra:last"].split('=')[1]))
-                datas = await self.json_infos(
-                    f'{URLs.captain_coaster}/api/images?page={random_page}')
+                base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true')
+                last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
+                chosen_page = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
+                print('-' * 111)
+                print('chosen_page', chosen_page)
+                print('lenmember', len(chosen_page["hydra:member"]))
+                print('last_page', last_page)
+                coaster = chosen_page["hydra:member"][random.randint(1, len(chosen_page["hydra:member"])) - 1]
+                coaster_imgs = await self.json_infos(f'{URLs.captain_coaster}/api/images?coaster={coaster["id"]}')
+                rdm_image = coaster_imgs["hydra:member"][random.randint(1, len(coaster_imgs["hydra:member"])) - 1]["path"]
 
-                # Pick random image
-                chosen_image = random.choice(datas["hydra:member"])
-                coaster_infos = await self.json_infos(
-                    URLs.captain_coaster + chosen_image['coaster'])
-
-                # Send image to discord
-                await ctx.send(embed=await build_embed(
+                embed_question = await build_embed(
                     ctx,
-                    title="De quel coaster et quel parc s'agit-il ?",
+                    title=f"De quel coaster et quel parc s'agit-il ? ({difficulty})",
                     colour='gold',
-                    img=f"{URLs.captain_coaster}/images/coasters/{chosen_image['path']}",
+                    img=f"{URLs.captain_coaster}/images/coasters/{rdm_image}",
                     author_icon=ctx.author.avatar_url,
                     author_name=ctx.author.name
-                ))
+                )
+
+                # Send image to discord
+                question = await ctx.send(embed=embed_question)
 
                 # Set valid answers
                 valid_coaster_answers = [
-                    coaster_infos['name'].lower(),
-                    coaster_infos['name'].replace(' ', '').lower()
+                    coaster['name'].strip.lower(),
+                    coaster['name'].strip.replace(' ', '').lower()
                 ]
 
                 valid_park_answers = [
-                    coaster_infos['park']['name'].lower(),
-                    coaster_infos['park']['name'].replace(' ', '').lower(),
-                    coaster_infos['park']['name'].replace(' ', '').replace("'","").lower(),
+                    coaster['park']['name'].strip.lower(),
+                    coaster['park']['name'].strip.replace(' ', '').lower(),
+                    coaster['park']['name'].strip.replace(' ', '').replace("'","").lower(),
                 ]
 
                 def both_answers(m):
-                    return m.content.lower() in valid_park_answers or m.content.lower() in valid_coaster_answers
+                    return m.content.strip.lower() in valid_park_answers or m.content.strip.lower() in valid_coaster_answers
 
                 def park_answers(m):
-                    return m.content.lower() in valid_park_answers
+                    return m.content.strip.lower() in valid_park_answers
 
                 def coaster_answers(m):
-                    return m.content.lower() in valid_coaster_answers
+                    return m.content.strip.lower() in valid_coaster_answers
 
                 while valid_park_answers or valid_coaster_answers:
                     try:
@@ -251,32 +264,31 @@ class RollerCoasters:
                             ctx,
                             colour='red',
                             title=random.choice(CC_TAUNT),
-                            description=f"Il s'agissait de {coaster_infos['name']} se trouvant à {coaster_infos['park']['name']}")
+                            description=f"Il s'agissait de {coaster['name']} se trouvant à {coaster['park']['name']}")
                         await ctx.send(embed=embed)
                         break
 
                     else:
                         if coaster_answers(msg):
                             valid_coaster_answers = []
-                            titre = f"Bravo {msg.author.name}, tu as trouvé le coaster! ({coaster_infos['name']})"
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le coaster! ({coaster['name']})"
+                            embed_question = embed_question.add_field(name="Coaster", value=f"{coaster['name']} ({msg.author.name})")
+                            await question.edit(embed=embed_question)
                             if valid_park_answers:
                                 titre += "\nSaurez vous trouver son Parc ?"
 
                         else:
                             valid_park_answers = []
-                            titre = f"Bravo {msg.author.name}, tu as trouvé le Parc! ({coaster_infos['park']['name']})"
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le Parc! ({coaster['park']['name']})"
+                            embed_question = embed_question.add_field(name="Parc", value=f"{coaster['park']['name']} ({msg.author.name})")
+                            await question.edit(embed=embed_question)
                             if valid_coaster_answers:
                                 titre += "\nSaurez vous trouver le coaster ?"
 
                         embed = await build_embed(ctx, colour='green', title=titre)
 
                         await ctx.send(embed=embed)
-                self.game_in_progress = False
-                # await ctx.send(embed=buil)
-
-
-                #await ctx.send(embed=embed)
-
+                self.game_in_progress[ctx.channel.id] = False
 
 
 
@@ -309,7 +321,7 @@ class RollerCoasters:
                 description="Va falloir attendre mon mignon",
                 colour=discord.Colour.red()
             )
-            embed.set_author(
+            embed.set_or(
                 icon_url=self.bot.user.avatar_url, name=str(self.bot.user.name))
             await ctx.send(content='', embed=embed)
 

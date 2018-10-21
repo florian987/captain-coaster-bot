@@ -246,13 +246,13 @@ class RollerCoasters:
                 ]
 
                 def both_answers(m):
-                    return m.content.strip.lower() in valid_park_answers or m.content.strip.lower() in valid_coaster_answers
+                    return m.content.strip().lower() in valid_park_answers or m.content.strip().lower() in valid_coaster_answers
 
                 def park_answers(m):
-                    return m.content.strip.lower() in valid_park_answers
+                    return m.content.strip().lower() in valid_park_answers
 
                 def coaster_answers(m):
-                    return m.content.strip.lower() in valid_coaster_answers
+                    return m.content.strip().lower() in valid_coaster_answers
 
                 while valid_park_answers or valid_coaster_answers:
                     try:

@@ -214,11 +214,14 @@ class RollerCoasters:
         def coaster_answers(m):
             return fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= 80
 
+        def both_answers(m):
+            return park_answers(m) or coaster_answers(m)
+
         def on_the_park_way(m):
-            return 60 <= fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) < 80
+            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) < 80
 
         def on_the_coaster_way(m):
-            return 60 <= fuzz.ratio(normalize(m.content), normalize(coaster['park'])) < 80
+            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['park'])) < 80
 
         # Game
         if self.is_online(URLs.captain_coaster):
@@ -268,7 +271,7 @@ class RollerCoasters:
                     # ANSWER
                     try:
                         msg = await self.bot.wait_for(
-                            'message', timeout=TIMEOUT)
+                            'message', timeout=TIMEOUT, check=both_answers)
 
                     except asyncio.TimeoutError:
                         embed = await build_embed(
@@ -280,42 +283,41 @@ class RollerCoasters:
                         break
 
                     else:
-                        if (coaster_answers(msg) and not coaster_found) or (park_answers(msg) and not park_found):
-                            if coaster_answers(msg) and not coaster_found:
-                                coaster_found = True
-                                titre = f"Bravo {msg.author.name}, tu as trouvé le coaster!"
-                                descr = coaster['name']
-                                embed_question = embed_question.add_field(name="Coaster", value=f"{coaster['name']} ({msg.author.name})")
-                                log.info(f"{ctx.message.author} found coaster {coaster['name']}.")
-                                if not park_found:
-                                    titre += "\nSaurez vous trouver son Parc ?"
-                                # TODO validate
-                                else:
-                                    embed_question.colour = 'green'
-
+                        if coaster_answers(msg) and not coaster_found:
+                            coaster_found = True
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le coaster!"
+                            descr = coaster['name']
+                            embed_question = embed_question.add_field(name="Coaster", value=f"{coaster['name']} ({msg.author.name})")
+                            log.info(f"{ctx.message.author} found coaster {coaster['name']}.")
+                            if not park_found:
+                                titre += "\nSaurez vous trouver son Parc ?"
+                            # TODO validate
                             else:
-                                park_found = True
-                                titre = f"Bravo {msg.author.name}, tu as trouvé le Parc!"
-                                descr = coaster['park']['name']
-                                embed_question = embed_question.add_field(name="Parc", value=f"{coaster['park']['name']} ({msg.author.name})")
-                                log.info(f"{ctx.message.author} found park  {coaster['park']['name']}.")
-                                if not coaster_found:
-                                    titre += "\nSaurez vous trouver le coaster ?"
-                                # TODO validate
-                                else:
-                                    embed_question.colour = 'green'
+                                embed_question.colour = 'green'
 
-                            # Send 'bravo' embed
-                            embed = await build_embed(ctx, colour='green', title=titre, descr=descr)
-                            await ctx.send(embed=embed)
+                        elif park_answers(msg) and not park_found:
+                            park_found = True
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le Parc!"
+                            descr = coaster['park']['name']
+                            embed_question = embed_question.add_field(name="Parc", value=f"{coaster['park']['name']} ({msg.author.name})")
+                            log.info(f"{ctx.message.author} found park  {coaster['park']['name']}.")
+                            if not coaster_found:
+                                titre += "\nSaurez vous trouver le coaster ?"
+                            # TODO validate
+                            else:
+                                embed_question.colour = 'green'
 
-                            # Edit original embed
-                            await question.edit(embed=embed_question)
+                        # Send 'bravo' embed
+                        embed = await build_embed(ctx, colour='green', title=titre, descr=descr)
+                        await ctx.send(embed=embed)
 
-                        # HINT
-                        elif (on_coaster_way(msg) and not coaster_found) or (on_park_way(msg) and not park_found):
+                        # Edit original embed
+                        await question.edit(embed=embed_question)
+
+                    # HINT Park
+                    if not park_found or not coaster_found:
+                        if (on_coaster_way(msg) and not coaster_found) or (on_park_way(msg) and not park_found):
                             await ctx.send(content="Ca chauffe!")
-
 
 
                 log.info(f"Game ended in {ctx.channel}")

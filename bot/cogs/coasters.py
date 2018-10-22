@@ -193,25 +193,55 @@ class RollerCoasters:
         Une pertinence de 80% est nécessaire pour avoir une réponse validée.
         """
 
+        # Configuration
+        TIMEOUT = 120.0
+        park_found = False
+        coaster_found = False
+
         lvl_map = {
             'easy': '[gt]=10',
             'medium': '[between]=1..10',
             'hard': '[lt]=1'
         }
 
-        if difficulty not in lvl_map:
-            await ctx.send(content="Une erreur de frappe ? On lance en mode facile.")
-            difficulty = 'easy'
+        # Check functions
+        def normalize(string):
+            return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace("'", "").replace("-", "").replace(":", "")))
+            #return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace(' ', '').replace("'", "").replace("-", "").replace(":", "")))
+
+        def park_answers(m):
+            return fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) >= 80
+
+        def coaster_answers(m):
+            return fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= 80
+
+        def both_answers(m):
+            return park_answers(m) or coaster_answers(m)
+
+        def on_the_park_way(m):
+            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) < 80
+
+        def on_the_coaster_way(m):
+            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['park'])) < 80
+
+        # Game
+        
 
         if self.is_online(URLs.captain_coaster):
+            
             if ctx.guild is not None:
                 await ctx.message.delete()
                 
             if ctx.channel.id in self.game_in_progress and self.game_in_progress[ctx.channel.id]:
-                    try:
-                        await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
-                    except errors.Forbidden:
-                        pass
+                log.info(f"{ctx.message.author} tried to start a game in {ctx.channel} but a game is already running.")
+                try:
+                    await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
+                except errors.Forbidden:
+                    pass                
+            
+            if difficulty not in lvl_map:
+                await ctx.send(content="Une erreur de frappe ? On lance en mode facile.")
+                difficulty = 'easy'
 
             else:
                 self.game_in_progress[ctx.channel.id] = True
@@ -220,13 +250,12 @@ class RollerCoasters:
                 base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true')
                 last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
                 chosen_page = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
-                print('-' * 111)
-                print('chosen_page', chosen_page)
-                print('lenmember', len(chosen_page["hydra:member"]))
-                print('last_page', last_page)
                 coaster = chosen_page["hydra:member"][random.randint(1, len(chosen_page["hydra:member"])) - 1]
                 coaster_imgs = await self.json_infos(f'{URLs.captain_coaster}/api/images?coaster={coaster["id"]}')
                 rdm_image = coaster_imgs["hydra:member"][random.randint(1, len(coaster_imgs["hydra:member"])) - 1]["path"]
+
+                log.info(f"Game started by {ctx.message.author} in {ctx.channel}."
+                         f"Coaster: {coaster['name']}, Parc: {coaster['park']['name']}")
 
                 embed_question = await build_embed(
                     ctx,
@@ -240,32 +269,12 @@ class RollerCoasters:
                 # Send image to discord
                 question = await ctx.send(embed=embed_question)
 
-                def normalize(string):
-                    return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace(' ', '').replace("'s", "").replace("'", "").replace("-", "").replace(":", "")))
+                while not park_found or not coaster_found:
 
-                def both_answers(m):
-                    return fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) >= 80 or fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= 80
-
-                def park_answers(m):
-                    return fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) >= 80
-
-                def coaster_answers(m):
-                    return fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= 80
-
-                def on_the_park_way(m):
-                    return normalize(m.content) in normalize(coaster['park']['name'])
-
-                def on_the_coaster_way(m):
-                    return normalize(m.content) in normalize(coaster['name'])
-
-                park_found = False
-                coaster_found = False
-
-                while not park_found or not coaster_found:     
-
+                    # ANSWER
                     try:
                         msg = await self.bot.wait_for(
-                            'message', timeout=120.0, check=both_answers)
+                            'message', timeout=TIMEOUT, check=both_answers)
 
                     except asyncio.TimeoutError:
                         embed = await build_embed(
@@ -278,24 +287,65 @@ class RollerCoasters:
 
                     else:
                         if coaster_answers(msg):
-                            coaster_found = True
-                            titre = f"Bravo {msg.author.name}, tu as trouvé le coaster! ({coaster['name']})"
+                            coaster_found = True                            
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le coaster!"
+                            descr = coaster['name']
                             embed_question = embed_question.add_field(name="Coaster", value=f"{coaster['name']} ({msg.author.name})")
-                            await question.edit(embed=embed_question)
+                            log.info(f"{ctx.message.author} found coaster {coaster['name']}.")
                             if not park_found:
                                 titre += "\nSaurez vous trouver son Parc ?"
+                            # TODO validate
+                            else:
+                                embed_question.colour = 'green'
 
                         else:
                             park_found = True
-                            titre = f"Bravo {msg.author.name}, tu as trouvé le Parc! ({coaster['park']['name']})"
+                            titre = f"Bravo {msg.author.name}, tu as trouvé le Parc!"
+                            descr = coaster['park']['name']
                             embed_question = embed_question.add_field(name="Parc", value=f"{coaster['park']['name']} ({msg.author.name})")
-                            await question.edit(embed=embed_question)
+                            log.info(f"{ctx.message.author} found park  {coaster['park']['name']}.")
                             if not coaster_found:
                                 titre += "\nSaurez vous trouver le coaster ?"
+                            # TODO validate
+                            else:
+                                embed_question.colour = 'green'
 
-                        embed = await build_embed(ctx, colour='green', title=titre)
-
+                        # Send 'bravo' embed
+                        embed = await build_embed(ctx, colour='green', title=titre, descr=descr)
                         await ctx.send(embed=embed)
+
+                        # Edit original embed
+                        await question.edit(embed=embed_question)
+
+                    # HINT Park
+                    if not park_found:
+                        try:
+                            msg = await self.bot.wait_for(
+                                'message',
+                                timeout=TIMEOUT,
+                                check=on_the_park_way)
+
+                        except asyncio.TimeoutError:
+                            pass
+
+                        except:
+                            await ctx.send(content="Ca chauffe!")
+
+                    # HINT Coaster
+                    if not coaster_found:
+                        try:
+                            msg = await self.bot.wait_for(
+                                'message',
+                                timeout=TIMEOUT,
+                                check=on_the_coaster_way)
+
+                        except asyncio.TimeoutError:
+                            pass
+
+                        except:
+                            await ctx.send(content="Ca chauffe!")
+
+                log.info(f"Game ended in {ctx.channel}")
                 self.game_in_progress[ctx.channel.id] = False
 
 

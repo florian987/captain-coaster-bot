@@ -224,21 +224,22 @@ class RollerCoasters:
         def on_the_coaster_way(m):
             return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['park'])) < 80
 
-        # Game
-        
+        def on_both_ways(m):
+            return on_the_park_way(m) or on_the_coaster_way(m)
 
+        # Game
         if self.is_online(URLs.captain_coaster):
-            
+
             if ctx.guild is not None:
                 await ctx.message.delete()
-                
+
             if ctx.channel.id in self.game_in_progress and self.game_in_progress[ctx.channel.id]:
                 log.info(f"{ctx.message.author} tried to start a game in {ctx.channel} but a game is already running.")
                 try:
                     await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
                 except errors.Forbidden:
-                    pass                
-            
+                    pass
+
             if difficulty not in lvl_map:
                 await ctx.send(content="Une erreur de frappe ? On lance en mode facile.")
                 difficulty = 'easy'
@@ -287,7 +288,7 @@ class RollerCoasters:
 
                     else:
                         if coaster_answers(msg) and not coaster_found:
-                            coaster_found = True                            
+                            coaster_found = True
                             titre = f"Bravo {msg.author.name}, tu as trouvé le coaster!"
                             descr = coaster['name']
                             embed_question = embed_question.add_field(name="Coaster", value=f"{coaster['name']} ({msg.author.name})")
@@ -318,32 +319,20 @@ class RollerCoasters:
                         await question.edit(embed=embed_question)
 
                     # HINT Park
-                    if not park_found:
+                    if not park_found or not coaster_found:
                         try:
                             msg = await self.bot.wait_for(
                                 'message',
-                                timeout=TIMEOUT,
-                                check=on_the_park_way)
+                                timeout=TIMEOUT)
+                                #check=on_both_ways) # verifier si timeout revient a 0
 
                         except asyncio.TimeoutError:
                             pass
+                        
+                        else:
+                            if (on_coaster_way(msg) and not coaster_found) or (on_park_way(msg) and not park_found):
+                                await ctx.send(content="Ca chauffe!")
 
-                        except:
-                            await ctx.send(content="Ca chauffe!")
-
-                    # HINT Coaster
-                    if not coaster_found:
-                        try:
-                            msg = await self.bot.wait_for(
-                                'message',
-                                timeout=TIMEOUT,
-                                check=on_the_coaster_way)
-
-                        except asyncio.TimeoutError:
-                            pass
-
-                        except:
-                            await ctx.send(content="Ca chauffe!")
 
                 log.info(f"Game ended in {ctx.channel}")
                 self.game_in_progress[ctx.channel.id] = False

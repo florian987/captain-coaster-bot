@@ -10,6 +10,7 @@ import re
 from discord import errors
 from discord.ext import commands
 from discord.ext.commands import Context, group
+from fuzzywuzzy import fuzz
 
 import scrapper.rcdb as rcdb
 from bot.utils.discord_emojis import emojis as dis_emojis
@@ -187,7 +188,9 @@ class RollerCoasters:
     @cc_group.command(name="game", aliases=['play', 'jeu'])
     async def cc_play(self, ctx, difficulty='easy'):
         """
-        Get a random image from CC and users should guess it
+        Quizz avec les images de CC.
+
+        Une pertinence de 80% est nécessaire pour avoir une réponse validée.
         """
 
         lvl_map = {
@@ -197,7 +200,7 @@ class RollerCoasters:
         }
 
         if difficulty not in lvl_map:
-            await ctx.send(content="Erreur de frappe ? On lance en mode facile.")
+            await ctx.send(content="Une erreur de frappe ? On lance en mode facile.")
             difficulty = 'easy'
 
         if self.is_online(URLs.captain_coaster):
@@ -238,16 +241,16 @@ class RollerCoasters:
                 question = await ctx.send(embed=embed_question)
 
                 def normalize(string):
-                    return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace(' ', '').replace("'s","").replace("'", "").replace("-", "").replace(":","")))
+                    return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace(' ', '').replace("'s", "").replace("'", "").replace("-", "").replace(":", "")))
 
                 def both_answers(m):
-                    return normalize(m.content) == normalize(coaster['park']['name']) or normalize(m.content) == normalize(coaster['name'])
+                    return fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) >= 80 or fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= 80
 
                 def park_answers(m):
-                    return normalize(m.content) == normalize(coaster['park']['name'])
+                    return fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) >= 80
 
                 def coaster_answers(m):
-                    return normalize(m.content) == normalize(coaster['name'])
+                    return fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= 80
 
                 def on_the_park_way(m):
                     return normalize(m.content) in normalize(coaster['park']['name'])

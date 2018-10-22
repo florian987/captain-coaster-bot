@@ -286,7 +286,7 @@ class RollerCoasters:
                         break
 
                     else:
-                        if coaster_answers(msg):
+                        if coaster_answers(msg) and not coaster_found:
                             coaster_found = True                            
                             titre = f"Bravo {msg.author.name}, tu as trouvé le coaster!"
                             descr = coaster['name']
@@ -298,7 +298,7 @@ class RollerCoasters:
                             else:
                                 embed_question.colour = 'green'
 
-                        else:
+                        elif park_answers(msg) and not park_found:
                             park_found = True
                             titre = f"Bravo {msg.author.name}, tu as trouvé le Parc!"
                             descr = coaster['park']['name']

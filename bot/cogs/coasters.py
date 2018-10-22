@@ -16,7 +16,7 @@ import scrapper.rcdb as rcdb
 from bot.utils.discord_emojis import emojis as dis_emojis
 from bot.constants import Keys, URLs, CC_TAUNT
 from bot.utils.embedconverter import build_embed
-from bot.decorators import in_any_channel_or_dm
+from bot.decorators import in_any_channel_guild
 
 
 log = logging.getLogger(__name__)
@@ -88,7 +88,7 @@ class RollerCoasters:
         return embed
 
     @group(name='cc', aliases=['captaincoaster'], invoke_without_command=True)
-    @in_any_channel_or_dm(473760830505091072, 502418016949239809)
+    @in_any_channel_guild(473760830505091072, 502418016949239809, 249216021599223808)
     async def cc_group(self, ctx: Context, *, query=None):
         """
         Retrieve infos from Captain Coaster

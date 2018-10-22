@@ -46,7 +46,6 @@ guild:
     roles:
         admin:             &ADMIN_ROLE    499979692456280074
         pilotes:           &PILOTE_ROLE   499998283586863122
-        moderator:         &MOD_ROLE      267629731250176001 # gardé pr l'exemple
 
 
 filter:

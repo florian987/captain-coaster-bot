@@ -206,6 +206,9 @@ class RollerCoasters:
 
         # Check functions
         def normalize(string):
+            print('-' * 12)
+            print(string)
+            print('-' * 12)
             return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace("'", "").replace("-", "").replace(":", "")))
 
         def park_answers(m):
@@ -214,11 +217,11 @@ class RollerCoasters:
         def coaster_answers(m):
             return fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= 80
 
-        def on_the_park_way(m):
-            return 60 <= fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) < 80
+        def on_park_way(m):
+            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) < 80
 
-        def on_the_coaster_way(m):
-            return 60 <= fuzz.ratio(normalize(m.content), normalize(coaster['park'])) < 80
+        def on_coaster_way(m):
+            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['name'])) < 80
 
         # Game
         if self.is_online(URLs.captain_coaster):
@@ -277,6 +280,12 @@ class RollerCoasters:
                             title=random.choice(CC_TAUNT),
                             description=f"Il s'agissait de {coaster['name']} se trouvant à {coaster['park']['name']}")
                         await ctx.send(embed=embed)
+
+                        # Change original embed
+                        embed_question.colour = discord.Colour.red()
+                        await question.edit(embed=embed_question)
+
+                        #Endgame
                         break
 
                     else:
@@ -303,7 +312,7 @@ class RollerCoasters:
                                     titre += "\nSaurez vous trouver le coaster ?"
                                 # TODO validate
                                 else:
-                                    embed_question.colour = 'green'
+                                    embed_question.colour = discord.Colour.green()
 
                             # Send 'bravo' embed
                             embed = await build_embed(ctx, colour='green', title=titre, descr=descr)
@@ -315,8 +324,6 @@ class RollerCoasters:
                         # HINT
                         elif (on_coaster_way(msg) and not coaster_found) or (on_park_way(msg) and not park_found):
                             await ctx.send(content="Ca chauffe!")
-
-
 
                 log.info(f"Game ended in {ctx.channel}")
                 self.game_in_progress[ctx.channel.id] = False

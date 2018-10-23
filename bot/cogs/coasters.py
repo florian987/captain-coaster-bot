@@ -315,7 +315,7 @@ class RollerCoasters:
                                     embed_question.colour = discord.Colour.green()
 
                             # Send 'bravo' embed
-                            embed = await build_embed(ctx, colour='green', title=titre, descr=descr)
+                            embed = await build_embed(ctx, colour='green', title=titre, description=descr)
                             await ctx.send(embed=embed)
 
                             # Edit original embed

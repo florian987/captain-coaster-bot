@@ -299,7 +299,7 @@ class RollerCoasters:
                                     titre += "\nSaurez vous trouver son Parc ?"
                                 # TODO validate
                                 else:
-                                    embed_question.colour = 'green'
+                                    embed_question.colour = discord.Colour.green()
 
                             else:
                                 park_found = True

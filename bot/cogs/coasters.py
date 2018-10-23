@@ -224,15 +224,15 @@ class RollerCoasters:
         # Game
         if self.is_online(URLs.captain_coaster):
 
-            if ctx.guild is not None:
-                await ctx.message.delete()
-
             if ctx.channel.id in self.game_in_progress and self.game_in_progress[ctx.channel.id]:
                 log.info(f"{ctx.message.author} tried to start a game in {ctx.channel} but a game is already running.")
                 try:
                     await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
                 except errors.Forbidden:
                     pass
+
+            if ctx.guild is not None:
+                await ctx.message.delete()
 
             if difficulty not in lvl_map:
                 await ctx.send(content="Une erreur de frappe ? On lance en mode facile.")

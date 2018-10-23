@@ -13,6 +13,7 @@ from discord.ext.commands import Context, group
 from fuzzywuzzy import fuzz
 
 import scrapper.rcdb as rcdb
+import bot.database as db
 from bot.utils.discord_emojis import emojis as dis_emojis
 from bot.constants import Keys, URLs, CC_TAUNT
 from bot.utils.embedconverter import build_embed
@@ -26,26 +27,26 @@ class RollerCoasters:
     """Interract with Captain Coaster API"""
 
     HEADERS = {'X-AUTH-TOKEN': Keys.captaincoaster}
+    game_in_progress = {}
+    mapping = {
+        'materialType': 'Type',
+        'speed': 'Vitesse',
+        'height': 'Hauteur',
+        'length': 'Longueur',
+        'inversionsNumber': "Inversions",
+        'manufacturer': 'Constructeur',
+        'status': 'Etat',
+        'park': "Parc",
+        'rank': "Classement",
+        'validDuels': "Duels",
+        "totalRatings": "Votes",
+        "score": "Score"
+    }
 
     def __init__(self, bot):
         self.bot = bot
-        self.std_emojis = dis_emojis()
-        self.game_in_progress = False
-        self.game_in_progress = {}
-        self.mapping = {
-            'materialType': 'Type',
-            'speed': 'Vitesse',
-            'height': 'Hauteur',
-            'length': 'Longueur',
-            'inversionsNumber': "Inversions",
-            'manufacturer': 'Constructeur',
-            'status': 'Etat',
-            'park': "Parc",
-            'rank': "Classement",
-            'validDuels': "Duels",
-            "totalRatings": "Votes",
-            "score": "Score"
-        }
+        self.std_emojis = dis_emojis()        
+        self.conn = db.connect()        
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:

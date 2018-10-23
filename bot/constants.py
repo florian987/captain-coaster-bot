@@ -256,6 +256,16 @@ class Reddit(metaclass=YAMLGetter):
     subreddits: list
 
 
+
+class Postgres(metaclass=YAMLGetter):
+    section = "postgresql"
+
+    host: str
+    database: str
+    user: str
+    password: str
+
+
 class URLs(metaclass=YAMLGetter):
     section = "urls"
 

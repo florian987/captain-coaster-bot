@@ -84,4 +84,4 @@ bot.run(
 )
 
 
-bot.http_session.close()
+await bot.http_session.close()

@@ -48,6 +48,13 @@ guild:
         pilotes:           &PILOTE_ROLE   499998283586863122
 
 
+postgresql:
+    host: "localhost"
+    database: "localhost"
+    user: "postgres"
+    password: "example"
+
+
 filter:
 
     # What do we filter?

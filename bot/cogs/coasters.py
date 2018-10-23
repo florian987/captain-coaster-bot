@@ -282,9 +282,11 @@ class RollerCoasters:
                         await ctx.send(embed=embed)
 
                         # Change original embed
-                        embed_question.colour = discord.Colour.red()
+                        if coaster_found or park_found:
+                            embed_question.colour = discord.Colour.dark_red()
+                        else:
+                            embed_question.colour = discord.Colour.red()
                         await question.edit(embed=embed_question)
-
                         #Endgame
                         break
 

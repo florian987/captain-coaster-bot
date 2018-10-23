@@ -206,9 +206,6 @@ class RollerCoasters:
 
         # Check functions
         def normalize(string):
-            print('-' * 12)
-            print(string)
-            print('-' * 12)
             return re.sub("\(.*?\)", "", unidecode.unidecode(string.lower().strip().replace("'", "").replace("-", "").replace(":", "")))
 
         def park_answers(m):

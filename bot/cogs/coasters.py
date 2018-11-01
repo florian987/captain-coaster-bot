@@ -46,7 +46,7 @@ class RollerCoasters:
     def __init__(self, bot):
         self.bot = bot
         self.std_emojis = dis_emojis()        
-        self.conn = db.connect()        
+        #self.conn = db.connect()        
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:
@@ -243,7 +243,7 @@ class RollerCoasters:
 
                 # Build images list
                 base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true')
-                if ["hydra:last"] in base_infos["hydra:view"]:
+                if "hydra:last" in base_infos["hydra:view"]:
                     last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
                 else:
                     last_page = 1

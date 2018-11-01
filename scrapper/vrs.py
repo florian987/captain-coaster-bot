@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # import pickle
-# import traceback
+import traceback
 import json
 import logging
 import os
@@ -16,6 +16,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.proxy import *
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+
+from PIL import Image
+from io import BytesIO
 
 log = logging.getLogger(__name__)
 
@@ -52,6 +56,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--ignore-ssl-errors')
+        options.add_argument('--ignore-certificate-errors-spki-list')
         options.add_experimental_option("prefs", {
             "download.default_directory": DL_DIR,
             "download.prompt_for_download": False,
@@ -364,12 +369,20 @@ def build_datapacks_infos(driver, cars_list, premium=False):
             # Iterate over DataPacks tables TR
             car_elems = iter_dom(driver, "//table[@data-vrs-widget="
                                  "'DataPackWeeksTable']/tbody/tr")
+                                 
             for car_elem in car_elems:
+
+                
+                #driver.save_screenshot('screen.png')
 
                 datapack = {}  # Create datapack dict
                 datapack_path = ''
 
                 try:  # Build datapack
+                    #print(dir(car_elem))
+                    #print(car_elem.find_element_by_xpath("//td[@class='thumbnail-column']/div/img").get_attribute("title"))
+
+                    #datapack['track'] = car_elem.find_elements_by_xpath("//td[@class='thumbnail-column'/img").get_attribute("title")
                     datapack['track'] = car_elem.find_elements_by_css_selector(
                         "td:nth-of-type(2) img"
                     )[0].get_attribute('title')
@@ -390,8 +403,10 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                     if datapack['fastest_laptime'] != "":
 
                         # Open permalink box
-                        car_elem.find_element_by_css_selector(
-                            "td:nth-of-type(6) a:nth-of-type(3)"
+                        #car_elem.find_element_by_css_selector(
+                        car_elem.find_element_by_xpath(
+                            #"td:nth-of-type(6) a:nth-of-type(3)"
+                            "//a[@data-vrs-widget-field='getPermalink']"
                         ).click()
 
                         # Get datapack permalink
@@ -407,8 +422,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                     car['datapacks'].append(datapack)
 
                 except Exception as e:
-                    # print('ERR', e)
-                    # traceback.print_stack()
+                    print('ERR', e)
+                    traceback.print_stack()
                     pass
 
             for datapack in car['datapacks']:
@@ -505,6 +520,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                         # Add file to files list
                         datapack['files'].append(file)
 
+    print(cars_list)
+
     # pickle.dump(cars_list, open(settings.history_file,'wb'))
 
     with open(os.path.join(DL_DIR, 'data.json'), 'w') as tempfile:
@@ -517,6 +534,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
 if __name__ == '__main__':
 
+    print(ROOT_DIR, DL_DIR)
+
     driver = build_driver(headless=False)
     cars_list = build_cars_list(driver)  # Create cars list
     build_datapacks_infos(driver, cars_list)  # Build cars datapacks
@@ -527,4 +546,4 @@ if __name__ == '__main__':
     # print(json.dumps(cars_list, indent=4))
 
     # Finaly close the browser
-    driver.close()
+    # driver.close()

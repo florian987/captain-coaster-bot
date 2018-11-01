@@ -17,7 +17,7 @@ async def connect():
     return await asyncpg.connect(user=Postgres.user, password=Postgres.password,
                                  database=Postgres.database, host=Postgres.host)
 
-async def disconnect():
+#async def disconnect():
 
 
 async def run():

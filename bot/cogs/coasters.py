@@ -243,7 +243,10 @@ class RollerCoasters:
 
                 # Build images list
                 base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true')
-                last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
+                if ["hydra:last"] in base_infos["hydra:view"]:
+                    last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
+                else:
+                    last_page = 1
                 chosen_page = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
                 coaster = chosen_page["hydra:member"][random.randint(1, len(chosen_page["hydra:member"])) - 1]
                 coaster_imgs = await self.json_infos(f'{URLs.captain_coaster}/api/images?coaster={coaster["id"]}')

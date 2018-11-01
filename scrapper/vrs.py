@@ -64,8 +64,6 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             # Not tested
             options.add_argument('disable-gpu')
 
-            download_path = DL_DIR
-
         # Build Chrome driver
         driver = webdriver.Chrome(chrome_options=options)
 
@@ -79,34 +77,15 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
         # Build Firefox profile
         profile = webdriver.FirefoxProfile()
         profile.set_preference(
-            'browser.download.folderList', 2)  # custom location
-        profile.set_preference(
-            'browser.download.manager.showWhenStarting', False)
-        profile.set_preference('browser.download.dir', DL_DIR)
-        profile.set_preference('browser.download.downloadDir', DL_DIR)
-        profile.set_preference(
-            'browser.helperApps.neverAsk.saveToDisk', 'application/zip')
-        profile.set_preference(
+            'browser.download.folderList', 2,  # custom location
+            'browser.download.manager.showWhenStarting', False,
+            'browser.download.dir', DL_DIR,
+            'browser.download.downloadDir', DL_DIR,
+            'browser.helperApps.neverAsk.saveToDisk', 'application/zip',
             'browser.helperApps.neverAsk.saveToDisk',
             'application/octet-stream')
 
-        # Proxy settings
-        if proxy:
-            firefox_proxy = Proxy({
-                'proxyType': ProxyType.MANUAL,
-                'httpProxy': settings.PROXY,
-                'ftpProxy': settings.PROXY,
-                'sslProxy': settings.PROXY,
-                'noProxy': ''  # set this value as desired
-            })
-
-            driver = webdriver.Firefox(
-                profile, proxy=firefox_proxy, 
-                log_path=gecko_log_path)  # Ajout du proxy
-
-        else:
-            # Build Firefox driver without proxy
-            driver = webdriver.Firefox(profile, log_path=gecko_log_path)
+        driver = webdriver.Firefox(profile, log_path=gecko_log_path)
 
     # Set global driver settings
     # driver.implicitly_wait(60)
@@ -377,8 +356,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
             print(f"|_ Building {car['serie']} - {car['name']} datapacks")
 
             driver.get(car['url'])  # Load car URL and wait Js load
-            wait_by_xpath(driver, f"//p[@class='base-info' "
-                          "and text()=\"{car['name']}\"]")
+            wait_by_xpath(driver, "//p[@class='base-info' "
+                          f"and text()=\"{car['name']}\"]")
 
             # Iterate over DataPacks tables TR
             car_elems = iter_dom(driver, "//table[@data-vrs-widget="
@@ -478,6 +457,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                         # Download datapack file if not present
                         if not os.path.isfile(file['path']):
+                            print(f"Downloading file {file['name']}")
                             try:
                                 file_element.click()
                             except Exception:
@@ -535,7 +515,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
 if __name__ == '__main__':
 
-    driver = build_driver()
+    driver = build_driver(headless=False)
     cars_list = build_cars_list(driver)  # Create cars list
     build_datapacks_infos(driver, cars_list)  # Build cars datapacks
 

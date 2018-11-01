@@ -52,6 +52,9 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
     # Set Chrome browser settings
     if browser == "Chrome":
         options = webdriver.ChromeOptions()
+        options.add_argument(
+            '--ignore-certificate-errors',
+            '--ignore-ssl-errors')
         options.add_experimental_option("prefs", {
             "download.default_directory": DL_DIR,
             "download.prompt_for_download": False,
@@ -340,6 +343,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
     """
     Retrieve all available datapacks with infos and files
     """
+
+    print("Building datapacks infos...")
 
     premium = authenticate(driver)
 

@@ -43,8 +43,6 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
     """
     # TODO Implement firefox, waiting for selenium 3.14.0 to fix timeout
 
-    # PROXY = "fw_in.bnf.fr:8080"
-
     # Create needed directories if not existing
     for directory in needed_dirs:
         create_dirs(directory)
@@ -52,9 +50,8 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
     # Set Chrome browser settings
     if browser == "Chrome":
         options = webdriver.ChromeOptions()
-        options.add_argument(
-            '--ignore-certificate-errors',
-            '--ignore-ssl-errors')
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--ignore-ssl-errors')
         options.add_experimental_option("prefs", {
             "download.default_directory": DL_DIR,
             "download.prompt_for_download": False,

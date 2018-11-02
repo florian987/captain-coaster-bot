@@ -12,6 +12,8 @@ include
 lib
 lib64
 logs/*
+scrapper/tmp
+screen.png
 selenium/
 settings.json
 share/

@@ -18,9 +18,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-from PIL import Image
-from io import BytesIO
-
 log = logging.getLogger(__name__)
 
 # Credentials
@@ -287,53 +284,62 @@ def authenticate(driver):
     """
     Authenticate using a Google account and return a boolean
     """
+
+    print("Trying to authenticate")
+    
     driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
-    time.sleep(2)
 
     try:
         # Open menu
-        wait_by_css(driver, ".button-collapse")
-        driver.find_element_by_class_name(".button-collapse").click()
-        time.sleep(2)
+        wait_by_xpath(driver, "//a[@data-activates='sidenavCollapse']")
+        driver.find_element_by_xpath("//a[@data-activates='sidenavCollapse']").click()
 
         # Derouler menu
-        driver.find_element_by_css_selector(
-            'i.material-icons:nth-child(4)'
+        # driver.find_element_by_css_selector(
+        #     'i.material-icons:nth-child(4)'
+        driver.find_element_by_xpath(
+            '//*[@id="sidenavCollapse"]/ul/li[1]/div[1]/a'
         ).click
-        time.sleep(2)
 
         # Click login button
-        driver.find_element_by_css_selector(
-            'li.active > div:nth-child(2) > ul:nth-child(1) > li:nth-child(5)'
-            ' > a:nth-child(1) > span:nth-child(2)'
+        wait_by_xpath(driver, '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a')
+        driver.find_element_by_xpath(
+            '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a'
         ).click
 
         # click Login with google
         wait_by_id(driver, '#gwt-debug-googleLogin')
         driver.find_element_by_id('#gwt-debug-googleLogin').click
 
+        # Accept ToS
+        try:
+            wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
+            driver.find_elements_by_xpath('//input[@type="checkbox" and @value="on"]')[0].click  # Tick box
+            driver.find_element_by_xpath('//a[text()="Confirm"]').click
+        except Exception:
+            pass
+
         # Type login
-        wait_by_id(driver, 'identifierId')
-        driver.find_element_by_id('identifierId').send_keys(google_email)
+        wait_by_xpath(driver, '//input[@type="email"]')
+        driver.find_element_by_xpath('//input[@type="email"]').send_keys(google_email)
         driver.find_element_by_css_selector(
             '#identifierNext > div:nth-child(2)'
         ).click()
 
         # Type password
-        wait_by_css(
-            driver,
-            '#password > div:nth-child(1) > div:nth-child(1) '
-            '> div:nth-child(1) > input:nth-child(1)'
-        )
-
-        driver.find_element_by_css_selector(
-            '#password > div:nth-child(1) > div:nth-child(1)'
-            '> div:nth-child(1) > input:nth-child(1)'
-        ).send_keys(google_password)
-
+        wait_by_xpath(driver, "//input[@type='password']")
+        driver.find_element_by_xpath("//input[@type='password']").send_keys(google_password)
         driver.find_element_by_css_selector(
             '#passwordNext > div:nth-child(2)'
         ).click()
+        
+        # Accept ToS
+        try:
+            wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
+            driver.find_elements_by_xpath('//input[@type="checkbox" and @value="on"]')[0].click  # Tick box
+            driver.find_element_by_xpath('//a[text()="Confirm"]').click
+        except Exception:
+            pass
 
         return True
 
@@ -369,20 +375,20 @@ def build_datapacks_infos(driver, cars_list, premium=False):
             # Iterate over DataPacks tables TR
             car_elems = iter_dom(driver, "//table[@data-vrs-widget="
                                  "'DataPackWeeksTable']/tbody/tr")
-                                 
-            for car_elem in car_elems:
 
-                
-                #driver.save_screenshot('screen.png')
+            for car_elem in car_elems:
+                # Skip "previous week"
+                if car_elem.find_element_by_css_selector("a").get_attribute('text') == "Show previous weeks":
+                    continue
 
                 datapack = {}  # Create datapack dict
                 datapack_path = ''
 
                 try:  # Build datapack
-                    #print(dir(car_elem))
+                    #print(car_elem.find_element_by_css_selector("a").get_attribute('text'))
                     #print(car_elem.find_element_by_xpath("//td[@class='thumbnail-column']/div/img").get_attribute("title"))
-
                     #datapack['track'] = car_elem.find_elements_by_xpath("//td[@class='thumbnail-column'/img").get_attribute("title")
+
                     datapack['track'] = car_elem.find_elements_by_css_selector(
                         "td:nth-of-type(2) img"
                     )[0].get_attribute('title')
@@ -415,16 +421,18 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                         ).get_attribute('value')
 
                         # Close modal
-                        driver.find_element_by_css_selector(
-                            ".KM1CN4-a-h a"
+                        driver.find_element_by_xpath(
+                            "//a[@class='default-button text-button']"
                         ).click()
 
                     car['datapacks'].append(datapack)
 
                 except Exception as e:
+                    driver.save_screenshot('screen.png')
                     print('ERR', e)
                     traceback.print_stack()
-                    pass
+                    print(datapack)
+                    # pass
 
             for datapack in car['datapacks']:
                 datapack['files'] = []
@@ -437,8 +445,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 if "url" in datapack:  # If datapack has url
 
                     driver.get(datapack['url'])  # Load datapack url
-                    wait_by_xpath(driver, f"//span[text()=\""  # Wait page
-                                  "{datapack['track']}\"]")
+                    wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
                     # print('page: ' + driver.current_url)
 
                     # Iterate over files
@@ -533,8 +540,6 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
 
 if __name__ == '__main__':
-
-    print(ROOT_DIR, DL_DIR)
 
     driver = build_driver(headless=False)
     cars_list = build_cars_list(driver)  # Create cars list

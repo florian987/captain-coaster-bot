@@ -219,7 +219,13 @@ class Simracing:
                             icon_url=car['img_author'],
                             name=car['author']
                         )
-
+                        if datapack['time_of_day']:
+                            embed.add_field(name="Moment de la journée", value=datapack['time_of_day'], inline=False)
+                        if datapack['track_state']:
+                            embed.add_field(name="Etat de la piste", value=datapack['track_state'], inline=False)
+                        if datapack['fastest_laptime']:
+                            embed.add_field(name="Meileur temps", value=datapack['fastest_laptime'], inline=False)
+                            
                         for file in datapack['files']:
 
                             # Check file size limit before upload (8Mb)

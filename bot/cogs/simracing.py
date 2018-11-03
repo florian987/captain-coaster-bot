@@ -220,9 +220,9 @@ class Simracing:
                             name=car['author']
                         )
                         if datapack['time_of_day']:
-                            embed.add_field(name="Moment de la journée", value=datapack['time_of_day'], inline=False)
+                            embed.add_field(name="Moment de la journée", value=datapack['time_of_day'])
                         if datapack['track_state']:
-                            embed.add_field(name="Etat de la piste", value=datapack['track_state'], inline=False)
+                            embed.add_field(name="Etat de la piste", value=datapack['track_state'])
                         if datapack['fastest_laptime']:
                             embed.add_field(name="Meileur temps", value=datapack['fastest_laptime'], inline=False)
                             

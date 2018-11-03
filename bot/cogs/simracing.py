@@ -1,5 +1,7 @@
+import itertools
 import logging
 import os
+import re
 import zipfile
 
 import aiohttp
@@ -54,7 +56,7 @@ class Simracing:
     #     os.unlink(file_to_process)  # remove pngfile
 
     @commands.command(name="get_setup_channels",
-                    aliases=["setup_chans", 'get_setups_chans'])
+                      aliases=["setup_chans", 'get_setups_chans'])
     @commands.guild_only()
     @with_role(Roles.pilotes)
     async def get_channels(self, ctx):
@@ -87,7 +89,7 @@ class Simracing:
         purged_msgs = 0
 
         for channel in setup_category.channels:
-            deleted = await channel.purge(check=is_me)
+            deleted = await channel.purge(check=is_me, limit=9999)
             if deleted:
                 await channel.send(
                     f'Deleted {len(deleted)} message(s)'
@@ -131,15 +133,13 @@ class Simracing:
                     log.error("VRS website offline, aborting.")
                     return False
 
-        async def message_exists(channel: discord.TextChannel, message: discord.Message):
-            """Search message content in a defined channel"""
-            return bool(channel.history().get(content=message))
-
-        # async def embed_exists(channel: discord.TextChannel, embed):
-        #    """Search message content in a defined channel"""
-        #    if await channel.history().get(embed=embed):
-        #        return True
-        #    return False
+        # async def message_exists(channel: discord.TextChannel, message: discord.Message):
+        #     """Search message content in a defined channel"""
+        #     return bool(channel.history().get(content=message))
+#
+        # async def embed_exists(channel: discord.TextChannel, embed: discord.Embed):
+        #     """Search embed in a defined channel"""
+        #     return bool(channel.history().get(embed=embed))
 
         # TODO END THIS
         async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
@@ -160,13 +160,27 @@ class Simracing:
             upload_channel = await ensure_channel_exists(
                 upload_channel_name.lower(), setup_category)
 
+            # TODO End cehck if exists            
+            upload_msg_hist = await upload_channel.history().flatten()
+
+            def file_uploaded(history, filename):
+                for message in history:
+                    if message.content == filename:
+                        return message
+
+            def embed_sent(history, embed):  # rename to embed_exists
+                for message in history:
+                    for mbd in message.embeds:
+                        if mbd.title == embed.title and mbd.description == embed.description:
+                            return mbd
+
             # Change Bot Status
             await self.bot.change_presence(
                 activity=discord.Game(name='Lister les setups')
             )
 
             # Create webdriver
-            driver = scrapper.build_driver(headless=False)
+            driver = scrapper.build_driver(headless=True)
 
             # Scrap VRS website and build cars infos
             iracing_cars = scrapper.build_cars_list(driver)
@@ -186,9 +200,11 @@ class Simracing:
             for car in cars_list:
 
                 # Create serie channel name
-                serie_channel_name = car['serie'].replace(' ', '-').lower()
+                serie_channel_name = re.sub(' +', ' ', car['serie'].lower().replace('iracing', '').strip().replace('-', '')).replace(' ', '-')
                 serie_channel = await ensure_channel_exists(
                     serie_channel_name, setup_category)
+                
+                channel_embeds = await serie_channel.history().flatten()
 
                 for datapack in car['datapacks']:
                     if datapack['files']:
@@ -216,18 +232,13 @@ class Simracing:
                                     f"{datapack['track']}-{file['name']}"
                                 ).replace(' ', '_')
 
-                                # upload file if not exists
-                                if not await message_exists(
-                                        upload_channel, filename_on_discord):
+                                upload_msg = file_uploaded(upload_msg_hist, filename_on_discord)
+
+                                if upload_msg is None:
                                     upload_msg = (
                                         await upload_channel.send(
                                             content=filename_on_discord,
                                             file=discord.File(file['path'])))
-                                else:
-                                    upload_msg = (
-                                        await upload_channel
-                                        .history()
-                                        .get(content=filename_on_discord))
 
                                 # Add file to embed
                                 embed.add_field(
@@ -236,8 +247,11 @@ class Simracing:
                                     f"({upload_msg.attachments[0].url})")
 
                         # TODO Validate this works
-                        log.info(f"Generated embed for {car['serie']} - {car['name']}.")
-                        await serie_channel.send(content='', embed=embed)
+                        embed_exists = embed_sent(channel_embeds, embed)
+
+                        if not embed_exists:
+                            await serie_channel.send(embed=embed)
+                            log.info(f"Sent embed for {car['serie']} - {car['name']}.")
 
         else:
             """If VRS Offline"""
@@ -280,7 +294,7 @@ class Simracing:
                     # await upload_and_delete(msg, png_file)
                     await msg.channel.send(file=discord.File(png_file))
                     os.unlink(png_file)  # remove pngfile
-                    #os.unlink(attachment.filename)  # remove zipfile
+                    # os.unlink(attachment.filename)  # remove zipfile
                     log.info(f"Preview generated {png_file} "
                              f"- uploader: {msg.author}")
 

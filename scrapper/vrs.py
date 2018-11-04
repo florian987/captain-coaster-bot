@@ -22,8 +22,17 @@ log = logging.getLogger(__name__)
 
 # Credentials
 
-google_email = "adelargem@gmail.com"
-google_password = "AerhEHa3654G!gre"
+google_email = "osmozwareesport@gmail.com"
+google_password = "Nj689933"
+google_cookie = {
+    'domain': 'virtualracingschool.appspot.com',
+    'expiry': 1542534627,
+    'httpOnly': False,
+    'name': 'JSESSIONID',
+    'path': '/',
+    'secure': False,
+    'value': 'LCT1XmGyJ_4-ZZvX-eALuA'
+    }
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 DL_DIR = os.path.join(script_dir, "downloads")
@@ -66,8 +75,23 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             # Not tested
             options.add_argument('disable-gpu')
 
+        # TODO clean this
+        if os.name == 'posix':
+            chromedriver = 'chromedriver_linux64'
+        elif os.name == 'nt':
+            chromedriver = 'chromedriver_win32.exe'
+
+        if os.path.isfile(os.path.join(script_dir, chromedriver)):
+            chromedriver_path = os.path.join(script_dir, chromedriver)
+        else:
+            chromedriver_path = os.path.join(script_dir, 'scrapper', chromedriver)
+
+        print(os.path.join(script_dir, chromedriver_path))
+
         # Build Chrome driver
-        driver = webdriver.Chrome(chrome_options=options)
+        driver = webdriver.Chrome(
+            executable_path=chromedriver_path,
+            chrome_options=options)
 
         # Add devtools command to allow download
         driver.execute_cdp_cmd(
@@ -287,64 +311,73 @@ def authenticate(driver):
 
     print("Trying to authenticate")
     
-    driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
+    # driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
+    driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
+    driver.add_cookie(google_cookie)
 
-    try:
+    #try:
         # Open menu
-        wait_by_xpath(driver, "//a[@data-activates='sidenavCollapse']")
-        driver.find_element_by_xpath("//a[@data-activates='sidenavCollapse']").click()
+        # wait_by_xpath(driver, "//a[@data-activates='sidenavCollapse']")
+        # driver.find_element_by_xpath("//a[@data-activates='sidenavCollapse']").click()
 
         # Derouler menu
         # driver.find_element_by_css_selector(
         #     'i.material-icons:nth-child(4)'
-        driver.find_element_by_xpath(
-            '//*[@id="sidenavCollapse"]/ul/li[1]/div[1]/a'
-        ).click
+        # driver.find_element_by_xpath(
+        #     '//*[@id="sidenavCollapse"]/ul/li[1]/div[1]/a'
+        # ).click
 
         # Click login button
-        wait_by_xpath(driver, '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a')
-        driver.find_element_by_xpath(
-            '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a'
-        ).click
-
-        # click Login with google
-        wait_by_id(driver, '#gwt-debug-googleLogin')
-        driver.find_element_by_id('#gwt-debug-googleLogin').click
-
-        # Accept ToS
-        try:
-            wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
-            driver.find_elements_by_xpath('//input[@type="checkbox" and @value="on"]')[0].click  # Tick box
-            driver.find_element_by_xpath('//a[text()="Confirm"]').click
-        except Exception:
-            pass
-
-        # Type login
-        wait_by_xpath(driver, '//input[@type="email"]')
-        driver.find_element_by_xpath('//input[@type="email"]').send_keys(google_email)
-        driver.find_element_by_css_selector(
-            '#identifierNext > div:nth-child(2)'
-        ).click()
-
-        # Type password
-        wait_by_xpath(driver, "//input[@type='password']")
-        driver.find_element_by_xpath("//input[@type='password']").send_keys(google_password)
-        driver.find_element_by_css_selector(
-            '#passwordNext > div:nth-child(2)'
-        ).click()
-        
-        # Accept ToS
-        try:
-            wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
-            driver.find_elements_by_xpath('//input[@type="checkbox" and @value="on"]')[0].click  # Tick box
-            driver.find_element_by_xpath('//a[text()="Confirm"]').click
-        except Exception:
-            pass
-
-        return True
-
-    except Exception:
-        return False
+        # wait_by_xpath(driver, '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a')
+        # driver.find_element_by_xpath(
+        #     '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a'
+        # ).click
+        #wait_by_xpath(driver, '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span')
+        #driver.find_element_by_xpath(
+        #    '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span'
+        #).click()
+#
+        #print(driver.find_element_by_class_name('popupContent').get_attribute('innerHTML'))
+#
+        ## click Login with google
+        #wait_by_xpath(driver, '//*[@id="gwt-debug-googleLogin"]')
+        #driver.find_element_by_xpath('//*[@id="gwt-debug-googleLogin"]').click()
+#
+        ## Accept ToS
+        #try:
+        #    wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
+        #    driver.find_elements_by_xpath('//input[@type="checkbox" and @value="on"]')[0].click()  # Tick box
+        #    driver.find_element_by_xpath('//a[text()="Confirm"]').click()
+        #except Exception:
+        #    pass
+#
+        ## Type login
+        #wait_by_xpath(driver, '//input[@type="email"]')
+        #driver.find_element_by_xpath('//input[@type="email"]').click()
+        #driver.find_element_by_xpath('//input[@type="email"]').send_keys(google_email)
+        #driver.find_element_by_css_selector(
+        #    '#identifierNext > div:nth-child(2)'
+        #).click()
+#
+        ## Type password
+        #wait_by_xpath(driver, "//input[@type='password']")
+        #driver.find_element_by_xpath("//input[@type='password']").send_keys(google_password)
+        #driver.find_element_by_css_selector(
+        #    '#passwordNext > div:nth-child(2)'
+        #).click()
+        #
+        ## Accept ToS
+        #try:
+        #    wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
+        #    driver.find_elements_by_xpath('//input[@type="checkbox" and @value="on"]')[0].click  # Tick box
+        #    driver.find_element_by_xpath('//a[text()="Confirm"]').click
+        #except Exception:
+        #    pass
+#
+        #return True
+#
+    #except Exception:
+        #return False
 
 
 def build_datapacks_infos(driver, cars_list, premium=False):
@@ -362,170 +395,166 @@ def build_datapacks_infos(driver, cars_list, premium=False):
     for car in cars_list:  # Build datapacks
 
         car['datapacks'] = []  # Initialize datapacks list
+        print(f"|_ Building {car['serie']} - {car['name']} datapacks")
 
-        # Only iterate over free cars
-        if not car['premium']:
+        driver.get(car['url'])  # Load car URL and wait Js load
+        wait_by_xpath(
+            driver,
+            "//p[@class='base-info' and text()=\"{car['name']}\"]")
 
-            print(f"|_ Building {car['serie']} - {car['name']} datapacks")
+        # Iterate over DataPacks tables TR
+        car_elems = iter_dom(driver, "//table[@data-vrs-widget="
+                                "'DataPackWeeksTable']/tbody/tr")
 
-            driver.get(car['url'])  # Load car URL and wait Js load
-            wait_by_xpath(driver, "//p[@class='base-info' "
-                          f"and text()=\"{car['name']}\"]")
+        for car_elem in car_elems:
+            # Skip "previous week"
+            if car_elem.find_element_by_css_selector("a").get_attribute('text') == "Show previous weeks":
+                continue
 
-            # Iterate over DataPacks tables TR
-            car_elems = iter_dom(driver, "//table[@data-vrs-widget="
-                                 "'DataPackWeeksTable']/tbody/tr")
+            datapack = {}  # Create datapack dict
+            datapack_path = ''
 
-            for car_elem in car_elems:
-                # Skip "previous week"
-                if car_elem.find_element_by_css_selector("a").get_attribute('text') == "Show previous weeks":
-                    continue
+            try:  # Build datapack
+                #print(car_elem.find_element_by_css_selector("a").get_attribute('text'))
+                #print(car_elem.find_element_by_xpath("//td[@class='thumbnail-column']/div/img").get_attribute("title"))
+                #datapack['track'] = car_elem.find_elements_by_xpath("//td[@class='thumbnail-column'/img").get_attribute("title")
 
-                datapack = {}  # Create datapack dict
-                datapack_path = ''
+                datapack['track'] = car_elem.find_elements_by_css_selector(
+                    "td:nth-of-type(2) img"
+                )[0].get_attribute('title')
 
-                try:  # Build datapack
-                    #print(car_elem.find_element_by_css_selector("a").get_attribute('text'))
-                    #print(car_elem.find_element_by_xpath("//td[@class='thumbnail-column']/div/img").get_attribute("title"))
-                    #datapack['track'] = car_elem.find_elements_by_xpath("//td[@class='thumbnail-column'/img").get_attribute("title")
+                datapack['fastest_laptime'] = car_elem.find_elements_by_css_selector(
+                    "td:nth-of-type(3) div span:nth-of-type(1) span"
+                )[0].get_attribute('title')
 
-                    datapack['track'] = car_elem.find_elements_by_css_selector(
-                        "td:nth-of-type(2) img"
-                    )[0].get_attribute('title')
+                datapack['time_of_day'] = (car_elem.find_elements_by_css_selector(
+                    "td:nth-of-type(4) div span:nth-of-type(1) span"
+                )[0].get_attribute('title'))
 
-                    datapack['fastest_laptime'] = car_elem.find_elements_by_css_selector(
-                        "td:nth-of-type(3) div span:nth-of-type(1) span"
-                    )[0].get_attribute('title')
+                datapack['track_state'] = car_elem.find_elements_by_css_selector(
+                    "td:nth-of-type(4) div span:nth-of-type(2) span"
+                )[0].get_attribute('title')
 
-                    datapack['time_of_day'] = (car_elem.find_elements_by_css_selector(
-                        "td:nth-of-type(4) div span:nth-of-type(1) span"
-                    )[0].get_attribute('title'))
+                # If datapack is not empty
+                if datapack['fastest_laptime'] != "":
 
-                    datapack['track_state'] = car_elem.find_elements_by_css_selector(
-                        "td:nth-of-type(4) div span:nth-of-type(2) span"
-                    )[0].get_attribute('title')
+                    # Open permalink box
+                    #car_elem.find_element_by_css_selector(
+                    car_elem.find_element_by_xpath(
+                        #"td:nth-of-type(6) a:nth-of-type(3)"
+                        "//a[@data-vrs-widget-field='getPermalink']"
+                    ).click()
 
-                    # If datapack is not empty
-                    if datapack['fastest_laptime'] != "":
+                    # Get datapack permalink
+                    datapack['url'] = driver.find_element_by_css_selector(
+                        ".gwt-TextBox"
+                    ).get_attribute('value')
 
-                        # Open permalink box
-                        #car_elem.find_element_by_css_selector(
-                        car_elem.find_element_by_xpath(
-                            #"td:nth-of-type(6) a:nth-of-type(3)"
-                            "//a[@data-vrs-widget-field='getPermalink']"
-                        ).click()
+                    # Close modal
+                    driver.find_element_by_xpath(
+                        "//a[@class='default-button text-button']"
+                    ).click()
 
-                        # Get datapack permalink
-                        datapack['url'] = driver.find_element_by_css_selector(
-                            ".gwt-TextBox"
-                        ).get_attribute('value')
+                car['datapacks'].append(datapack)
 
-                        # Close modal
-                        driver.find_element_by_xpath(
-                            "//a[@class='default-button text-button']"
-                        ).click()
+            except Exception as e:
+                driver.save_screenshot('screen.png')
+                print('ERR', e)
+                traceback.print_stack()
+                print(datapack)
+                # pass
 
-                    car['datapacks'].append(datapack)
+        for datapack in car['datapacks']:
+            datapack['files'] = []
 
-                except Exception as e:
-                    driver.save_screenshot('screen.png')
-                    print('ERR', e)
-                    traceback.print_stack()
-                    print(datapack)
-                    # pass
+            datapack_path = os.path.join(  # Build desired paths
+                car['car_path'], datapack['track'])
 
-            for datapack in car['datapacks']:
-                datapack['files'] = []
+            create_dirs(datapack_path)  # Create paths if needed
 
-                datapack_path = os.path.join(  # Build desired paths
-                    car['car_path'], datapack['track'])
+            if "url" in datapack:  # If datapack has url
 
-                create_dirs(datapack_path)  # Create paths if needed
+                driver.get(datapack['url'])  # Load datapack url
+                wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
+                # print('page: ' + driver.current_url)
 
-                if "url" in datapack:  # If datapack has url
+                # Iterate over files
+                file_elements = iter_dom(driver, "//li[@data-vrs-widget="
+                                            "'LIWrapper']/div/div/form/div/a")
 
-                    driver.get(datapack['url'])  # Load datapack url
-                    wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
-                    # print('page: ' + driver.current_url)
+                for file_element in file_elements:
+                    filetype = {  # Define extensions dict
+                        "olap": "hotlap",
+                        "blap": "bestlap",
+                        "rpy": "replay",
+                        "zip": "replay",
+                        "sto": "setup"
+                    }
 
-                    # Iterate over files
-                    file_elements = iter_dom(driver, "//li[@data-vrs-widget="
-                                             "'LIWrapper']/div/div/form/div/a")
+                    file = {}  # Create file dict
 
-                    for file_element in file_elements:
-                        filetype = {  # Define extensions dict
-                            "olap": "hotlap",
-                            "blap": "bestlap",
-                            "rpy": "replay",
-                            "zip": "replay",
-                            "sto": "setup"
-                        }
+                    # Set file attributes
+                    file['name'] = file_element.get_attribute('text')
+                    file_extension = file['name'].split('.')[-1]
+                    file["type"] = filetype.get(file_extension, "unknown")
+                    filepath_temp = os.path.join(
+                        DL_DIR, file['name']
+                    )
+                    file['path'] = os.path.join(
+                        datapack_path, file['name']
+                    )
 
-                        file = {}  # Create file dict
+                    # Download Car image
+                    download_img(car['img_url'], car['car_path'])
+                    # Download Serie image
+                    download_img(car['serie_img_url'], car['serie_path'])
 
-                        # Set file attributes
-                        file['name'] = file_element.get_attribute('text')
-                        file_extension = file['name'].split('.')[-1]
-                        file["type"] = filetype.get(file_extension, "unknown")
-                        filepath_temp = os.path.join(
-                            DL_DIR, file['name']
-                        )
-                        file['path'] = os.path.join(
-                            datapack_path, file['name']
-                        )
+                    # Download datapack file if not present
+                    if not os.path.isfile(file['path']):
+                        print(f"Downloading file {file['name']}")
+                        try:
+                            file_element.click()
+                        except Exception:
+                            print("Can not click")
 
-                        # Download Car image
-                        download_img(car['img_url'], car['car_path'])
-                        # Download Serie image
-                        download_img(car['serie_img_url'], car['serie_path'])
+                        # Close modal License box if opened
+                        try:
+                            ok_button = driver.find_element_by_xpath(
+                                '/html/body/div[7]/div/div/div[3]/a[2]'
+                            )
+                            ok_button.click()
+                        except Exception as e:
+                            pass
 
-                        # Download datapack file if not present
-                        if not os.path.isfile(file['path']):
-                            print(f"Downloading file {file['name']}")
-                            try:
-                                file_element.click()
-                            except Exception:
-                                print("Can not click")
+                        sleep_count = 0
+                        # Wait file to be downloaded (Chrome)
+                        while not (os.path.isfile(filepath_temp) and sleep_count < 180):
+                            # print('wait because part', sleep_count)
+                            time.sleep(1)
+                            sleep_count += 1
 
-                            # Close modal License box if opened
-                            try:
-                                ok_button = driver.find_element_by_xpath(
-                                    '/html/body/div[7]/div/div/div[3]/a[2]'
-                                )
-                                ok_button.click()
-                            except Exception as e:
-                                pass
+                        shutil.move(filepath_temp, file['path'])
 
-                            sleep_count = 0
-                            # Wait file to be downloaded (Chrome)
-                            while not (os.path.isfile(filepath_temp) and
-                                       sleep_count < 180):
-                                # print('wait because part', sleep_count)
-                                time.sleep(1)
-                                sleep_count += 1
+                        # TODO per browser switch
+                        # Wait file to be downloaded (Firefox)
+                        # sleep_count = 0
+                        # while os.path.isfile(filepath_temp + '.part')
+                        # and sleep_count < 90:
+                        #    print('wait because part', sleep_count)
+                        #    time.sleep(1)
+                        #    sleep_count += 1
 
-                            shutil.move(filepath_temp, file['path'])
+                        # print('DL OK', 'Temp_path: ' + filepath_temp)
 
-                            # TODO per browser switch
-                            # Wait file to be downloaded (Firefox)
-                            # sleep_count = 0
-                            # while os.path.isfile(filepath_temp + '.part')
-                            # and sleep_count < 90:
-                            #    print('wait because part', sleep_count)
-                            #    time.sleep(1)
-                            #    sleep_count += 1
+                        # Move file
+                        # if not os.path.isfile(filepath_temp + '.part')
+                        # and os.path.isfile(filepath_temp):
+                        #    shutil.move(filepath_temp, file['path'])
+                        #
+                        #    #time.sleep(5)
 
-                            # print('DL OK', 'Temp_path: ' + filepath_temp)
-
-                            # Move file
-                            # if not os.path.isfile(filepath_temp + '.part')
-                            # and os.path.isfile(filepath_temp):
-                            #    shutil.move(filepath_temp, file['path'])
-                            #
-                            #    #time.sleep(5)
-
-                        # Add file to files list
-                        datapack['files'].append(file)
+                    # Add file to files list
+                    datapack['files'].append(file)
 
     print(cars_list)
 

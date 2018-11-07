@@ -100,6 +100,11 @@ class RollerCoasters:
         else:
             await ctx.invoke(self.bot.get_command("cc search"), search=query)
 
+    @commands.is_owner()
+    @cc_group.command(name="listgames")
+    async def cc_listgames(self, ctx):
+        await ctx.message.author.send(content=f"Parties en cours.\nf{self.game_in_progress}")
+
     @cc_group.command(name="list", aliases=[])
     async def cc_list(self, ctx):
         """

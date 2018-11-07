@@ -11,7 +11,7 @@ import urllib
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.proxy import *
 from selenium.webdriver.support import expected_conditions as EC
@@ -26,12 +26,12 @@ google_email = "osmozwareesport@gmail.com"
 google_password = "Nj689933"
 google_cookie = {
     'domain': 'virtualracingschool.appspot.com',
-    'expiry': 1542534627,
+    'expiry': 1542742817,
     'httpOnly': False,
     'name': 'JSESSIONID',
     'path': '/',
     'secure': False,
-    'value': 'LCT1XmGyJ_4-ZZvX-eALuA'
+    'value': 'kmNZrVMwsu14bGYm1UkFxA'
     }
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -85,7 +85,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             chromedriver_path = os.path.join(script_dir, chromedriver)
         else:
             chromedriver_path = os.path.join(script_dir, 'scrapper', chromedriver)
-        
+
         if os.name == 'posix':
             os.chmod(chromedriver_path, 0o755)
 
@@ -98,7 +98,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
 
         # Add devtools command to allow download
         driver.execute_cdp_cmd(
-            'Page.setDownloadBehavior', 
+            'Page.setDownloadBehavior',
             {'behavior': 'allow', 'downloadPath': DL_DIR})
 
     elif browser == "Firefox":  # Handle Firefox profile
@@ -313,11 +313,15 @@ def authenticate(driver):
     """
 
     print("Trying to authenticate")
-    
-    # driver.get("https://virtualracingschool.appspot.com/#/DataPacks")
-    driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
-    driver.add_cookie(google_cookie)
-
+    try:
+        driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
+        driver.add_cookie(google_cookie)
+        driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
+        subscription_box = driver.find_element_by_xpath('//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div[2]')  # Check if subscription box is displayed
+    except StaleElementReferenceException:
+        return False
+    else:
+        return subscription_box.is_displayed()
     #try:
         # Open menu
         # wait_by_xpath(driver, "//a[@data-activates='sidenavCollapse']")
@@ -339,13 +343,13 @@ def authenticate(driver):
         #driver.find_element_by_xpath(
         #    '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span'
         #).click()
-#
+    #
         #print(driver.find_element_by_class_name('popupContent').get_attribute('innerHTML'))
-#
+    #
         ## click Login with google
         #wait_by_xpath(driver, '//*[@id="gwt-debug-googleLogin"]')
         #driver.find_element_by_xpath('//*[@id="gwt-debug-googleLogin"]').click()
-#
+    #
         ## Accept ToS
         #try:
         #    wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
@@ -353,7 +357,7 @@ def authenticate(driver):
         #    driver.find_element_by_xpath('//a[text()="Confirm"]').click()
         #except Exception:
         #    pass
-#
+    #
         ## Type login
         #wait_by_xpath(driver, '//input[@type="email"]')
         #driver.find_element_by_xpath('//input[@type="email"]').click()
@@ -361,7 +365,7 @@ def authenticate(driver):
         #driver.find_element_by_css_selector(
         #    '#identifierNext > div:nth-child(2)'
         #).click()
-#
+    #
         ## Type password
         #wait_by_xpath(driver, "//input[@type='password']")
         #driver.find_element_by_xpath("//input[@type='password']").send_keys(google_password)
@@ -376,11 +380,13 @@ def authenticate(driver):
         #    driver.find_element_by_xpath('//a[text()="Confirm"]').click
         #except Exception:
         #    pass
-#
+    #
         #return True
-#
+    #
     #except Exception:
         #return False
+
+
 
 
 def build_datapacks_infos(driver, cars_list, premium=False):
@@ -418,10 +424,6 @@ def build_datapacks_infos(driver, cars_list, premium=False):
             datapack_path = ''
 
             try:  # Build datapack
-                #print(car_elem.find_element_by_css_selector("a").get_attribute('text'))
-                #print(car_elem.find_element_by_xpath("//td[@class='thumbnail-column']/div/img").get_attribute("title"))
-                #datapack['track'] = car_elem.find_elements_by_xpath("//td[@class='thumbnail-column'/img").get_attribute("title")
-
                 datapack['track'] = car_elem.find_elements_by_css_selector(
                     "td:nth-of-type(2) img"
                 )[0].get_attribute('title')
@@ -439,25 +441,19 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 )[0].get_attribute('title')
 
                 # If datapack is not empty
-                if datapack['fastest_laptime'] != "":
-
+                if datapack['fastest_laptime'] != "":                    
                     # Open permalink box
-                    #car_elem.find_element_by_css_selector(
                     car_elem.find_element_by_xpath(
-                        #"td:nth-of-type(6) a:nth-of-type(3)"
                         "//a[@data-vrs-widget-field='getPermalink']"
                     ).click()
-
                     # Get datapack permalink
                     datapack['url'] = driver.find_element_by_css_selector(
                         ".gwt-TextBox"
                     ).get_attribute('value')
-
                     # Close modal
                     driver.find_element_by_xpath(
                         "//a[@class='default-button text-button']"
                     ).click()
-
                 car['datapacks'].append(datapack)
 
             except Exception as e:
@@ -472,21 +468,19 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
             datapack_path = os.path.join(  # Build desired paths
                 car['car_path'], datapack['track'])
-
             create_dirs(datapack_path)  # Create paths if needed
 
             if "url" in datapack:  # If datapack has url
-
                 driver.get(datapack['url'])  # Load datapack url
                 wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
-                # print('page: ' + driver.current_url)
 
                 # Iterate over files
                 file_elements = iter_dom(driver, "//li[@data-vrs-widget="
-                                            "'LIWrapper']/div/div/form/div/a")
+                                         "'LIWrapper']/div/div/form/div/a")
 
                 for file_element in file_elements:
-                    filetype = {  # Define extensions dict
+                    # Define extensions dict
+                    filetype = {
                         "olap": "hotlap",
                         "blap": "bestlap",
                         "rpy": "replay",

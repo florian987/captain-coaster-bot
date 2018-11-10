@@ -13,10 +13,6 @@ class OwnerCog:
         self.bot = bot
         self.paginator = commands.Paginator(prefix="```py", suffix="```")
 
-    async def on_ready(self):
-        appinfo = await self.bot.application_info()
-        await appinfo.owner.send_friend_request()
-
     # Hidden means it won't show up on the default help.
     @commands.command(name='load', hidden=True)
     @commands.is_owner()

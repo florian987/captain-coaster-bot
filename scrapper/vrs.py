@@ -8,6 +8,7 @@ import os
 import shutil
 import time
 import urllib
+import re
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -23,7 +24,7 @@ log = logging.getLogger(__name__)
 # Credentials
 
 google_email = "osmozwareesport@gmail.com"
-google_password = "Nj689933"
+google_password = "Nj68994455"
 google_cookie = {
     'domain': 'virtualracingschool.appspot.com',
     'expiry': 1542742817,
@@ -299,8 +300,14 @@ def build_cars_list(driver):
         car['url'] = site_url + node_id
         car['premium'] = car_premium
         car['season_path'] = os.path.join(DL_DIR, car['season'])
-        car['serie_path'] = os.path.join(car['season_path'], car['serie'])
-        car['car_path'] = os.path.join(car['serie_path'], car['name'])
+        car['serie_path'] = os.path.join(
+            car['season_path'].lower().strip().replace(' ', '_'),
+            car['serie'].lower().strip().replace(' ', '_')
+        )
+        car['car_path'] = os.path.join(
+            car['serie_path'].lower().strip().replace(' ', '_'),
+            car['name'].lower().strip().replace(' ', '_')
+        )
 
         cars.append(car)  # Add car to cars list
 
@@ -313,65 +320,63 @@ def authenticate(driver):
     """
 
     print("Trying to authenticate")
+    # Failed cookie attempt
+    # try:
+    #     driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
+    #     driver.add_cookie(google_cookie)
+    #     driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
+    #     subscription_box = driver.find_element_by_xpath('//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div[2]')  # Check if subscription box is displayed
+    # except StaleElementReferenceException:
+    #     return False
+    # else:
+    #     return subscription_box.is_displayed()
+    driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
     try:
-        driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
-        driver.add_cookie(google_cookie)
-        driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
-        subscription_box = driver.find_element_by_xpath('//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div[2]')  # Check if subscription box is displayed
-    except StaleElementReferenceException:
-        return False
-    else:
-        return subscription_box.is_displayed()
-    #try:
-        # Open menu
-        # wait_by_xpath(driver, "//a[@data-activates='sidenavCollapse']")
-        # driver.find_element_by_xpath("//a[@data-activates='sidenavCollapse']").click()
+        # Clic LOGIN Button
+        wait_by_xpath(driver, '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span')
+        driver.find_element_by_xpath(
+            '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span'
+        ).click()
 
-        # Derouler menu
-        # driver.find_element_by_css_selector(
-        #     'i.material-icons:nth-child(4)'
-        # driver.find_element_by_xpath(
-        #     '//*[@id="sidenavCollapse"]/ul/li[1]/div[1]/a'
-        # ).click
+        # click Login with google
+        wait_by_xpath(driver, '//*[@id="gwt-debug-googleLogin"]')
+        driver.find_element_by_xpath('//*[@id="gwt-debug-googleLogin"]').click()
 
-        # Click login button
-        # wait_by_xpath(driver, '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a')
-        # driver.find_element_by_xpath(
-        #     '//*[@id="sidenavCollapse"]/ul/li[1]/div[2]/ul/li[5]/a'
-        # ).click
-        #wait_by_xpath(driver, '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span')
-        #driver.find_element_by_xpath(
-        #    '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span'
-        #).click()
-    #
-        #print(driver.find_element_by_class_name('popupContent').get_attribute('innerHTML'))
-    #
-        ## click Login with google
-        #wait_by_xpath(driver, '//*[@id="gwt-debug-googleLogin"]')
-        #driver.find_element_by_xpath('//*[@id="gwt-debug-googleLogin"]').click()
-    #
-        ## Accept ToS
+        # Accept ToS
         #try:
         #    wait_by_xpath(driver, '//input[@type="checkbox" and @value="on"]')
         #    driver.find_elements_by_xpath('//input[@type="checkbox" and @value="on"]')[0].click()  # Tick box
         #    driver.find_element_by_xpath('//a[text()="Confirm"]').click()
         #except Exception:
         #    pass
-    #
-        ## Type login
-        #wait_by_xpath(driver, '//input[@type="email"]')
-        #driver.find_element_by_xpath('//input[@type="email"]').click()
-        #driver.find_element_by_xpath('//input[@type="email"]').send_keys(google_email)
-        #driver.find_element_by_css_selector(
-        #    '#identifierNext > div:nth-child(2)'
-        #).click()
-    #
-        ## Type password
-        #wait_by_xpath(driver, "//input[@type='password']")
-        #driver.find_element_by_xpath("//input[@type='password']").send_keys(google_password)
-        #driver.find_element_by_css_selector(
-        #    '#passwordNext > div:nth-child(2)'
-        #).click()
+
+        # Type login
+        login_field = '//*[@id="identifierId"]'
+        login_next = '//*[@id="identifierNext"]/content/span'
+        wait_by_xpath(driver, login_field)
+        driver.find_element_by_xpath(login_field).click()
+        driver.find_element_by_xpath(login_field).send_keys(google_email)
+        driver.find_element_by_xpath(login_next).click()
+
+        # Type password
+        passwd_field = '//*[@id="password"]/div[1]/div/div[1]/input'
+        passwd_next = '//*[@id="passwordNext"]/content/span'
+        wait_by_xpath(driver, passwd_field)
+        driver.find_element_by_xpath(passwd_field).send_keys(google_password)
+        time.sleep(3)  # crap wait do not remove (or fix it)
+        driver.find_element_by_xpath(passwd_next).click()
+        time.sleep(10)  # crap wait do not remove (or fix it)
+
+        # Check if premium
+        subscription_div = '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div[2]'
+        driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
+        try:
+            wait_by_xpath(driver, subscription_div)
+            subscription_box = driver.find_element_by_xpath(subscription_div)  # Check if subscription box is displayed
+        except StaleElementReferenceException:
+            return False
+        else:
+            return subscription_box.is_displayed()
         #
         ## Accept ToS
         #try:
@@ -383,10 +388,8 @@ def authenticate(driver):
     #
         #return True
     #
-    #except Exception:
-        #return False
-
-
+    except Exception:
+        return False
 
 
 def build_datapacks_infos(driver, cars_list, premium=False):
@@ -397,6 +400,10 @@ def build_datapacks_infos(driver, cars_list, premium=False):
     print("Building datapacks infos...")
 
     premium = authenticate(driver)
+    #print(f'Premium: {premium}' )
+
+    # Temp crap due tu aussie driver search
+    cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"]
 
     if not premium:  # Define list to iterate over
         cars_list = [item for item in cars_list if not item['premium']]
@@ -409,13 +416,15 @@ def build_datapacks_infos(driver, cars_list, premium=False):
         driver.get(car['url'])  # Load car URL and wait Js load
         wait_by_xpath(
             driver,
-            "//p[@class='base-info' and text()=\"{car['name']}\"]")
+            f"//p[@class='base-info' and text()=\"{car['name']}\"]")
 
         # Iterate over DataPacks tables TR
-        car_elems = iter_dom(driver, "//table[@data-vrs-widget="
-                                "'DataPackWeeksTable']/tbody/tr")
-
-        for car_elem in car_elems:
+        # car_elems = iter_dom(driver, "//table[@data-vrs-widget="
+        #                         "'DataPackWeeksTable']/tbody/tr")
+# 
+        # for car_elem in car_elems:
+        for car_elem in iter_dom(driver, "//table[@data-vrs-widget="
+                                 "'DataPackWeeksTable']/tbody/tr"):
             # Skip "previous week"
             if car_elem.find_element_by_css_selector("a").get_attribute('text') == "Show previous weeks":
                 continue
@@ -441,7 +450,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 )[0].get_attribute('title')
 
                 # If datapack is not empty
-                if datapack['fastest_laptime'] != "":                    
+                if datapack['fastest_laptime'] != "":
                     # Open permalink box
                     car_elem.find_element_by_xpath(
                         "//a[@data-vrs-widget-field='getPermalink']"
@@ -472,11 +481,17 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
             if "url" in datapack:  # If datapack has url
                 driver.get(datapack['url'])  # Load datapack url
+
+                # TODO This seems really slow, potentially not working
                 wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
 
                 # Iterate over files
                 file_elements = iter_dom(driver, "//li[@data-vrs-widget="
                                          "'LIWrapper']/div/div/form/div/a")
+
+                # Remove not uploaded files (GG VRS)
+                file_elements = [item for item in file_elements if "not uploaded" not in item.get_attribute('text')]
+                cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"]
 
                 for file_element in file_elements:
                     # Define extensions dict
@@ -491,7 +506,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                     file = {}  # Create file dict
 
                     # Set file attributes
-                    file['name'] = file_element.get_attribute('text')
+                    file['name'] = re.sub("^(.*?)\\\\", "", file_element.get_attribute('text').replace("\\", "-"))
+                    #file['name'] = file_element.get_attribute('text').replace("\\", "-")
                     file_extension = file['name'].split('.')[-1]
                     file["type"] = filetype.get(file_extension, "unknown")
                     filepath_temp = os.path.join(
@@ -507,12 +523,15 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                     download_img(car['serie_img_url'], car['serie_path'])
 
                     # Download datapack file if not present
-                    if not os.path.isfile(file['path']):
+                    if not os.path.isfile(file['path']) and "not uploaded" not in file['name']:
                         print(f"Downloading file {file['name']}")
                         try:
                             file_element.click()
-                        except Exception:
-                            print("Can not click")
+                        except Exception as e:
+                            print(f"Can't click: {file['name']}")
+                            traceback.print_stack()
+                            raise
+                            #continue
 
                         # Close modal License box if opened
                         try:
@@ -521,7 +540,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                             )
                             ok_button.click()
                         except Exception as e:
-                            pass
+                            print("Can't click: ", e)
+                            continue
 
                         sleep_count = 0
                         # Wait file to be downloaded (Chrome)
@@ -530,6 +550,9 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                             time.sleep(1)
                             sleep_count += 1
 
+                        print('-' * 12)
+                        print(f"Moving {filepath_temp} to {file['path']}")
+                        print('-' * 12)
                         shutil.move(filepath_temp, file['path'])
 
                         # TODO per browser switch
@@ -569,6 +592,7 @@ if __name__ == '__main__':
 
     driver = build_driver(headless=False)
     cars_list = build_cars_list(driver)  # Create cars list
+    print(json.dumps(cars_list, indent=4))
     build_datapacks_infos(driver, cars_list)  # Build cars datapacks
 
     # with open ('data.json', 'w') as tempfile:

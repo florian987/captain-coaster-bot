@@ -27,7 +27,7 @@ class RollerCoasters:
     """Interract with Captain Coaster API"""
 
     HEADERS = {'X-AUTH-TOKEN': Keys.captaincoaster}
-    game_in_progress = {}
+    games_in_progress = []
     mapping = {
         'materialType': 'Type',
         'speed': 'Vitesse',
@@ -103,7 +103,7 @@ class RollerCoasters:
     @commands.is_owner()
     @cc_group.command(name="listgames")
     async def cc_listgames(self, ctx):
-        await ctx.message.author.send(content=f"Parties en cours.\nf{self.game_in_progress}")
+        await ctx.message.author.send(content=f"Parties en cours.\n{self.games_in_progress}")
 
     @cc_group.command(name="list", aliases=[])
     async def cc_list(self, ctx):
@@ -229,22 +229,24 @@ class RollerCoasters:
         # Game
         if self.is_online(URLs.captain_coaster):
 
-            if ctx.channel.id in self.game_in_progress and self.game_in_progress[ctx.channel.id]:
+            if ctx.guild is not None:
+                await ctx.message.delete()
+
+            if ctx.channel.id in self.games_in_progress:
                 log.info(f"{ctx.message.author} tried to start a game in {ctx.channel} but a game is already running.")
                 try:
                     await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
                 except errors.Forbidden:
                     pass
-
-            if ctx.guild is not None:
-                await ctx.message.delete()
+                finally:
+                    return
 
             if difficulty not in lvl_map:
                 await ctx.send(content="Une erreur de frappe ? On lance en mode facile.")
                 difficulty = 'easy'
 
             else:
-                self.game_in_progress[ctx.channel.id] = True
+                self.games_in_progress.append(ctx.channel.id)
 
                 # Build images list
                 base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true')
@@ -334,7 +336,7 @@ class RollerCoasters:
                             await ctx.send(content="Ca chauffe!")
 
                 log.info(f"Game ended in {ctx.channel}")
-                self.game_in_progress[ctx.channel.id] = False
+                self.games_in_progress.remove(ctx.channel.id)
 
 
 

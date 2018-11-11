@@ -494,7 +494,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
         # car_elems = iter_dom(driver, XPATH['datapacks_table'])
         # for car_elem in car_elems:
 
-        #For each datapack
+        # Build datapacks infos
         for car_elem in iter_dom(driver, XPATH['datapacks_table']):
             # Skip "previous week"
             if car_elem.find_element_by_css_selector("a").get_attribute('text') == "Show previous weeks":
@@ -516,6 +516,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 print(f" |_ {datapack['track']}")
 
 
+                # TODO CA CHIE DS LA COLLE
                 # If datapack is not empty
                 if datapack['fastest_laptime'] != "":
                     # Open permalink box
@@ -535,35 +536,41 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 print(datapack)
                 # pass
 
-            for datapack in car['datapacks']:
-                #print(f" |_ {datapack['track']}")
-                datapack['files'] = []
+        # Retrieve datapacks files
+        for datapack in car['datapacks']:
+            print(json.dumps(datapack, indent=4))
+            #print(f" |_ {datapack['track']}")
+            datapack['files'] = []
 
-                datapack_path = os.path.join(  # Build desired paths
-                    car['car_path'], datapack['track'])
-                create_dirs(datapack_path)  # Create paths if needed
+            datapack_path = os.path.join(  # Build desired paths
+                car['car_path'], datapack['track'])
+            create_dirs(datapack_path)  # Create paths if needed
 
-                if "url" in datapack:  # If datapack has url
-                    driver.get(datapack['url'])  # Load datapack url
+            if "url" in datapack:  # If datapack has url
+                driver.get(datapack['url'])  # Load datapack url
+                print('-' * 12)
+                print(datapack['url'])
+                print('-' * 12)
 
-                    # TODO This seems really slow, potentially not working
-                    wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
+                # TODO This seems really slow, potentially not working
+                time.sleep(3)
+                wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
 
-                    # Iterate over files
-                    file_elements = iter_dom(driver, XPATH['files_table'])
+                # Iterate over files
+                file_elements = iter_dom(driver, XPATH['files_table'])
 
-                    # Remove not uploaded files (GG VRS)
-                    file_elements = [item for item in file_elements if "not uploaded" not in item.get_attribute('text')]
-                    cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"]
+                # Remove not uploaded files (GG VRS)
+                file_elements = [item for item in file_elements if "not uploaded" not in item.get_attribute('text')]
+                cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"]
 
-                    # Download Car image
-                    if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
-                        download_img(car['img_url'], car['car_path'])
-                    # Download Serie image
-                    if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):
-                        download_img(car['serie_img_url'], car['serie_path'])
+                # Download Car image
+                if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
+                    download_img(car['img_url'], car['car_path'])
+                # Download Serie image
+                if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):
+                    download_img(car['serie_img_url'], car['serie_path'])
 
-                    datapack['files'] = build_files(driver, file_elements, datapack_path)
+                datapack['files'] = build_files(driver, file_elements, datapack_path)
 
 
     print(cars_list)

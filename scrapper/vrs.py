@@ -68,7 +68,7 @@ XPATH = {
     "cars_table": "//table[@data-vrs-widget='tableWrapper']/tbody/tr",
     "login_btn": '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div/div[2]/a/span',
     "ggl_login_btn": '//*[@id="gwt-debug-googleLogin"]',
-    "login_filed": '//*[@id="identifierId"]',
+    "login_field": '//*[@id="identifierId"]',
     "login_nxt": '//*[@id="identifierNext"]/content/span',
     "passwd_field": '//*[@id="password"]/div[1]/div/div[1]/input',
     "passwd_nxt": '//*[@id="passwordNext"]/content/span',
@@ -357,16 +357,6 @@ def authenticate(driver):
     """
 
     print("Trying to authenticate")
-    # Failed cookie attempt
-    # try:
-    #     driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
-    #     driver.add_cookie(google_cookie)
-    #     driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
-    #     subscription_box = driver.find_element_by_xpath('//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div[2]')  # Check if subscription box is displayed
-    # except StaleElementReferenceException:
-    #     return False
-    # else:
-    #     return subscription_box.is_displayed()
     driver.get("https://virtualracingschool.appspot.com/#/Account/Billing")
     # Clic LOGIN Button
     wait_by_xpath(driver, XPATH['login_btn'])
@@ -384,29 +374,28 @@ def authenticate(driver):
     #except Exception:
     #    pass
 
+    # Type login
+    wait_by_xpath(driver, XPATH['login_field'])
+    driver.find_element_by_xpath(XPATH['login_field']).click()
+    driver.find_element_by_xpath(XPATH['login_field']).send_keys(google_email)
+    driver.find_element_by_xpath(XPATH['login_nxt']).click()
+
+    # Type password
+    wait_by_xpath(driver, XPATH['passwd_field'])
+    driver.find_element_by_xpath(XPATH['passwd_field']).send_keys(google_password)
+    time.sleep(3)  # crap wait do not remove (or fix it)
+    driver.find_element_by_xpath(XPATH['passwd_nxt']).click()
+    time.sleep(10)  # crap wait do not remove (or fix it)
+
+    # Check if premium
+    driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
     try:
-        # Type login
-        wait_by_xpath(driver, XPATH['login_field'])
-        driver.find_element_by_xpath(XPATH['login_field']).click()
-        driver.find_element_by_xpath(XPATH['login_field']).send_keys(google_email)
-        driver.find_element_by_xpath(XPATH['login_nxt']).click()
-
-        # Type password
-        wait_by_xpath(driver, XPATH['passwd_field'])
-        driver.find_element_by_xpath(XPATH['passwd_field']).send_keys(google_password)
-        time.sleep(3)  # crap wait do not remove (or fix it)
-        driver.find_element_by_xpath(XPATH['passwd_nxt']).click()
-        time.sleep(10)  # crap wait do not remove (or fix it)
-
-        # Check if premium
-        driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
-        try:
-            wait_by_xpath(driver, XPATH['subscr_div'])
-            subscription_box = driver.find_element_by_xpath(XPATH['subscr_div'])  # Check if subscription box is displayed
-        except StaleElementReferenceException:
-            return False
-        else:
-            return subscription_box.is_displayed()
+        wait_by_xpath(driver, XPATH['subscr_div'])
+        subscription_box = driver.find_element_by_xpath(XPATH['subscr_div'])  # Check if subscription box is displayed
+    except StaleElementReferenceException:
+        return False
+    else:
+        return subscription_box.is_displayed()
         #
         ## Accept ToS
         #try:
@@ -418,24 +407,24 @@ def authenticate(driver):
     #
         #return True
     #
-    except Exception:
-        print('Failed to auth')
-        return False
+    #except Exception:
+    #    print('Failed to auth')
+    #    return False
 
 
 def build_files(driver, files_elem, dpack_path):
     files = []
     for elem in files_elem:
-        file = {}  # Create file dict
-
-        # Set file attributes
-        file['name'] = re.sub("^(.*?)\\\\", "", elem.get_attribute('text').replace("\\", "-"))
+        file = {}  
+        file['name'] = re.sub("^(.*?)\\\\", "", elem.get_attribute('text'))
         file["type"] = filetype.get(file['name'].split('.')[-1], "unknown")
         file['path'] = os.path.join(dpack_path, file['name'])
 
         filepath_temp = os.path.join(
             DL_DIR, file['name']
         )
+
+        print(f"  |_ {file['name']}")
 
         # Download datapack file if not present
         if not os.path.isfile(file['path']) and "not uploaded" not in file['name']:
@@ -505,6 +494,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
         # car_elems = iter_dom(driver, XPATH['datapacks_table'])
         # for car_elem in car_elems:
 
+        #For each datapack
         for car_elem in iter_dom(driver, XPATH['datapacks_table']):
             # Skip "previous week"
             if car_elem.find_element_by_css_selector("a").get_attribute('text') == "Show previous weeks":
@@ -522,6 +512,9 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                     CSS['dp_time_of_day'])[0].get_attribute('title')
                 datapack['track_state'] = car_elem.find_elements_by_css_selector(
                     CSS['dp_track_state'])[0].get_attribute('title')
+
+                print(f" |_ {datapack['track']}")
+
 
                 # If datapack is not empty
                 if datapack['fastest_laptime'] != "":
@@ -542,104 +535,36 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 print(datapack)
                 # pass
 
-        for datapack in car['datapacks']:
-            datapack['files'] = []
+            for datapack in car['datapacks']:
+                #print(f" |_ {datapack['track']}")
+                datapack['files'] = []
 
-            datapack_path = os.path.join(  # Build desired paths
-                car['car_path'], datapack['track'])
-            create_dirs(datapack_path)  # Create paths if needed
+                datapack_path = os.path.join(  # Build desired paths
+                    car['car_path'], datapack['track'])
+                create_dirs(datapack_path)  # Create paths if needed
 
-            if "url" in datapack:  # If datapack has url
-                driver.get(datapack['url'])  # Load datapack url
+                if "url" in datapack:  # If datapack has url
+                    driver.get(datapack['url'])  # Load datapack url
 
-                # TODO This seems really slow, potentially not working
-                wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
+                    # TODO This seems really slow, potentially not working
+                    wait_by_xpath(driver, f"//span[text()='{datapack['track']}']")  # Wait page
 
-                # Iterate over files
-                file_elements = iter_dom(driver, XPATH['files_table'])
+                    # Iterate over files
+                    file_elements = iter_dom(driver, XPATH['files_table'])
 
-                # Remove not uploaded files (GG VRS)
-                file_elements = [item for item in file_elements if "not uploaded" not in item.get_attribute('text')]
-                cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"]
+                    # Remove not uploaded files (GG VRS)
+                    file_elements = [item for item in file_elements if "not uploaded" not in item.get_attribute('text')]
+                    cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"]
 
-                # Download Car image
-                if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
-                    download_img(car['img_url'], car['car_path'])
-                # Download Serie image
-                if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):
-                    download_img(car['serie_img_url'], car['serie_path'])
+                    # Download Car image
+                    if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
+                        download_img(car['img_url'], car['car_path'])
+                    # Download Serie image
+                    if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):
+                        download_img(car['serie_img_url'], car['serie_path'])
 
-                datapack['files'] = build_files(driver, file_elements, datapack_path)
+                    datapack['files'] = build_files(driver, file_elements, datapack_path)
 
-                #for file_element in file_elements:
-                #    
-                #    file = {}  # Create file dict
-#
-                #    # Set file attributes
-                #    file['name'] = re.sub("^(.*?)\\\\", "", file_element.get_attribute('text').replace("\\", "-"))
-                #    file_extension = file['name'].split('.')[-1]
-                #    file["type"] = filetype.get(file_extension, "unknown")
-                #    filepath_temp = os.path.join(
-                #        DL_DIR, file['name']
-                #    )
-                #    file['path'] = os.path.join(
-                #        datapack_path, file['name']
-                #    )
-#
-#
-                #    # Download datapack file if not present
-                #    if not os.path.isfile(file['path']) and "not uploaded" not in file['name']:
-                #        print(f"Downloading file {file['name']}")
-                #        try:
-                #            file_element.click()
-                #        except Exception as e:
-                #            print(f"Can't click: {file['name']}")
-                #            traceback.print_stack()
-                #            raise
-                #            #continue
-#
-                #        # Close modal License box if opened
-                #        try:
-                #            ok_button = driver.find_element_by_xpath(
-                #                '/html/body/div[7]/div/div/div[3]/a[2]'
-                #            )
-                #            ok_button.click()
-                #        except Exception as e:
-                #            print("Can't click: ", e)
-                #            continue
-#
-                #        sleep_count = 0
-                #        # Wait file to be downloaded (Chrome)
-                #        while not (os.path.isfile(filepath_temp) and sleep_count < 180):
-                #            # print('wait because part', sleep_count)
-                #            time.sleep(1)
-                #            sleep_count += 1
-#
-                #        print('-' * 12)
-                #        print(f"Moving {filepath_temp} to {file['path']}")
-                #        print('-' * 12)
-                #        shutil.move(filepath_temp, file['path'])
-#
-                #        # TODO per browser switch
-                #        # Wait file to be downloaded (Firefox)
-                #        # sleep_count = 0
-                #        # while os.path.isfile(filepath_temp + '.part')
-                #        # and sleep_count < 90:
-                #        #    print('wait because part', sleep_count)
-                #        #    time.sleep(1)
-                #        #    sleep_count += 1
-#
-                #        # print('DL OK', 'Temp_path: ' + filepath_temp)
-#
-                #        # Move file
-                #        # if not os.path.isfile(filepath_temp + '.part')
-                #        # and os.path.isfile(filepath_temp):
-                #        #    shutil.move(filepath_temp, file['path'])
-                #        #
-                #        #    #time.sleep(5)
-#
-                #    # Add file to files list
-                #    datapack['files'].append(file)
 
     print(cars_list)
 

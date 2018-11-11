@@ -382,10 +382,11 @@ def authenticate(driver):
 
     # Type password
     wait_by_xpath(driver, XPATH['passwd_field'])
+    time.sleep(3)
     driver.find_element_by_xpath(XPATH['passwd_field']).send_keys(google_password)
-    time.sleep(3)  # crap wait do not remove (or fix it)
+    time.sleep(5)  # crap wait do not remove (or fix it)
     driver.find_element_by_xpath(XPATH['passwd_nxt']).click()
-    time.sleep(10)  # crap wait do not remove (or fix it)
+    time.sleep(5)  # crap wait do not remove (or fix it)
 
     # Check if premium
     driver.get("https://virtualracingschool.appspot.com/#/Account/Settings")
@@ -520,11 +521,15 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 # If datapack is not empty
                 if datapack['fastest_laptime'] != "":
                     # Open permalink box
+                    print(car_elem.find_element_by_xpath(XPATH["dp_permalink"]))
                     car_elem.find_element_by_xpath(XPATH["dp_permalink"]).click()
+
+                    time.sleep(1)
                     # Get datapack permalink
                     datapack['url'] = driver.find_element_by_css_selector(
                         ".gwt-TextBox"
                     ).get_attribute('value')
+                    print(f" |_ {datapack['url']}")
                     # Close modal
                     driver.find_element_by_xpath(XPATH['dp_modal_close']).click()
                 car['datapacks'].append(datapack)

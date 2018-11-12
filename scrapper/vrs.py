@@ -521,7 +521,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 # If datapack is not empty
                 if datapack['fastest_laptime'] != "":
                     # Open permalink box
-                    print(car_elem.find_element_by_xpath(XPATH["dp_permalink"]))
+                    #print(car_elem.find_element_by_xpath(XPATH["dp_permalink"]))
                     car_elem.find_element_by_xpath(XPATH["dp_permalink"]).click()
 
                     time.sleep(1)

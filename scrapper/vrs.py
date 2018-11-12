@@ -7,7 +7,7 @@ import logging
 import os
 import shutil
 import time
-import urllib
+import urllib.request
 import re
 
 from bs4 import BeautifulSoup
@@ -576,10 +576,10 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
                     print('-' * 12)
                     print(f"DL {car['img_url']} to {car['car_path']}")
-                    download_img(car['img_url'], car['car_path'])
+                    download_img(car['img_url'], os.path.join(car['car_path'], "logo.jpg"))
                 # Download Serie image
                 if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):
-                    download_img(car['serie_img_url'], car['serie_path'])
+                    download_img(car['serie_img_url'], os.path.join(car['serie_path'], "logo.jpg"))
 
                 datapack['files'] = build_files(driver, file_elements, datapack_path)
 

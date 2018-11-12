@@ -417,7 +417,7 @@ def build_files(driver, files_elem, dpack_path):
     files = []
     for elem in files_elem:
         file = {}  
-        file['name'] = re.sub("^(.*?)\\\\", "", elem.get_attribute('text'))
+        file['name'] = re.sub("([^\\\\]+$)", "", elem.get_attribute('text'))
         file["type"] = filetype.get(file['name'].split('.')[-1], "unknown")
         file['path'] = os.path.join(dpack_path, file['name'])
 
@@ -470,8 +470,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
     print("Building datapacks infos...")
 
-    #premium = authenticate(driver)
-    premium = False
+    premium = authenticate(driver)
+    #premium = False
     #print(f'Premium: {premium}' )
 
     # Temp crap due tu aussie driver search

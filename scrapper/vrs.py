@@ -430,6 +430,7 @@ def build_files(driver, files_elem, dpack_path):
         # Download datapack file if not present
         if not os.path.isfile(file['path']) and "not uploaded" not in file['name']:
             #print(f"Downloading file {file['name']}")
+            # Some files does not works VRS\18S4IMSA\W11-Daytona\VRS_18S4MB_RSR_Daytona_R2.sto
             try:
                 elem.click()
             except Exception as e:
@@ -529,7 +530,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                     datapack['url'] = driver.find_element_by_css_selector(
                         ".gwt-TextBox"
                     ).get_attribute('value')
-                    print(f" |_ {datapack['url']}")
+                    #print(f" |_ {datapack['url']}")
                     # Close modal
                     time.sleep(1)
                     driver.find_element_by_xpath(XPATH['dp_modal_close']).click()
@@ -573,6 +574,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                 # Download Car image
                 if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
+                    print('-' * 12)
+                    print(f"DL {car['img_url']} to {car['car_path']}")
                     download_img(car['img_url'], car['car_path'])
                 # Download Serie image
                 if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):

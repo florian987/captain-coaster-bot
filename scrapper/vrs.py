@@ -75,7 +75,7 @@ XPATH = {
     "subscr_div": '//*[@id="gwt-debug-mainWindow"]/div/main/div[2]/div/div[2]',
     'modal_ok': '/html/body/div[7]/div/div/div[3]/a[2]',
     "datapacks_table": "//table[@data-vrs-widget='DataPackWeeksTable']/tbody/tr",
-    "dp_permalink": "//a[@data-vrs-widget-field='getPermalink']",
+    "dp_permalink": ".//a[@data-vrs-widget-field='getPermalink']",
     "dp_modal_close": "//a[@class='default-button text-button']",
     "files_table": "//li[@data-vrs-widget='LIWrapper']/div/div/form/div/a"
 }
@@ -338,12 +338,12 @@ def build_cars_list(driver):
         car['premium'] = car_premium
         car['season_path'] = os.path.join(DL_DIR, car['season'])
         car['serie_path'] = os.path.join(
-            car['season_path'].lower().strip().replace(' ', '_'),
-            car['serie'].lower().strip().replace(' ', '_')
+            car['season_path'].strip().replace(' ', '_'),
+            car['serie'].strip().replace(' ', '_')
         )
         car['car_path'] = os.path.join(
-            car['serie_path'].lower().strip().replace(' ', '_'),
-            car['name'].lower().strip().replace(' ', '_')
+            car['serie_path'].strip().replace(' ', '_'),
+            car['name'].strip().replace(' ', '_')
         )
 
         cars.append(car)  # Add car to cars list
@@ -429,7 +429,7 @@ def build_files(driver, files_elem, dpack_path):
 
         # Download datapack file if not present
         if not os.path.isfile(file['path']) and "not uploaded" not in file['name']:
-            print(f"Downloading file {file['name']}")
+            #print(f"Downloading file {file['name']}")
             try:
                 elem.click()
             except Exception as e:
@@ -442,8 +442,8 @@ def build_files(driver, files_elem, dpack_path):
             try:
                 driver.find_element_by_xpath(XPATH['modal_ok']).click()
             except Exception as e:
-                print("Can't click: ", e)
-                continue
+                #print("Can't click: ", e)
+                pass
 
             sleep_count = 0
             # Wait file to be downloaded (Chrome)
@@ -470,7 +470,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
     print("Building datapacks infos...")
 
-    premium = authenticate(driver)
+    #premium = authenticate(driver)
+    premium = False
     #print(f'Premium: {premium}' )
 
     # Temp crap due tu aussie driver search
@@ -502,7 +503,6 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 continue
 
             datapack = {}  # Create datapack dict
-            datapack_path = ''
 
             try:  # Build datapack
                 datapack['track'] = car_elem.find_elements_by_css_selector(
@@ -531,7 +531,9 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                     ).get_attribute('value')
                     print(f" |_ {datapack['url']}")
                     # Close modal
+                    time.sleep(1)
                     driver.find_element_by_xpath(XPATH['dp_modal_close']).click()
+                    time.sleep(1)
                 car['datapacks'].append(datapack)
 
             except Exception as e:
@@ -542,8 +544,9 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 # pass
 
         # Retrieve datapacks files
+        datapack_path = ''
         for datapack in car['datapacks']:
-            print(json.dumps(datapack, indent=4))
+            #print(json.dumps(datapack, indent=4))
             #print(f" |_ {datapack['track']}")
             datapack['files'] = []
 
@@ -553,9 +556,9 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
             if "url" in datapack:  # If datapack has url
                 driver.get(datapack['url'])  # Load datapack url
-                print('-' * 12)
-                print(datapack['url'])
-                print('-' * 12)
+                #print('-' * 12)
+                #print(datapack['url'])
+                #print('-' * 12)
 
                 # TODO This seems really slow, potentially not working
                 time.sleep(3)
@@ -578,7 +581,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 datapack['files'] = build_files(driver, file_elements, datapack_path)
 
 
-    print(cars_list)
+    #print(cars_list)
 
     # pickle.dump(cars_list, open(settings.history_file,'wb'))
 

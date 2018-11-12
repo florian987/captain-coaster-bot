@@ -417,7 +417,7 @@ def build_files(driver, files_elem, dpack_path):
     files = []
     for elem in files_elem:
         file = {}  
-        file['name'] = re.sub("([^\\\\]+$)", "", elem.get_attribute('text'))
+        file['name'] = re.sub("^.*\\\\", "", elem.get_attribute('text'))
         file["type"] = filetype.get(file['name'].split('.')[-1], "unknown")
         file['path'] = os.path.join(dpack_path, file['name'])
 
@@ -435,8 +435,8 @@ def build_files(driver, files_elem, dpack_path):
             except Exception as e:
                 print(f"Can't click: {file['name']}")
                 traceback.print_stack()
-                raise
-                #continue
+                #raise
+                continue
 
             # Close modal License box if opened
             try:

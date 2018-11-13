@@ -94,6 +94,19 @@ CSS = {
 }
 
 
+class wait_for_text_to_match(object):
+    def __init__(self, locator, text):
+        self.locator = text
+        self.text = text
+
+    def __call__(self, driver):
+        try:
+            element_text = EC._find_element(driver, self.locator).text
+            return self.pattern.search(element_text)
+        except StaleElementReferenceException:
+            return False
+
+
 def build_driver(browser="Chrome", headless=True, proxy=None):
     """
     Build a selenium driver for the desired browser with its parameters
@@ -228,11 +241,8 @@ def wait_by_css(driver, css, retries=20):
 
 
 def wait_by_id(driver, id, retries=20):
-    """
-    Wait for element to load by ID
-    """
+    """Wait for element to load by ID"""
     try:
-        # element = WebDriverWait(driver, retries).until(
         WebDriverWait(driver, retries).until(
             EC.presence_of_element_located((By.ID, id)))
     except Exception:
@@ -240,9 +250,7 @@ def wait_by_id(driver, id, retries=20):
 
 
 def check_exists_by_xpath(driver, xpath):
-    """
-    check if an element exists by its xpath
-    """
+    """Check if an element exists by its xpath"""
     try:
         driver.find_element_by_xpath(xpath)
     except NoSuchElementException:
@@ -251,9 +259,7 @@ def check_exists_by_xpath(driver, xpath):
 
 
 def create_dirs(directory):
-    """
-    Ensure a directory exists
-    """
+    """Ensure a directory exists"""
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -261,7 +267,6 @@ def create_dirs(directory):
 def dl_img(url, dest=None):
     """
     Download an image weither specifying or not its destination.
-
     Register using filename from url. In cwd if dest is not set
     """
     # Set filename from url
@@ -418,7 +423,7 @@ def build_files(driver, files_elem, dpack_path):
     for elem in files_elem:
         file = {}  
         file['name'] = re.sub("^.*\\\\", "", elem.get_attribute('text'))
-        file["type"] = filetype.get(file['name'].split('.')[-1], "unknown")
+        file["type"] = filetype.get(os.path.splitext(file['name'])[1][1:], "unknown")
         file['path'] = os.path.join(dpack_path, file['name'])
 
         filepath_temp = os.path.join(
@@ -436,8 +441,7 @@ def build_files(driver, files_elem, dpack_path):
             except Exception as e:
                 print(f"Can't click: {file['name']}")
                 traceback.print_stack()
-                #raise
-                continue
+                continue  # Go to next iteration if failed
 
             # Close modal License box if opened
             try:
@@ -487,8 +491,10 @@ def build_datapacks_infos(driver, cars_list, premium=False):
         print(f"|_ Building {car['serie']} - {car['name']} datapacks")
 
         driver.get(car['url'])  # Load car URL and wait Js load
-        time.sleep(3)
         #TODO doesn't works due to text() usage
+        # TEST
+        time.sleep(3)
+        WebDriverWait(driver, 10).until(wait_for_text_to_match((By.XPATH, "//p[@class='base-info']"), f"{car['name']}"))
         #wait_by_xpath(
         #    driver,
         #    f"//p[@class='base-info' and text()=\'{car['name']}\']")
@@ -576,12 +582,12 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
                     print('-' * 12)
                     print(f"DL {car['img_url']} to {car['car_path']}")
-                    dl_img(car['img_url'], os.path.join(car['car_path'], "logo.jpg"))
+                    dl_img(car['img_url'], os.path.join(car['car_path'], f"logo{os.path.splitext(car['img_url'])[1]}"))
                 # Download Serie image
                 if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):
                     print('-' * 12)
                     print(f"DL {car['serie_img_url']} to {os.path.join(car['serie_path'], 'logo.jpg')}")
-                    dl_img(car['serie_img_url'], os.path.join(car['serie_path'], "logo.jpg"))
+                    dl_img(car['serie_img_url'], os.path.join(car['serie_path'], f"logo{os.path.splitext(car['serie_img_url'])[1]}"))
 
                 datapack['files'] = build_files(driver, file_elements, datapack_path)
 

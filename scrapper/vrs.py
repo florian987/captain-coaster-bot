@@ -258,7 +258,7 @@ def create_dirs(directory):
         os.makedirs(directory)
 
 
-def download_img(url, dest=None):
+def dl_img(url, dest=None):
     """
     Download an image weither specifying or not its destination.
 
@@ -576,12 +576,12 @@ def build_datapacks_infos(driver, cars_list, premium=False):
                 if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):
                     print('-' * 12)
                     print(f"DL {car['img_url']} to {car['car_path']}")
-                    download_img(car['img_url'], os.path.join(car['car_path'], "logo.jpg"))
+                    dl_img(car['img_url'], os.path.join(car['car_path'], "logo.jpg"))
                 # Download Serie image
                 if not os.path.exists(os.path.join(car['serie_path'], "logo.jpg")):
                     print('-' * 12)
                     print(f"DL {car['serie_img_url']} to {os.path.join(car['serie_path'], 'logo.jpg')}")
-                    download_img(car['serie_img_url'], os.path.join(car['serie_path'], "logo.jpg"))
+                    dl_img(car['serie_img_url'], os.path.join(car['serie_path'], "logo.jpg"))
 
                 datapack['files'] = build_files(driver, file_elements, datapack_path)
 

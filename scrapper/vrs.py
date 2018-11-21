@@ -123,6 +123,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             options.add_argument('disable-gpu')
 
         # TODO clean this
+        
         # if os.name == 'posix':
         #     chromedriver = 'chromedriver_linux64'
         # elif os.name == 'nt':

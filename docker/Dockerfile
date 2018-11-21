@@ -11,7 +11,8 @@ ENV PIPENV_HIDE_EMOJIS=1
 COPY . /bot
 WORKDIR /bot
 
-RUN pipenv install --deploy --system
+#RUN pipenv install --deploy --system
+RUN pipenv install --system
 # RUN pipenv sync
 
 ENTRYPOINT ["/sbin/tini", "--"]

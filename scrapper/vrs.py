@@ -127,15 +127,15 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
         #     chromedriver = 'chromedriver_linux64'
         # elif os.name == 'nt':
         #     chromedriver = 'chromedriver_win32.exe'
-# 
+#
         # if os.path.isfile(os.path.join(script_dir, chromedriver)):
         #     chromedriver_path = os.path.join(script_dir, chromedriver)
         # else:
         #     chromedriver_path = os.path.join(script_dir, 'scrapper', chromedriver)
-# 
+#
         # if os.name == 'posix':
         #     os.chmod(chromedriver_path, 0o755)
-# 
+#
         # print(os.path.join(script_dir, chromedriver_path))
 
         # Build Chrome driver
@@ -416,7 +416,7 @@ def authenticate(driver):
 def build_files(driver, files_elem, dpack_path):
     files = []
     for elem in files_elem:
-        file = {}  
+        file = {}
         file['name'] = re.sub("^.*\\\\", "", elem.get_attribute('text'))
         file["type"] = filetype.get(file['name'].split('.')[-1], "unknown")
         file['path'] = os.path.join(dpack_path, file['name'])

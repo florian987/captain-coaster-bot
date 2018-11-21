@@ -251,10 +251,8 @@ class Simracing:
                                     value=f"[{file['name']}]"
                                     f"({upload_msg.attachments[0].url})")
 
-                        # TODO Validate this works
-                        embed_exists = embed_sent(channel_embeds, embed)
-
-                        if not embed_exists:
+                        # Send embed if not already exists
+                        if not embed_sent(channel_embeds, embed):
                             await serie_channel.send(embed=embed)
                             log.info(f"Sent embed for {car['serie']} - {car['name']}.")
 

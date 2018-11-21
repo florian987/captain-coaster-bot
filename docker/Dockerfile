@@ -6,7 +6,7 @@ ENV PIPENV_NOSPIN=1
 ENV PIPENV_HIDE_EMOJIS=1
 ENV PATH /bot/scrapper:${PATH}
 
-RUN pip install pipenv
+# RUN pip install pipenv
 
 COPY . /bot
 WORKDIR /bot

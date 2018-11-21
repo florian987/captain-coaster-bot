@@ -5,10 +5,10 @@ import zipfile
 
 import aiohttp
 import discord
+import scrapper.vrs as scrapper
 from discord.ext import commands
 from PIL import Image
 
-import scrapper.vrs as scrapper
 from bot.constants import Channels, Roles
 from bot.decorators import in_channel, with_role
 
@@ -140,7 +140,7 @@ class Simracing:
         #     """Search embed in a defined channel"""
         #     return bool(channel.history().get(embed=embed))
 
-        async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
+        async def ensure_chan_exists(chan, cat: discord.CategoryChannel):
             """Ensure a channel exists and return it"""
             chan_to_return = discord.utils.get(
                 ctx.guild.text_channels, name=chan, category=cat
@@ -154,7 +154,7 @@ class Simracing:
         # Build cars infos
         if is_vrs_online():
 
-            upload_channel = await ensure_channel_exists(
+            upload_channel = await ensure_chan_exists(
                 upload_channel_name.lower(), setup_category)
 
             # Retrieve upload history
@@ -197,10 +197,9 @@ class Simracing:
             for car in cars_list:
 
                 # Create serie channel name
-                #serie_channel_name = re.sub(' +', ' ', car['serie'].lower().replace('iracing', '').strip().replace('-', '')).replace(' ', '-')
                 wl = re.findall(r'\w+', car['serie'].lower())
                 serie_channel_name = '-'.join(wl)
-                serie_channel = await ensure_channel_exists(
+                serie_channel = await ensure_chan_exists(
                     serie_channel_name, setup_category)
 
                 channel_embeds = await serie_channel.history().flatten()

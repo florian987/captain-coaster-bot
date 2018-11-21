@@ -114,6 +114,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             "download.default_directory": DL_DIR,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
+            'profile.default_content_setting_values.automatic_downloads': 1,
             "safebrowsing.enabled": False
         })
 

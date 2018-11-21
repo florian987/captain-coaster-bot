@@ -142,14 +142,13 @@ class Simracing:
 
         # TODO END THIS
         async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
-            """
-            Ensure a channel exists and return it
-            """
+            """Ensure a channel exists and return it"""
             chan_to_return = discord.utils.get(
                 ctx.guild.text_channels, name=chan, category=cat
             )
             if chan_to_return:
                 return chan_to_return
+                
             log.info(f"Creating channel '{chan}' in category '{cat}'.")
             return await ctx.guild.create_text_channel(name=chan, category=cat)
 
@@ -159,7 +158,7 @@ class Simracing:
             upload_channel = await ensure_channel_exists(
                 upload_channel_name.lower(), setup_category)
 
-            # TODO End cehck if exists            
+            # Retrieve upload history
             upload_msg_hist = await upload_channel.history().flatten()
 
             def file_uploaded(history, filename):

@@ -124,20 +124,20 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             options.add_argument('disable-gpu')
 
         # TODO clean this
-        if os.name == 'posix':
-            chromedriver = 'chromedriver_linux64'
-        elif os.name == 'nt':
-            chromedriver = 'chromedriver_win32.exe'
-
-        if os.path.isfile(os.path.join(script_dir, chromedriver)):
-            chromedriver_path = os.path.join(script_dir, chromedriver)
-        else:
-            chromedriver_path = os.path.join(script_dir, 'scrapper', chromedriver)
-
-        if os.name == 'posix':
-            os.chmod(chromedriver_path, 0o755)
-
-        print(os.path.join(script_dir, chromedriver_path))
+        # if os.name == 'posix':
+        #     chromedriver = 'chromedriver_linux64'
+        # elif os.name == 'nt':
+        #     chromedriver = 'chromedriver_win32.exe'
+# 
+        # if os.path.isfile(os.path.join(script_dir, chromedriver)):
+        #     chromedriver_path = os.path.join(script_dir, chromedriver)
+        # else:
+        #     chromedriver_path = os.path.join(script_dir, 'scrapper', chromedriver)
+# 
+        # if os.name == 'posix':
+        #     os.chmod(chromedriver_path, 0o755)
+# 
+        # print(os.path.join(script_dir, chromedriver_path))
 
         # Build Chrome driver
         driver = webdriver.Chrome(

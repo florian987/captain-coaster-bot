@@ -179,7 +179,7 @@ class Simracing:
             )
 
             # Create webdriver
-            driver = scrapper.build_driver(headless=False)
+            driver = scrapper.build_driver(headless=True)
 
             # Scrap VRS website and build cars infos
             iracing_cars = scrapper.build_cars_list(driver)

@@ -141,7 +141,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
 
         # Build Chrome driver
         driver = webdriver.Chrome(
-            executable_path=chromedriver_path,
+            #executable_path=chromedriver_path,
             chrome_options=options)
 
         # Add devtools command to allow download

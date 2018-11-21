@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 
-# import pickle
-import traceback
 import json
 import logging
 import os
+import re
 import shutil
 import time
+# import pickle
+import traceback
 import urllib.request
-import re
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import (NoSuchElementException,
+                                        StaleElementReferenceException)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 
 log = logging.getLogger(__name__)
 
@@ -517,20 +517,16 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                 print(f" |_ {datapack['track']}")
 
-
-                # TODO CA CHIE DS LA COLLE
                 # If datapack is not empty
                 if datapack['fastest_laptime'] != "":
-                    # Open permalink box
-                    #print(car_elem.find_element_by_xpath(XPATH["dp_permalink"]))
                     car_elem.find_element_by_xpath(XPATH["dp_permalink"]).click()
-
                     time.sleep(1)
+
                     # Get datapack permalink
                     datapack['url'] = driver.find_element_by_css_selector(
                         ".gwt-TextBox"
                     ).get_attribute('value')
-                    #print(f" |_ {datapack['url']}")
+
                     # Close modal
                     time.sleep(1)
                     driver.find_element_by_xpath(XPATH['dp_modal_close']).click()

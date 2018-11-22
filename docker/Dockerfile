@@ -12,8 +12,8 @@ COPY . /bot
 WORKDIR /bot
 
 #RUN pipenv install --deploy --system
-RUN pipenv install --system
-# RUN pipenv sync
+#RUN pipenv install --system
+RUN pipenv sync
 
 ENTRYPOINT ["/sbin/tini", "--"]
 #CMD ["pipenv", "run", "start"]

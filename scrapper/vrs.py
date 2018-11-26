@@ -499,8 +499,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
         driver.get(car['url'])  # Load car URL and wait Js load
         #TODO doesn't works due to text() usage
         # TEST
-        time.sleep(3)
-        WebDriverWait(driver, 10).until(wait_for_text_to_match((By.XPATH, "//p[@class='base-info']"), f"{car['name']}"))
+        time.sleep(5)
+        # WebDriverWait(driver, 10).until(wait_for_text_to_match((By.XPATH, "//p[@class='base-info']"), f"{car['name']}"))
         #wait_by_xpath(
         #    driver,
         #    f"//p[@class='base-info' and text()=\'{car['name']}\']")

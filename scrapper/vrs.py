@@ -11,7 +11,7 @@ import traceback
 import urllib.request
 
 from bs4 import BeautifulSoup
-from bot.constants import VRS
+#from bot.constants import VRS
 from selenium import webdriver
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)

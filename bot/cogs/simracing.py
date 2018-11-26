@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import sys
 import zipfile
 
 import aiohttp
@@ -113,6 +114,8 @@ class Simracing:
     @with_role(Roles.pilotes)
     async def setups(self, ctx):
         """Retrieve cars setups from VRS Website"""
+
+        await ctx.message.owner.send(content=sys.path)
 
         vrs_url = 'https://virtualracingschool.appspot.com/#/DataPacks'
         setups_category_name = "Setups"

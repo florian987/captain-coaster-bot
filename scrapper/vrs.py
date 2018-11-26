@@ -401,7 +401,7 @@ def authenticate(driver):
     try:
         wait_by_xpath(driver, XPATH['subscr_div'])
         subscription_box = driver.find_element_by_xpath(XPATH['subscr_div'])  # Check if subscription box is displayed
-    except StaleElementReferenceException:
+    except (StaleElementReferenceException, NoSuchElementException):
         return False
     else:
         return subscription_box.is_displayed()

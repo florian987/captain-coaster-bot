@@ -1,18 +1,19 @@
-FROM python:3.6-alpine
-#FROM python:3.6-alpine3.7
+FROM python:3.6-stretch 
 
-RUN apk add --update tini
-RUN apk add --update build-base
-RUN apk add --update libffi-dev
-RUN apk add --update zlib
-RUN apk add --update jpeg-dev
-RUN apk add --update libxml2 libxml2-dev libxslt-dev
-RUN apk add --update zlib-dev
-RUN apk add --update freetype-dev
-RUN apk add --update opus-dev
-RUN apk add --update ffmpeg
-RUN apk add --update chromium
-RUN apk add --update chromium-chromedriver
+# Add Tini
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		libffi-dev \
+		zlib1g \
+        libxml2 libxml2-dev libxslt1-dev \
+        freetype2-demos libfreetype6 libfreetype6-dev \
+        opus-tools \
+        ffmpeg \
+        chromium chromedriver \
+	&& rm -rf /var/lib/apt/lists/* 
 
 RUN pip install pipenv
 
@@ -26,15 +27,5 @@ ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIPENV_IGNORE_VIRTUALENVS=1
 ENV PIPENV_NOSPIN=1
 ENV PIPENV_HIDE_EMOJIS=1
-
-# chrome
-RUN rm  -rf /tmp/* /var/cache/apk/* &&\
-    wget "https://chromedriver.storage.googleapis.com/2.44/chromedriver_linux64.zip" &&\
-    unzip chromedriver_linux64.zip &&\
-    rm -rf chromedriver_linux64.zip &&\
-    chmod a+x chromedriver &&\
-    mv chromedriver /usr/local/bin/ &&\
-    ln -s /usr/local/bin/chromedriver /usr/local/lib/python3.6/chromedriver
-
 
 RUN pipenv install

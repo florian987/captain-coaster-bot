@@ -115,7 +115,7 @@ class Simracing:
     async def setups(self, ctx):
         """Retrieve cars setups from VRS Website"""
 
-        await ctx.message.owner.send(content=sys.path)
+        await ctx.message.author.send(content=sys.path)
 
         vrs_url = 'https://virtualracingschool.appspot.com/#/DataPacks'
         setups_category_name = "Setups"

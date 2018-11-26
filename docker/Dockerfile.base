@@ -32,7 +32,8 @@ RUN rm  -rf /tmp/* /var/cache/apk/* &&\
     unzip chromedriver_linux64.zip &&\
     rm -rf chromedriver_linux64.zip &&\
     chmod a+x chromedriver &&\
-    mv chromedriver /usr/local/bin/
+    mv chromedriver /usr/local/bin/ &&\
+    ln -s /usr/local/bin/chromedriver /usr/local/lib/python3.6/chromedriver
 
 
 RUN pipenv install

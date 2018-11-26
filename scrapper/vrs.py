@@ -122,8 +122,8 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--ignore-ssl-errors')
         options.add_argument('--ignore-certificate-errors-spki-list')
-        options.add_arguments("--disable-dev-shm-usage")  # overcome limited resource problems
-        options.add_arguments("--no-sandbox")  # Bypass OS security model
+        options.add_argument("--disable-dev-shm-usage")  # overcome limited resource problems
+        options.add_argument("--no-sandbox")  # Bypass OS security model
         options.add_experimental_option("prefs", {
             "download.default_directory": DL_DIR,
             "download.prompt_for_download": False,

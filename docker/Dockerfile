@@ -4,15 +4,16 @@ ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIPENV_IGNORE_VIRTUALENVS=1
 ENV PIPENV_NOSPIN=1
 ENV PIPENV_HIDE_EMOJIS=1
-ENV PATH="/bot/scrapper:${PATH}"
+#ENV PATH /bot/scrapper:${PATH}
 
-RUN pip install pipenv
+# RUN pip install pipenv
 
 COPY . /bot
 WORKDIR /bot
 
-RUN pipenv install --deploy --system
-# RUN pipenv sync
+RUN pipenv install --deploy --system --ignore-pipfile
+#RUN pipenv install --system
+#RUN pipenv sync
 
 ENTRYPOINT ["/sbin/tini", "--"]
 #CMD ["pipenv", "run", "start"]

@@ -5,10 +5,10 @@ import zipfile
 
 import aiohttp
 import discord
+import scrapper.vrs as scrapper
 from discord.ext import commands
 from PIL import Image
 
-import scrapper.vrs as scrapper
 from bot.constants import Channels, Roles
 from bot.decorators import in_channel, with_role
 
@@ -140,26 +140,24 @@ class Simracing:
         #     """Search embed in a defined channel"""
         #     return bool(channel.history().get(embed=embed))
 
-        # TODO END THIS
-        async def ensure_channel_exists(chan, cat: discord.CategoryChannel):
-            """
-            Ensure a channel exists and return it
-            """
+        async def ensure_chan_exists(chan, cat: discord.CategoryChannel):
+            """Ensure a channel exists and return it"""
             chan_to_return = discord.utils.get(
                 ctx.guild.text_channels, name=chan, category=cat
             )
             if chan_to_return:
                 return chan_to_return
+
             log.info(f"Creating channel '{chan}' in category '{cat}'.")
             return await ctx.guild.create_text_channel(name=chan, category=cat)
 
         # Build cars infos
         if is_vrs_online():
 
-            upload_channel = await ensure_channel_exists(
+            upload_channel = await ensure_chan_exists(
                 upload_channel_name.lower(), setup_category)
 
-            # TODO End cehck if exists            
+            # Retrieve upload history
             upload_msg_hist = await upload_channel.history().flatten()
 
             def file_uploaded(history, filename):
@@ -179,7 +177,7 @@ class Simracing:
             )
 
             # Create webdriver
-            driver = scrapper.build_driver(headless=False)
+            driver = scrapper.build_driver(headless=True)
 
             # Scrap VRS website and build cars infos
             iracing_cars = scrapper.build_cars_list(driver)
@@ -199,10 +197,11 @@ class Simracing:
             for car in cars_list:
 
                 # Create serie channel name
-                serie_channel_name = re.sub(' +', ' ', car['serie'].lower().replace('iracing', '').strip().replace('-', '')).replace(' ', '-')
-                serie_channel = await ensure_channel_exists(
+                wl = re.findall(r'\w+', car['serie'].lower())
+                serie_channel_name = '-'.join(wl)
+                serie_channel = await ensure_chan_exists(
                     serie_channel_name, setup_category)
-                
+
                 channel_embeds = await serie_channel.history().flatten()
 
                 for datapack in car['datapacks']:
@@ -224,7 +223,7 @@ class Simracing:
                             embed.add_field(name="Etat de la piste", value=datapack['track_state'])
                         if datapack['fastest_laptime']:
                             embed.add_field(name="Meileur temps", value=datapack['fastest_laptime'], inline=False)
-                            
+
                         for file in datapack['files']:
 
                             # Check file size limit before upload (8Mb)
@@ -251,10 +250,8 @@ class Simracing:
                                     value=f"[{file['name']}]"
                                     f"({upload_msg.attachments[0].url})")
 
-                        # TODO Validate this works
-                        embed_exists = embed_sent(channel_embeds, embed)
-
-                        if not embed_exists:
+                        # Send embed if not already exists
+                        if not embed_sent(channel_embeds, embed):
                             await serie_channel.send(embed=embed)
                             log.info(f"Sent embed for {car['serie']} - {car['name']}.")
 

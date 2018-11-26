@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
 
-# import pickle
-import traceback
 import json
 import logging
 import os
+import re
 import shutil
 import time
+# import pickle
+import traceback
 import urllib.request
-import re
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import (NoSuchElementException,
+                                        StaleElementReferenceException)
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.proxy import *
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 
 log = logging.getLogger(__name__)
 
@@ -127,6 +126,7 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             "download.default_directory": DL_DIR,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
+            'profile.default_content_setting_values.automatic_downloads': 1,
             "safebrowsing.enabled": False
         })
 
@@ -136,24 +136,25 @@ def build_driver(browser="Chrome", headless=True, proxy=None):
             options.add_argument('disable-gpu')
 
         # TODO clean this
-        if os.name == 'posix':
-            chromedriver = 'chromedriver_linux64'
-        elif os.name == 'nt':
-            chromedriver = 'chromedriver_win32.exe'
-
-        if os.path.isfile(os.path.join(script_dir, chromedriver)):
-            chromedriver_path = os.path.join(script_dir, chromedriver)
-        else:
-            chromedriver_path = os.path.join(script_dir, 'scrapper', chromedriver)
-
-        if os.name == 'posix':
-            os.chmod(chromedriver_path, 0o755)
-
-        print(os.path.join(script_dir, chromedriver_path))
+        
+        # if os.name == 'posix':
+        #     chromedriver = 'chromedriver_linux64'
+        # elif os.name == 'nt':
+        #     chromedriver = 'chromedriver_win32.exe'
+#
+        # if os.path.isfile(os.path.join(script_dir, chromedriver)):
+        #     chromedriver_path = os.path.join(script_dir, chromedriver)
+        # else:
+        #     chromedriver_path = os.path.join(script_dir, 'scrapper', chromedriver)
+#
+        # if os.name == 'posix':
+        #     os.chmod(chromedriver_path, 0o755)
+#
+        # print(os.path.join(script_dir, chromedriver_path))
 
         # Build Chrome driver
         driver = webdriver.Chrome(
-            executable_path=chromedriver_path,
+            #executable_path=chromedriver_path,
             chrome_options=options)
 
         # Add devtools command to allow download
@@ -421,7 +422,7 @@ def authenticate(driver):
 def build_files(driver, files_elem, dpack_path):
     files = []
     for elem in files_elem:
-        file = {}  
+        file = {}
         file['name'] = re.sub("^.*\\\\", "", elem.get_attribute('text'))
         file["type"] = filetype.get(os.path.splitext(file['name'])[1][1:], "unknown")
         file['path'] = os.path.join(dpack_path, file['name'])
@@ -523,20 +524,16 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                 print(f" |_ {datapack['track']}")
 
-
-                # TODO CA CHIE DS LA COLLE
                 # If datapack is not empty
                 if datapack['fastest_laptime'] != "":
-                    # Open permalink box
-                    #print(car_elem.find_element_by_xpath(XPATH["dp_permalink"]))
                     car_elem.find_element_by_xpath(XPATH["dp_permalink"]).click()
-
                     time.sleep(1)
+
                     # Get datapack permalink
                     datapack['url'] = driver.find_element_by_css_selector(
                         ".gwt-TextBox"
                     ).get_attribute('value')
-                    #print(f" |_ {datapack['url']}")
+
                     # Close modal
                     time.sleep(1)
                     driver.find_element_by_xpath(XPATH['dp_modal_close']).click()

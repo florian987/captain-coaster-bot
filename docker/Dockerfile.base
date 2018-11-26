@@ -26,4 +26,13 @@ ENV PIPENV_IGNORE_VIRTUALENVS=1
 ENV PIPENV_NOSPIN=1
 ENV PIPENV_HIDE_EMOJIS=1
 
+# chrome
+RUN rm  -rf /tmp/* /var/cache/apk/* &&\
+    wget "https://chromedriver.storage.googleapis.com/2.44/chromedriver_linux64.zip" &&\
+    unzip chromedriver_linux64.zip &&\
+    rm -rf chromedriver_linux64.zip &&\
+    chmod a+x chromedriver &&\
+    mv chromedriver /usr/local/bin/
+
+
 RUN pipenv install

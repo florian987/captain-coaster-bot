@@ -23,10 +23,10 @@ log = logging.getLogger(__name__)
 
 # Credentials
 
-google_email = VRS.email
-google_password = VRS.password
-# google_email = "osmozwareesport@gmail.com"
-# google_password = "Nj689966"
+# google_email = VRS.email
+# google_password = VRS.password
+google_email = "osmozwareesport@gmail.com"
+google_password = "Nj689966"
 # google_cookie = {
 #     'domain': 'virtualracingschool.appspot.com',
 #     'expiry': 1542742817,

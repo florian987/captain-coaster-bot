@@ -215,6 +215,14 @@ class Categories(metaclass=YAMLGetter):
     setups: int
 
 
+class VRS(metaclass=YAMLGetter):
+    section = "credentials"
+    subsection = "vrs"
+
+    email: str
+    password: str
+
+
 class Roles(metaclass=YAMLGetter):
     section = "guild"
     subsection = "roles"

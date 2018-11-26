@@ -11,6 +11,7 @@ import traceback
 import urllib.request
 
 from bs4 import BeautifulSoup
+from bot.constants import VRS
 from selenium import webdriver
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
@@ -22,17 +23,19 @@ log = logging.getLogger(__name__)
 
 # Credentials
 
-google_email = "osmozwareesport@gmail.com"
-google_password = "Nj689966"
-google_cookie = {
-    'domain': 'virtualracingschool.appspot.com',
-    'expiry': 1542742817,
-    'httpOnly': False,
-    'name': 'JSESSIONID',
-    'path': '/',
-    'secure': False,
-    'value': 'kmNZrVMwsu14bGYm1UkFxA'
-}
+google_email = VRS.email
+google_password = VRS.password
+# google_email = "osmozwareesport@gmail.com"
+# google_password = "Nj689966"
+# google_cookie = {
+#     'domain': 'virtualracingschool.appspot.com',
+#     'expiry': 1542742817,
+#     'httpOnly': False,
+#     'name': 'JSESSIONID',
+#     'path': '/',
+#     'secure': False,
+#     'value': 'kmNZrVMwsu14bGYm1UkFxA'
+# }
 
 #
 # PATHS

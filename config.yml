@@ -39,7 +39,7 @@ guild:
         team_setups:       &CUSTOM_SETS   464125961018015754
 
     categories:
-        setups:            &SETUPS        242522534526246456
+        setups:            &SETUPS        499997014768091157
 
     ignored: [*ADMINS]
 

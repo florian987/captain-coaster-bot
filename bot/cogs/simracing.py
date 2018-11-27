@@ -201,6 +201,8 @@ class Simracing:
 
                 # Create serie channel name
                 wl = re.findall(r'\w+', car['serie'].lower())
+                if "iracing" in wl:  # remove iracing from series name
+                    wl.remove("iracing")
                 serie_channel_name = '-'.join(wl)
                 serie_channel = await ensure_chan_exists(
                     serie_channel_name, setup_category)

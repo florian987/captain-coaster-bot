@@ -176,7 +176,7 @@ class Simracing:
 
             # Change Bot Status
             await self.bot.change_presence(
-                activity=discord.Game(name='Lister les setups')
+                activity=discord.Game(name='Récupérer les setups')
             )
 
             # Create webdriver

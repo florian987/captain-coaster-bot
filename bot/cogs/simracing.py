@@ -118,7 +118,7 @@ class Simracing:
         # await ctx.message.author.send(content=sys.path)
 
         vrs_url = 'https://virtualracingschool.appspot.com/#/DataPacks'
-        setups_category_name = "Setups"
+        setups_category_name = "VRS"
         upload_channel_name = "__uploads__"
 
         setup_category = discord.utils.find(
@@ -176,7 +176,7 @@ class Simracing:
 
             # Change Bot Status
             await self.bot.change_presence(
-                activity=discord.Game(name='Lister les setups')
+                activity=discord.Game(name='Récupérer les setups')
             )
 
             # Create webdriver

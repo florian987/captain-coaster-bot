@@ -578,7 +578,8 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                 # Remove not uploaded files (GG VRS)
                 file_elements = [item for item in file_elements if "not uploaded" not in item.get_attribute('text')]
-                cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"]
+                cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"
+                             or item['serie'] != "Ferrari GT3 Challenge - Fixed"]
 
                 # Download Car image
                 if not os.path.exists(os.path.join(car['car_path'], "logo.jpg")):

@@ -578,6 +578,7 @@ def build_datapacks_infos(driver, cars_list, premium=False):
 
                 # Remove not uploaded files (GG VRS)
                 file_elements = [item for item in file_elements if "not uploaded" not in item.get_attribute('text')]
+                # TODO Create exceptions list
                 cars_list = [item for item in cars_list if item['serie'] != "Aussie Driver Search"
                              or item['serie'] != "Ferrari GT3 Challenge - Fixed"]
 

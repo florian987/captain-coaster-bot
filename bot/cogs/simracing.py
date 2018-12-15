@@ -272,16 +272,19 @@ class Simracing:
 
             await ctx.send(content='', embed=embed)
 
-    @in_channel(Channels.skins)
     async def on_message(self, msg: discord.Message):
         """
         Generate embed from uploaded skins
         """
 
+        # Return if not the desired channel
+        if msg.channel.id != Channels.skins:
+            return
+
         # Remove messages without attachments
-        ##if not msg.attachments:
-        ##    await msg.delete()
-        #    await msg.author.send(content="Ce channel est réservé aux skins.")
+        if not msg.attachments:
+            await msg.delete()
+            await msg.author.send(content="Ce channel est réservé aux skins.")
 
         for attachment in msg.attachments:
             # Get file extension
@@ -298,7 +301,6 @@ class Simracing:
 
                 # Convert files
                 for tga_file in tga_files:
-
                     png_file = await self.bot.loop.run_in_executor(
                         None, self.tga_to_png, tga_file
                     )
@@ -306,7 +308,6 @@ class Simracing:
                     # await upload_and_delete(msg, png_file)
                     await msg.channel.send(file=discord.File(png_file))
                     os.unlink(png_file)  # remove pngfile
-                    # os.unlink(attachment.filename)  # remove zipfile
                     log.info(f"Preview generated {png_file} "
                              f"- uploader: {msg.author}")
 
@@ -320,8 +321,7 @@ class Simracing:
                 # await upload_and_delete(msg, png_file)
                 await msg.channel.send(file=discord.File(png_file))
                 os.unlink(png_file)
-                log.info(f"Preview generated {png_file} "
-                         f"- uploader: {msg.author}")
+                log.info(f"Preview generated {png_file} - uploader: {msg.author}")
 
 
 def setup(bot):

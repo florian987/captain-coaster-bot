@@ -279,9 +279,9 @@ class Simracing:
         """
 
         # Remove messages without attachments
-        if not msg.attachments:
-            await msg.delete()
-            await msg.author.send(content="Ce channel est réservé aux skins.")
+        ##if not msg.attachments:
+        ##    await msg.delete()
+        #    await msg.author.send(content="Ce channel est réservé aux skins.")
 
         for attachment in msg.attachments:
             # Get file extension

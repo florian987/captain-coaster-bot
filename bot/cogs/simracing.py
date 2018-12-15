@@ -278,6 +278,10 @@ class Simracing:
         Generate embed from uploaded skins
         """
 
+        # Remove messages without attachments
+        if not msg.attachments:
+            await msg.delete()
+
         for attachment in msg.attachments:
             # Get file extension
             file_ext = attachment.filename.split('.')[1]

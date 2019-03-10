@@ -369,7 +369,7 @@ class RollerCoasters:
                 description="Va falloir attendre mon mignon",
                 colour=discord.Colour.red()
             )
-            embed.set_or(
+            embed.set_author(
                 icon_url=self.bot.user.avatar_url, name=str(self.bot.user.name))
             await ctx.send(content='', embed=embed)
 

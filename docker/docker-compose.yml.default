@@ -1,7 +1,0 @@
-discord-bot:
-  image: hub.hsfactory.net/jeff/discord-bot:latest
-  restart: always
-  volumes:
-    - /opt/discord-bot:/bot
-  environment:
-    - BOT_TOKEN=""

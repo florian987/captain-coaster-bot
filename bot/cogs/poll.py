@@ -14,7 +14,7 @@ from emoji import UNICODE_EMOJI
 log = logging.getLogger(__name__)
 
 
-class Poll:
+class Poll(commands.Cog, name='Poll Cog'):
     def __init__(self, bot):
         self.bot = bot
         self.std_emojis = [e for e in UNICODE_EMOJI if len(e) == 1]

@@ -30,6 +30,7 @@ pylint = "*"
 "flake8-tidy-imports" = "*"
 "flake8-todo" = "*"
 unidecode = "*"
+pep8 = "*"
 
 [requires]
 python_version = "3.6"

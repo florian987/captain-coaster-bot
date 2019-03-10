@@ -2,6 +2,7 @@ import logging
 
 import aiohttp
 import asyncio
+import asyncpg
 import discord
 import json
 import random
@@ -15,7 +16,7 @@ from fuzzywuzzy import fuzz
 import scrapper.rcdb as rcdb
 import bot.database as db
 from bot.utils.discord_emojis import emojis as dis_emojis
-from bot.constants import Keys, URLs, CC_TAUNT
+from bot.constants import Keys, URLs, CC_TAUNT, Postgres
 from bot.utils.embedconverter import build_embed
 from bot.decorators import in_any_channel_guild
 
@@ -23,7 +24,7 @@ from bot.decorators import in_any_channel_guild
 log = logging.getLogger(__name__)
 
 
-class RollerCoasters:
+class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
     """Interract with Captain Coaster API"""
 
     HEADERS = {'X-AUTH-TOKEN': Keys.captaincoaster}
@@ -45,8 +46,33 @@ class RollerCoasters:
 
     def __init__(self, bot):
         self.bot = bot
-        self.std_emojis = dis_emojis()        
-        #self.conn = db.connect()        
+        self.std_emojis = dis_emojis()
+
+        # asyncpg example https://github.com/mikevb1/lagbot/blob/master/lagbot.py
+        # Check if DB is up and exists
+        self.pool = await asyncpg.create_pool(
+            host=Postgres.host,
+            database=Postgres.database,
+            user=Postgres.user,
+            password=Postgres.password,
+            command_timeout=60
+        )
+
+    async def on_ready(self):
+        async with self.db_pool.acquire() as con:
+            return await con.fetchrow('''
+                CREATE TABLE IF NOT EXISTS cc_games (
+                    game_id SERIAL PRIMARY KEY,
+                    creation_date timestamp,
+                    difficulty int,
+                    park str,
+                    coaster str,
+                    park_solver_discordid int,
+                    coaster_solver_discordid int,
+                    park_solved_at timestamp,
+                    coaster_solved_at timestamp
+                );
+                ''')
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:
@@ -135,7 +161,7 @@ class RollerCoasters:
                         await ctx.message.delete()
                     except errors.Forbidden:
                         print('-' * 12)
-                        print('JAIPALDROI')
+                        print('No permissions to delete message')
                         pass
                 await ctx.send(embed=embed)
 

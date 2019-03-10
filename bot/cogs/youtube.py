@@ -106,7 +106,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         # discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
-class Youtube_Commands:
+class Youtube_Commands(commands.Cog, name='Youtube Cog'):
     def __init__(self, bot):
         self.bot = bot
 

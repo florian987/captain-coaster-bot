@@ -48,19 +48,20 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         self.bot = bot
         self.std_emojis = dis_emojis()
 
+    @commands.Cog.listener()
+    async def on_ready(self):
         # asyncpg example https://github.com/mikevb1/lagbot/blob/master/lagbot.py
         # Check if DB is up and exists
-        self.pool = await asyncpg.create_pool(
+        self.db_pool = await asyncpg.create_pool(
             host=Postgres.host,
             database=Postgres.database,
             user=Postgres.user,
             password=Postgres.password,
             command_timeout=60
         )
-
-    async def on_ready(self):
+        print('===')
         async with self.db_pool.acquire() as con:
-            return await con.fetchrow('''
+            return await con.execute('''
                 CREATE TABLE IF NOT EXISTS cc_games (
                     game_id SERIAL PRIMARY KEY,
                     creation_date timestamp,

@@ -18,3 +18,16 @@ Selenium a besoin de capabilities admin.
 | coaster_solver_discordid | int | 4563473457357 |
 | park_solved_at| timestamp|2019-03-10 14:00:27.927209|
 | park_solved_at|timestmap|2019-03-10 14:00:27.927209|
+
+
+#### pgsql without on_ready()
+```py
+    def __init__(self, bot):
+        self.bot = bot
+        ...
+
+        self.bot.loop.create_task(self.init_db())
+
+    async def init_db(self):
+        self.db_pool = ...
+```

@@ -20,6 +20,14 @@ Selenium a besoin de capabilities admin.
 | park_solved_at|timestmap|2019-03-10 14:00:27.927209|
 
 
+| Name | Type |
+|---|---|
+|game_id| int|
+|event|text|
+|author|int|
+|park|int|
+|coaster|text|
+
 #### pgsql without on_ready()
 ```py
     def __init__(self, bot):

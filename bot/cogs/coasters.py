@@ -240,7 +240,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 OR coaster_solver_discordid = {player.id}
                 '''
             )
-            if points > 0:
+            if points <= 0:
                 descr = "Tu n'es pas encore classé."
             else:
                 descr = points

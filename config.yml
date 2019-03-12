@@ -55,7 +55,7 @@ credentials:
 postgresql:
     host: "localhost"
     database: "captaincoaster"
-    user: "captaincoaster"
+    user: "postgres"
     password: "captaincoaster"
 
 

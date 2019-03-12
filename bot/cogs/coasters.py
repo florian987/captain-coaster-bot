@@ -61,7 +61,6 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             password=Postgres.password,
             command_timeout=60
         )
-        print('===')
         async with self.db_pool.acquire() as con:
             await con.execute('''
                 CREATE TABLE IF NOT EXISTS cc_games(
@@ -78,7 +77,6 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     coaster_solved_at timestamp
                 );
             ''')
-
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:
@@ -97,7 +95,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         """
         Helper method to build Coasters infos from CC json
         """
-        coaster_json.pop('id')  # Remove useless id info
+        coaster_json.pop('id')
 
         embed = await build_embed(
             ctx,
@@ -111,10 +109,12 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             embed.set_thumbnail(
                 url=f"{URLs.captain_coaster}/images/coasters/{coaster_json.pop('mainImage')['path']}")
 
-        for k, v in coaster_json.items():  # Fields mapping
+        # Fields mapping
+        for k, v in coaster_json.items():
             if k in self.mapping:
                 k = self.mapping[k]
-            if type(v) == int or type(v) == str and not k.startswith('@'):  # Add fields to embed
+            # Add fields to embed
+            if type(v) == int or type(v) == str and not k.startswith('@'):
                 embed.add_field(name=k, value=v)
             elif type(v) == dict:
                 embed.add_field(name=k, value=v['name'])
@@ -166,8 +166,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     try:
                         await ctx.message.delete()
                     except errors.Forbidden:
-                        print('-' * 12)
-                        print('No permissions to delete message')
+                        print('---- No permissions to delete message')
                         pass
                 await ctx.send(embed=embed)
 
@@ -187,7 +186,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                         name=f"{coaster['name']} ({coaster['park']['name']})",
                         value=chosen_emoji, inline=True)
                     emojis_association[chosen_emoji] = coaster['id']
-                message = await ctx.send(embed=embed)  # Send embed
+
+                message = await ctx.send(embed=embed)
 
                 # Add reaction to embed
                 for emoji in emojis_association.keys():
@@ -226,7 +226,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
     @cc_group.command(name="score", aliases=['points'])
     async def cc_score(self, ctx, *, player: discord.User=None):
         """
-        Get your own score
+        Get player score
         """
 
         if player is None:
@@ -234,12 +234,25 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
         async with self.db_pool.acquire() as con:
             points = await con.fetchval(
-                f'SELECT count(*) from cc_games WHERE park_solver_discordid = {player.id} OR coaster_solver_discordid = {player.id}'
+                f'''
+                SELECT count(*) from cc_games
+                WHERE park_solver_discordid = {player.id}
+                OR coaster_solver_discordid = {player.id}
+                '''
             )
-            print('='* 4)
-            print(points)
-            print('='* 4)
-            await ctx.send(content=points)
+            if points > 0:
+                descr = "Tu n'es pas encore classé."
+            else:
+                descr = points
+
+            await ctx.send(
+                embed=await build_embed(
+                    ctx,
+                    title=f"Score de {player.name}",
+                    colour='blue',
+                    description=descr
+                )
+            )
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
     async def cc_play(self, ctx, difficulty='easy'):

@@ -241,18 +241,21 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 '''
             )
             if points <= 0:
-                descr = "Tu n'es pas encore classé."
-            else:
-                descr = points
-
-            await ctx.send(
-                embed=await build_embed(
-                    ctx,
-                    title=f"Score de {player.name}",
-                    colour='blue',
-                    description=descr
-                )
+                points = "Tu n'es pas encore classé."
+            
+            embed = await build_embed(
+                ctx,
+                title="**Leaderboard**",
+                colour='blue',
+                author_icon=player.avatar_url,
+                author_name=player.name
             )
+            embed.add_field(name="Points", value=points)
+
+            if isinstance(points, int):
+                embed.add_field(name="Classement", value=points)
+
+            await ctx.send(embed=embed)
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
     async def cc_play(self, ctx, difficulty='easy'):

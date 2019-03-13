@@ -49,9 +49,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
     def __init__(self, bot):
         self.bot = bot
         self.std_emojis = dis_emojis()
+        self.bot.loop.create_task(self.init_db())
 
-    @commands.Cog.listener()
-    async def on_ready(self):
+    async def init_db(self):
         # asyncpg example https://github.com/mikevb1/lagbot/blob/master/lagbot.py
         # Check if DB is up and exists
         self.db_pool = await asyncpg.create_pool(
@@ -275,28 +275,32 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
         await ctx.send(embed=embed)
 
-#    @commands.guild_only()
-#    @cc_group.command(name="classement", aliases=['leaderboard', 'top'])
-#    async def cc_leaderboard(self, ctx, *, limit: int = 10):
-#        """Get Leaderboard"""
-#
-#        await ctx.message.delete()
-#
-#        embed = await build_embed(
-#            ctx,
-#            title="**Leaderboard**",
-#            colour='blue',
-#            author_icon=player.avatar_url,
-#            author_name=player.name
-#        )
-#
-#        async with self.db_pool.acquire() as con:
-#            total_pts_usr = await con.fetch(
-#                f'''
-#                SELECT park, coaster, sum(difficulty) from cc_games group by 
-#                select sum(difficulty), count(*) from payments group by order_id order by sum desc limit 10 ;
-#                '''
-#            )
+    @commands.guild_only()
+    @cc_group.command(name="classement", aliases=['leaderboard', 'top'])
+    async def cc_leaderboard(self, ctx, *, limit: int = 10):
+        """Get Leaderboard"""
+
+        await ctx.message.delete()
+
+        embed = await build_embed(
+            ctx,
+            title="**Leaderboard**",
+            colour='blue',
+            author_icon=ctx.author.avatar_url,
+            author_name=ctx.author.name
+        )
+
+        async with self.db_pool.acquire() as con:
+            total_pts_usr = await con.fetch(
+                f'''
+                select coaster_solver_discordid, sum(difficulty) from cc_games group by coaster_solver_discordid order by sum desc limit {limit} ;
+                '''
+            )
+            print('=' * 12)
+            print(len(total_pts_usr))
+            for r in total_pts_usr:
+                print(dict(r))
+                embed.add_field(name=dict(r)['coaster_solver_discordid'], value=dict(r)['sum'], inline=False)
 #            if isinstance(park_points, int) and isinstance(coaster_points, int):
 #                points = park_points + coaster_points
 #            elif isinstance(park_points, int) and not isinstance(coaster_points, int):
@@ -308,7 +312,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 #
 #            embed.add_field(name="Points", value=points)
 #
-#        await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
     async def cc_play(self, ctx, difficulty='easy'):

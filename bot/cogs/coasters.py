@@ -235,14 +235,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         if player is None:
             player = ctx.message.author
 
-        embed = await build_embed(
-            ctx,
-            title="**Leaderboard**",
-            colour='blue',
-            author_icon=player.avatar_url,
-            author_name=player.name
-        )
-
+       
         async with self.db_pool.acquire() as con:
             #total_pts_usr = await con.fetchval(
             #    f'''
@@ -268,6 +261,15 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 points = coaster_points
             else:
                 points = "Tu n'es pas encore classé."
+
+            embed = await build_embed(
+                ctx,
+                title="**Leaderboard**",
+                colour='blue',
+                author_icon=player.avatar_url,
+                author_name=player.name
+            )
+
 
             embed.add_field(name="Points", value=points)
 
@@ -322,9 +324,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         min_match = 80
 
         lvl_map = {
-            'easy': '[gt]=10',
-            'medium': '[between]=1..10',
-            'hard': '[lt]=1'
+            'easy': '[gt]=50',
+            'medium': '[between]=10..50',
+            'hard': '[lt]=10'
         }
 
         int_lvl_map = {

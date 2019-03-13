@@ -53,7 +53,7 @@ credentials:
         password: "Nj689966"
 
 postgresql:
-    host: "localhost"
+    host: "172.18.0.3"
     database: "captaincoaster"
     user: "postgres"
     password: "captaincoaster"

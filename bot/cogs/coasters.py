@@ -68,7 +68,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     channel_id bigint,
                     time int,
                     creation_date timestamp,
-                    difficulty text,
+                    difficulty int,
                     park text,
                     coaster text,
                     park_solver_discordid bigint,
@@ -223,45 +223,95 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             else:
                 await ctx.send(content="Aucun coaster trouvé.")
 
+    @commands.guild_only()
     @cc_group.command(name="score", aliases=['points'])
-    async def cc_score(self, ctx, *, player: discord.User=None):
+    async def cc_score(self, ctx, *, player: discord.User = None):
         """
         Get player score
         """
 
+        await ctx.message.delete()
+
         if player is None:
             player = ctx.message.author
 
+        embed = await build_embed(
+            ctx,
+            title="**Leaderboard**",
+            colour='blue',
+            author_icon=player.avatar_url,
+            author_name=player.name
+        )
+
         async with self.db_pool.acquire() as con:
-            points = await con.fetchval(
+            #total_pts_usr = await con.fetchval(
+            #    f'''
+            #    SELECT park, coaster, sum(difficulty) from cc_games
+            #    '''
+            #)
+            park_points = await con.fetchval(
                 f'''
-                SELECT count(*) from cc_games
-                WHERE park_solver_discordid = {player.id}
-                OR coaster_solver_discordid = {player.id}
+                SELECT sum(difficulty) from cc_games WHERE park_solver_discordid = {player.id}
                 '''
             )
-            if points <= 0:
-                points = "Tu n'es pas encore classé."
-            
-            embed = await build_embed(
-                ctx,
-                title="**Leaderboard**",
-                colour='blue',
-                author_icon=player.avatar_url,
-                author_name=player.name
+            coaster_points = await con.fetchval(
+                f'''
+                SELECT sum(difficulty) from cc_games WHERE coaster_solver_discordid = {player.id}
+                '''
             )
+
+            if isinstance(park_points, int) and isinstance(coaster_points, int):
+                points = park_points + coaster_points
+            elif isinstance(park_points, int) and not isinstance(coaster_points, int):
+                points = park_points
+            elif not isinstance(park_points, int) and isinstance(coaster_points, int):
+                points = coaster_points
+            else:
+                points = "Tu n'es pas encore classé."
+
             embed.add_field(name="Points", value=points)
 
-            if isinstance(points, int):
-                embed.add_field(name="Classement", value=points)
+        await ctx.send(embed=embed)
 
-            await ctx.send(embed=embed)
+#    @commands.guild_only()
+#    @cc_group.command(name="classement", aliases=['leaderboard', 'top'])
+#    async def cc_leaderboard(self, ctx, *, limit: int = 10):
+#        """Get Leaderboard"""
+#
+#        await ctx.message.delete()
+#
+#        embed = await build_embed(
+#            ctx,
+#            title="**Leaderboard**",
+#            colour='blue',
+#            author_icon=player.avatar_url,
+#            author_name=player.name
+#        )
+#
+#        async with self.db_pool.acquire() as con:
+#            total_pts_usr = await con.fetch(
+#                f'''
+#                SELECT park, coaster, sum(difficulty) from cc_games group by 
+#                select sum(difficulty), count(*) from payments group by order_id order by sum desc limit 10 ;
+#                '''
+#            )
+#            if isinstance(park_points, int) and isinstance(coaster_points, int):
+#                points = park_points + coaster_points
+#            elif isinstance(park_points, int) and not isinstance(coaster_points, int):
+#                points = park_points
+#            elif not isinstance(park_points, int) and isinstance(coaster_points, int):
+#                points = coaster_points
+#            else:
+#                points = "Tu n'es pas encore classé."
+#
+#            embed.add_field(name="Points", value=points)
+#
+#        await ctx.send(embed=embed)
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
     async def cc_play(self, ctx, difficulty='easy'):
         """
         Quizz avec les images de CC.
-
         Une pertinence de 80% est nécessaire pour avoir une réponse validée.
         """
 
@@ -275,6 +325,12 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             'easy': '[gt]=10',
             'medium': '[between]=1..10',
             'hard': '[lt]=1'
+        }
+
+        int_lvl_map = {
+            'easy': 1,
+            'medium': 2,
+            'hard': 3
         }
 
         # Check functions
@@ -343,6 +399,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
                 # Insert party in DB
                 game_id = hash(int(ctx.channel.id) + int(time.time()))
+
                 async with self.db_pool.acquire() as con:
                     await con.execute(
                         '''INSERT INTO cc_games(game_id, channel_id, time, creation_date, difficulty, park, coaster)
@@ -351,7 +408,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                         ctx.channel.id,
                         time.time(),
                         datetime.datetime.now(),
-                        difficulty,
+                        int_lvl_map[difficulty],
                         coaster['park']['name'],
                         coaster['name']
                     )

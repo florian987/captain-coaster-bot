@@ -53,9 +53,9 @@ credentials:
         password: "Nj689966"
 
 postgresql:
-    host: "172.18.0.2"
+    host: "postgres"
     database: "captaincoaster"
-    user: "postgres"
+    user: "captaincoaster"
     password: "captaincoaster"
 
 

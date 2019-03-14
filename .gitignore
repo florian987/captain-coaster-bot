@@ -4,9 +4,10 @@
 bin/
 bot/scrapper/downloads/
 bot/scrapper/logs/
-config.json
+config.yml
 data.json
 docker/docker-compose.yml
+docker/postgres
 downloads/*
 include
 lib

@@ -18,6 +18,12 @@ bot:
         - owner
         - default
 
+postgresql:
+    host: "localhost"
+    database: "discordbot"
+    user: "discordbot"
+    password: "discordbot"
+
 
 style:
     colours:

@@ -5,6 +5,7 @@ import textwrap
 from datetime import datetime, timedelta
 
 from discord import Colour, Embed, TextChannel
+from discord.ext import commands
 from discord.ext.commands import Bot, Context, group
 
 from bot.constants import Channels, ERROR_REPLIES, Reddit as RedditConfig, Roles
@@ -16,7 +17,7 @@ from bot.pagination import LinePaginator
 log = logging.getLogger(__name__)
 
 
-class Reddit:
+class Reddit(commands.Cog, name='Reddit Cog'):
     """
     Track subreddit posts and show detailed statistics about them.
     """

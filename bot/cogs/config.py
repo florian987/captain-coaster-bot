@@ -7,7 +7,7 @@ from discord.ext import commands
 log = logging.getLogger(__name__)
 
 
-class Configs_Commands:
+class Configs_Commands(commands.Cog, name='Bot Configuration Cog'):
     def __init__(self, bot):
         self.bot = bot
         # self.config = 'config.json'

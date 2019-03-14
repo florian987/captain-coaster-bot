@@ -16,7 +16,7 @@ from bot.decorators import in_channel, with_role
 log = logging.getLogger(__name__)
 
 
-class Simracing:
+class Simracing(commands.Cog, name='Simracing Cog'):
     def __init__(self, bot):
         self.bot = bot
 

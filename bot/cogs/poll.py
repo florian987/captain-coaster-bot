@@ -14,7 +14,7 @@ from emoji import UNICODE_EMOJI
 log = logging.getLogger(__name__)
 
 
-class Poll:
+class Poll(commands.Cog, name='Poll Cog'):
     def __init__(self, bot):
         self.bot = bot
         self.std_emojis = [e for e in UNICODE_EMOJI if len(e) == 1]
@@ -57,7 +57,7 @@ class Poll:
             chosen_emoji = random.choice(
                 [e for e in allowed_emojis if e not in used_emojis])
             embed.add_field(
-                name=argslist.pop(0), value=chosen_emoji, inline=True)
+                name=argslist.pop(0), value=chosen_emoji, inline=False)
             used_emojis.append(chosen_emoji)
 
         # Send embed

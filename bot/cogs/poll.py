@@ -57,7 +57,7 @@ class Poll(commands.Cog, name='Poll Cog'):
             chosen_emoji = random.choice(
                 [e for e in allowed_emojis if e not in used_emojis])
             embed.add_field(
-                name=argslist.pop(0), value=chosen_emoji, inline=True)
+                name=argslist.pop(0), value=chosen_emoji, inline=False)
             used_emojis.append(chosen_emoji)
 
         # Send embed

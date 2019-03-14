@@ -15,6 +15,7 @@ async def build_embed(ctx, **kwargs):
     descr = kwargs.pop('description', None)
     colour = kwargs.pop('colour', discord.Embed.Empty)
     img = kwargs.pop('img', None)
+    thumbnail = kwargs.pop('thumbnail', None)
     # url = kwargs.pop('url', None)
     author_icon = kwargs.pop('author_icon', discord.Embed.Empty)
     author_name = kwargs.pop('author_name', None)
@@ -48,6 +49,9 @@ async def build_embed(ctx, **kwargs):
 
     if img:
         embed.set_image(url=img)
+
+    if thumbnail:
+        embed.set_thumbnail(url=thumbnail)
 
     if footer_text or footer_icon:
         embed.set_footer(text=footer_text, icon_url=footer_icon)

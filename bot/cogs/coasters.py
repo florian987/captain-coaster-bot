@@ -287,7 +287,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             title="**Leaderboard**",
             colour='blue',
             author_icon=ctx.author.avatar_url,
-            author_name=ctx.author.name
+            author_name=ctx.author.name,
+            thumbnail='https://image.flaticon.com/icons/png/512/262/262831.png'
         )
 
         async with self.db_pool.acquire() as con:
@@ -298,9 +299,17 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             )
             print('=' * 12)
             print(len(total_pts_usr))
-            for r in total_pts_usr:
-                print(dict(r))
-                embed.add_field(name=dict(r)['coaster_solver_discordid'], value=dict(r)['sum'], inline=False)
+            #for r in total_pts_usr:
+            count = 0
+            while count < len(total_pts_usr):
+                #print(dict(r))
+                embed.add_field(
+                    name=str(count + 1),
+                    value=str(total_pts_usr[count]['coaster_solver_discordid']) + ' (' + str(total_pts_usr[count]['sum']) + ')',
+                    inline=False
+                )
+                count += 1
+                #embed.add_field(name=dict(r)['coaster_solver_discordid'], value=dict(r)['sum'], inline=False)
 #            if isinstance(park_points, int) and isinstance(coaster_points, int):
 #                points = park_points + coaster_points
 #            elif isinstance(park_points, int) and not isinstance(coaster_points, int):

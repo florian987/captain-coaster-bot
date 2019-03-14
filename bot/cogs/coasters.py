@@ -65,6 +65,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             await con.execute('''
                 CREATE TABLE IF NOT EXISTS cc_games(
                     game_id bigint,
+                    guild_id bigint,
                     channel_id bigint,
                     time int,
                     creation_date timestamp,
@@ -237,7 +238,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
        
         async with self.db_pool.acquire() as con:
-            #total_pts_usr = await con.fetchval(
+            #r = await con.fetchval(
             #    f'''
             #    SELECT park, coaster, sum(difficulty) from cc_games
             #    '''
@@ -277,10 +278,13 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
     @commands.guild_only()
     @cc_group.command(name="classement", aliases=['leaderboard', 'top'])
-    async def cc_leaderboard(self, ctx, *, limit: int = 10):
+    async def cc_leaderboard(self, ctx, *, limit: int = 10, hardlimit: int = 50):
         """Get Leaderboard"""
 
         await ctx.message.delete()
+        
+        if limit > hardlimit:
+            limit = hardlimit
 
         embed = await build_embed(
             ctx,
@@ -292,20 +296,24 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         )
 
         async with self.db_pool.acquire() as con:
-            total_pts_usr = await con.fetch(
+            r = await con.fetch(
                 f'''
-                select coaster_solver_discordid, sum(difficulty) from cc_games group by coaster_solver_discordid order by sum desc limit {limit} ;
+                select coaster_solver_discordid, sum(difficulty) from cc_games
+                group by coaster_solver_discordid
+                order by sum desc limit {limit} ;
                 '''
             )
-            print('=' * 12)
-            print(len(total_pts_usr))
-            #for r in total_pts_usr:
+
             count = 0
-            while count < len(total_pts_usr):
-                #print(dict(r))
+            while count < len(r):
+                try:
+                    nickname = ctx.guild.get_member(r[count]['coaster_solver_discordid']).display_name
+                except AttributeError:
+                    nickname = "Unknown player"
+
                 embed.add_field(
                     name=str(count + 1),
-                    value=str(total_pts_usr[count]['coaster_solver_discordid']) + ' (' + str(total_pts_usr[count]['sum']) + ')',
+                    value=f"{nickname} ({str(r[count]['sum'])})",
                     inline=False
                 )
                 count += 1
@@ -417,9 +425,12 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
                 async with self.db_pool.acquire() as con:
                     await con.execute(
-                        '''INSERT INTO cc_games(game_id, channel_id, time, creation_date, difficulty, park, coaster)
-                        VALUES($1, $2, $3, $4, $5, $6, $7)''',
+                        '''INSERT INTO cc_games(
+                            game_id, guild_id, channel_id, time, creation_date, difficulty, park, coaster
+                        )
+                        VALUES($1, $2, $3, $4, $5, $6, $7, $8)''',
                         game_id,
+                        ctx.guild.id,
                         ctx.channel.id,
                         time.time(),
                         datetime.datetime.now(),

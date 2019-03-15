@@ -3,7 +3,7 @@ import discord.ext.commands.errors
 from discord.ext import commands
 
 
-class Dev_Commands:
+class Dev_Commands(commands.Cog, name='Dev Commands Cog'):
     def __init__(self, bot):
         self.bot = bot
 

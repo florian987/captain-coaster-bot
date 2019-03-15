@@ -9,7 +9,7 @@ from bot.utils.embedconverter import build_embed
 log = logging.getLogger(__name__)
 
 
-class Embed_Commands:
+class Embed_Commands(commands.Cog, name='Embed Testing Cog'):
     def __init__(self, bot):
         self.bot = bot
 

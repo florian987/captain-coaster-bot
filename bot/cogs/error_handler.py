@@ -26,7 +26,7 @@ http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#errors
 """
 
 
-class CommandErrorHandler:
+class CommandErrorHandler(commands.Cog, name='Error Handler Cog'):
     def __init__(self, bot):
         self.bot = bot
 

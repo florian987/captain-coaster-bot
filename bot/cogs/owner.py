@@ -7,7 +7,7 @@ from discord.ext import commands
 log = logging.getLogger(__name__)
 
 
-class OwnerCog:
+class OwnerCog(commands.Cog, name='Owner Cog'):
 
     def __init__(self, bot):
         self.bot = bot

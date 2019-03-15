@@ -8,7 +8,7 @@ from discord.ext import commands
 log = logging.getLogger(__name__)
 
 
-class Default_Commands:
+class Default_Commands(commands.Cog, name='Default Cog'):
     def __init__(self, bot):
         self.bot = bot
 

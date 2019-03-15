@@ -1,4 +1,4 @@
-# A Discord bot made for great French communities
+# <img src="https://www.logolynx.com/images/logolynx/1b/1bcc0f0aefe71b2c8ce66ffe8645d365.png"  width="30" height="30"> A Discord bot made for great French communities
 
 ## Features
 - Captain Coaster API

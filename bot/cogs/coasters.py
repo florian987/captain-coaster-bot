@@ -297,17 +297,22 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
         async with self.db_pool.acquire() as con:
             r = await con.fetch(
+                #f'''
+                #select coaster_solver_discordid, sum(difficulty) from cc_games
+                #group by coaster_solver_discordid
+                #order by sum desc limit {limit} ;
+                #'''
                 f'''
-                select coaster_solver_discordid, sum(difficulty) from cc_games
-                group by coaster_solver_discordid
-                order by sum desc limit {limit} ;
+                 select discord_uid, sum(difficulty)
+                 from (select coaster_solver_discordid as discord_uid, difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
+                 as fautmettreunalias group by discord_uid order by sum desc limit {limit}; 
                 '''
             )
 
             count = 0
             while count < len(r):
                 try:
-                    nickname = ctx.guild.get_member(r[count]['coaster_solver_discordid']).display_name
+                    nickname = ctx.guild.get_member(r[count]['discord_uid']).display_name
                 except AttributeError:
                     nickname = "Unknown player"
 

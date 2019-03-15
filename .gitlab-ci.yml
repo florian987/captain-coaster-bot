@@ -3,9 +3,6 @@ image: $CI_REGISTRY_IMAGE:ci
 variables:
   PIPENV_CACHE_DIR: "$CI_PROJECT_DIR/pipenv-cache"
 
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_PROJECT_DIR
-
 cache:
   paths:
     - "$CI_PROJECT_DIR/pipenv-cache"
@@ -16,8 +13,15 @@ stages:
   - build
 
 test:
-
   stage: test
+
+  image: docker:stable
+
+  services:
+    - docker:dind
+
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_PROJECT_DIR
 
   script:
     - pipenv install --dev --deploy

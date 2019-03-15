@@ -7,11 +7,7 @@ bot/scrapper/logs/
 config.yml
 data.json
 docker/docker-compose.yml
-<<<<<<< HEAD
 docker/postgres/
-=======
-docker/postgres
->>>>>>> abbf758ac642c12d9e918d5dacb82d56be5261a5
 downloads/*
 include
 lib

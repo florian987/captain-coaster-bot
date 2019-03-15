@@ -24,7 +24,7 @@ test:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
   script:
-    - apk add --no-cache python3
+    - apk add --no-cache python3 build-base
     - pip3 install pipenv
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 

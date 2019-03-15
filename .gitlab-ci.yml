@@ -28,9 +28,8 @@ test:
     - pipenv run lint --exit-zero 
 
 build:
-
   services:
-    - docker:latest
+    - docker:stable
 
   stage: build
   script:

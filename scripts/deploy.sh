@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build and deploy on master branch
-if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
+if [[ $CI_COMMIT_REF_SLUG == 'master' ]] || [[ $CI_COMMIT_REF_SLUG == 'dev' ]]; then
     #echo "Connecting to docker hub"
     #echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
@@ -12,10 +12,10 @@ if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
       echo "ci.Dockerfile was changed"
 
       echo "Building bot ci"
-      docker build -t hub.hsfactory.net/jeff/discord-bot:ci -f docker/ci.Dockerfile .
+      docker build -t $CI_REGISTRY:ci -f docker/ci.Dockerfile .
 
       echo "Pushing image to Docker Hub"
-      docker push hub.hsfactory.net/jeff/discord-bot:ci
+      docker push $CI_REGISTRY:ci
     else
       echo "ci.Dockerfile was not changed, not building"
     fi
@@ -24,22 +24,26 @@ if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
       echo "Dockerfile.base was changed"
 
       echo "Building bot base"
-      docker build -t hub.hsfactory.net/jeff/discord-bot:base -f docker/Dockerfile.base .
+      docker build -t $CI_REGISTRY:base -f docker/Dockerfile.base .
 
       echo "Pushing image to Docker Hub"
-      docker push hub.hsfactory.net/jeff/discord-bot:base
+      docker push $CI_REGISTRY:base
     else
       echo "Dockerfile.base was not changed, not building"
     fi
 
+    if [[ $CI_COMMIT_REF_SLUG == 'dev' ]]; then
+      docker_tag = "dev"
+    else
+      docker_tag = "latest"
+    fi
+
     echo "Building image"
-    docker build -t hub.hsfactory.net/jeff/discord-bot:latest -f docker/Dockerfile .
+    docker build -t $CI_REGISTRY:$docker_tag -f docker/Dockerfile .
 
     echo "Pushing image"
-    docker push hub.hsfactory.net/jeff/discord-bot:latest
+    docker push $CI_REGISTRY:$docker_tag
 
-    #echo "Deploying container"
-    #curl -H "token: $AUTODEPLOY_TOKEN" $AUTODEPLOY_WEBHOOK
 else
     echo "Skipping deploy"
 fi

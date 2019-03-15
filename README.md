@@ -1,24 +1,15 @@
-## Selenium
-Selenium a besoin de capabilities admin.
-```sh
---cap-add=SYS_ADMIN
-```
+# A Discord bot made for great French communities
 
-## CaptainCoaster
-### Postgres
+## Features
+- Captain Coaster API
+- Captain Coaster Quizz
+- Custom Error handler
+- Poll
+- Dev features (on the fly embeds, ...)
+- Youtube song to voice channel
+- ...
 
-| Name | Type | Comment |
-|---|---|---|
-| GameID | SERIAL | hash(channel.id + time.time()) |
-| Created_at | timestamp |  |
-| Difficulty | int |  |
-| Park | str |  |
-| Coaster | str |  |
-| park_solver_discordid | int |  |
-| coaster_solver_discordid | int |  |
-| park_solved_at| timestamp| |
-| park_solved_at|timestmap| |
-
-
-## TODO
-- rework vote to use number emoji instead of randome using [inflect](https://github.com/jazzband/inflect)
+## Discord servers using this bot
+- r/mkfr
+- Coasters World
+- HSFactory

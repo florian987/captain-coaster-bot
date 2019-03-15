@@ -19,7 +19,7 @@ bot:
         - default
 
 postgresql:
-    host: "localhost"
+    host: "postgres"
     database: "discordbot"
     user: "discordbot"
     password: "discordbot"

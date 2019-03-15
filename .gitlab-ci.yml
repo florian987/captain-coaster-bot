@@ -10,7 +10,7 @@ cache:
 
 stages:
   - test
-  - 👷 build
+  - build
 
 test:
   stage: test

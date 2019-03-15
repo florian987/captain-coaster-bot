@@ -29,7 +29,8 @@ test:
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 
-build:
+👷 build:
+  stage: 👷 build
   services:
     - docker:stable
 

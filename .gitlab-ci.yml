@@ -1,4 +1,4 @@
-image: $CI_REGISTRY:ci
+image: $CI_REGISTRY_IMAGE:ci
 
 variables:
   PIPENV_CACHE_DIR: "$CI_PROJECT_DIR/pipenv-cache"

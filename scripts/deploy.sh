@@ -12,10 +12,10 @@ if [[ $CI_COMMIT_REF_SLUG == 'master' ]] || [[ $CI_COMMIT_REF_SLUG == 'dev' ]]; 
       echo "ci.Dockerfile was changed"
 
       echo "Building bot ci"
-      docker build -t $CI_REGISTRY:ci -f docker/ci.Dockerfile .
+      docker build -t $CI_REGISTRY_IMAGE:ci -f docker/ci.Dockerfile .
 
       echo "Pushing image to Docker Hub"
-      docker push $CI_REGISTRY:ci
+      docker push $CI_REGISTRY_IMAGE:ci
     else
       echo "ci.Dockerfile was not changed, not building"
     fi
@@ -24,10 +24,10 @@ if [[ $CI_COMMIT_REF_SLUG == 'master' ]] || [[ $CI_COMMIT_REF_SLUG == 'dev' ]]; 
       echo "Dockerfile.base was changed"
 
       echo "Building bot base"
-      docker build -t $CI_REGISTRY:base -f docker/Dockerfile.base .
+      docker build -t $CI_REGISTRY_IMAGE:base -f docker/Dockerfile.base .
 
       echo "Pushing image to Docker Hub"
-      docker push $CI_REGISTRY:base
+      docker push $CI_REGISTRY_IMAGE:base
     else
       echo "Dockerfile.base was not changed, not building"
     fi
@@ -39,10 +39,10 @@ if [[ $CI_COMMIT_REF_SLUG == 'master' ]] || [[ $CI_COMMIT_REF_SLUG == 'dev' ]]; 
     fi
 
     echo "Building image"
-    docker build -t $CI_REGISTRY:$docker_tag -f docker/Dockerfile .
+    docker build -t $CI_REGISTRY_IMAGE:$docker_tag -f docker/Dockerfile .
 
     echo "Pushing image"
-    docker push $CI_REGISTRY:$docker_tag
+    docker push $CI_REGISTRY_IMAGE:$docker_tag
 
 else
     echo "Skipping deploy"

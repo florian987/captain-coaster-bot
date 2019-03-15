@@ -21,7 +21,7 @@ test:
     - docker:dind
 
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_PROJECT_DIR
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
   script:
     - pipenv install --dev --deploy

@@ -10,7 +10,7 @@ cache:
 
 stages:
   - test
-  - build
+  - 👷 build
 
 test:
   stage: test
@@ -24,8 +24,8 @@ test:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
   script:
-    - apk add --no-cache py-pip
-    - pip install pipenv
+    - apk add --no-cache python3
+    - pip3 install pipenv
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 

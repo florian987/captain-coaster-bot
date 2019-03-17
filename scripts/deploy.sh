@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build and deploy on master branch
-if [[ $CI_COMMIT_REF_SLUG == 'master' ]] || [[ $CI_COMMIT_REF_SLUG == 'dev' ]]; then
+if [ $CI_COMMIT_REF_SLUG == 'master' ] || [ $CI_COMMIT_REF_SLUG == 'dev' ]; then
     #echo "Connecting to docker hub"
     #echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 

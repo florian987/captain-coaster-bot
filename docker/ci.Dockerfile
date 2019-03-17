@@ -1,5 +1,8 @@
 FROM python:3.6-slim-stretch
 
+RUN apt update && apt -y install \
+    libffi-dev
+
 # RUN apk add --update docker \
 #                      curl \
 #                      tini \

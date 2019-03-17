@@ -1,16 +1,16 @@
-FROM python:3.6-alpine3.7
+FROM python:3.6-slim-stretch
 
-RUN apk add --update docker \
-                     curl \
-                     tini \
-                     build-base \
-                     libffi-dev \
-                     zlib \
-                     jpeg-dev \
-                     libxml2 libxml2-dev libxslt-dev \
-                     zlib-dev \
-                     freetype-dev \
-                     git
+# RUN apk add --update docker \
+#                      curl \
+#                      tini \
+#                      build-base \
+#                      libffi-dev \
+#                      zlib \
+#                      jpeg-dev \
+#                      libxml2 libxml2-dev libxslt-dev \
+#                      zlib-dev \
+#                      freetype-dev \
+#                      git
 
 RUN pip install --upgrade pip && pip install pipenv
 

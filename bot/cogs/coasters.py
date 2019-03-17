@@ -15,7 +15,6 @@ from discord.ext import commands
 from discord.ext.commands import Context, group
 from fuzzywuzzy import fuzz
 
-import scrapper.rcdb as rcdb
 import bot.database as db
 from bot.utils.discord_emojis import emojis as dis_emojis
 from bot.constants import Keys, URLs, CC_TAUNT, Postgres
@@ -50,6 +49,12 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         self.bot = bot
         self.std_emojis = dis_emojis()
         self.bot.loop.create_task(self.init_db())
+        self.lvl_map = {
+            'easy': '[gt]=50',
+            'medium': '[between]=10..50',
+            'hard': '[lt]=10'
+        }
+
 
     async def init_db(self):
         # asyncpg example https://github.com/mikevb1/lagbot/blob/master/lagbot.py
@@ -236,7 +241,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         if player is None:
             player = ctx.message.author
 
-       
+
         async with self.db_pool.acquire() as con:
             #r = await con.fetchval(
             #    f'''
@@ -270,11 +275,31 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 author_icon=player.avatar_url,
                 author_name=player.name
             )
-
-
             embed.add_field(name="Points", value=points)
 
         await ctx.send(embed=embed)
+
+    @commands.guild_only()
+    @cc_group.command(name="levels", aliases=["lvl", "level", "lvls", "niveaux"])
+    async def cc_levels(self, ctx):
+        """Get current levels"""
+
+        await ctx.message.delete()
+
+        mbd = await build_embed(
+            ctx,
+            title=f"Levels",
+            colour='blue',
+            author_icon=ctx.author.avatar_url,
+            author_name=ctx.author.name
+        )
+
+        for k, v in self.lvl_map.items():
+            r = await self.json_infos(
+                f'{URLs.captain_coaster}/api/coasters?totalRatings{self.lvl_map[k]}&mainImage[exists]=true')
+            mbd.add_field(name=k, value=f'{v} ({r["hydra:totalItems"]})', inline=False)
+
+        await ctx.send(embed=mbd)
 
     @commands.guild_only()
     @cc_group.command(name="classement", aliases=['leaderboard', 'top'])
@@ -282,7 +307,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         """Get Leaderboard"""
 
         await ctx.message.delete()
-        
+
         if limit > hardlimit:
             limit = hardlimit
 
@@ -297,15 +322,10 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
         async with self.db_pool.acquire() as con:
             r = await con.fetch(
-                #f'''
-                #select coaster_solver_discordid, sum(difficulty) from cc_games
-                #group by coaster_solver_discordid
-                #order by sum desc limit {limit} ;
-                #'''
                 f'''
                  select discord_uid, sum(difficulty)
                  from (select coaster_solver_discordid as discord_uid, difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
-                 as fautmettreunalias group by discord_uid order by sum desc limit {limit}; 
+                 as fautmettreunalias group by discord_uid order by sum desc limit {limit};
                 '''
             )
 
@@ -321,19 +341,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     value=f"{nickname} ({str(r[count]['sum'])})",
                     inline=False
                 )
-                count += 1
-                #embed.add_field(name=dict(r)['coaster_solver_discordid'], value=dict(r)['sum'], inline=False)
-#            if isinstance(park_points, int) and isinstance(coaster_points, int):
-#                points = park_points + coaster_points
-#            elif isinstance(park_points, int) and not isinstance(coaster_points, int):
-#                points = park_points
-#            elif not isinstance(park_points, int) and isinstance(coaster_points, int):
-#                points = coaster_points
-#            else:
-#                points = "Tu n'es pas encore classé."
-#
-#            embed.add_field(name="Points", value=points)
-#
+
         await ctx.send(embed=embed)
 
     @cc_group.command(name="game", aliases=['play', 'jeu'])
@@ -348,12 +356,6 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         park_found = False
         coaster_found = False
         min_match = 80
-
-        lvl_map = {
-            'easy': '[gt]=50',
-            'medium': '[between]=10..50',
-            'hard': '[lt]=10'
-        }
 
         int_lvl_map = {
             'easy': 1,
@@ -392,7 +394,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 finally:
                     return
 
-            if difficulty not in lvl_map:
+            if difficulty not in self.lvl_map:
                 await ctx.send(content="Une erreur de frappe ? On lance en mode facile.")
                 difficulty = 'easy'
 
@@ -400,12 +402,12 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 self.games_in_progress.append(ctx.channel.id)
 
                 # Build images list
-                base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true')
+                base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true')
                 if "hydra:last" in base_infos["hydra:view"]:
                     last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
                 else:
                     last_page = 1
-                chosen_page = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
+                chosen_page = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
                 coaster = chosen_page["hydra:member"][random.randint(1, len(chosen_page["hydra:member"])) - 1]
                 coaster_imgs = await self.json_infos(f'{URLs.captain_coaster}/api/images?coaster={coaster["id"]}')
                 rdm_image = coaster_imgs["hydra:member"][random.randint(1, len(coaster_imgs["hydra:member"])) - 1]["path"]

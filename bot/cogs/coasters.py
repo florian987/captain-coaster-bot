@@ -242,7 +242,6 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         if player is None:
             player = ctx.message.author
 
-
         async with self.db_pool.acquire() as con:
             park_points = await con.fetchval(
                 f'''
@@ -370,10 +369,10 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             return fuzz.ratio(normalize(m.content), normalize(coaster['name'])) >= min_match
 
         def on_park_way(m):
-            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) < min_match
+            return 60 <= fuzz.ratio(normalize(m.content), normalize(coaster['park']['name'])) < min_match
 
         def on_coaster_way(m):
-            return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['name'])) < min_match
+            return 60 <= fuzz.ratio(normalize(m.content), normalize(coaster['name'])) < min_match
 
         # Game
         if await self.is_online(cc_api):
@@ -463,7 +462,6 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                         else:
                             embed_question.colour = discord.Colour.red()
                         await question.edit(embed=embed_question)
-                        #Endgame
                         break
 
                     else:
@@ -476,8 +474,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                                 log.info(f"{ctx.message.author} found coaster {coaster['name']}.")
                                 async with self.db_pool.acquire() as con:
                                     await con.execute(
-                                        f'UPDATE cc_games SET (park_solver_discordid, park_solved_at) = ({msg.author.id}, now()) where game_id = {game_id}'
-                                        #f'UPDATE cc_games SET park_solver_discordid = {msg.author.id} where game_id = {game_id}'
+                                        f'''
+                                        UPDATE cc_games SET (park_solver_discordid, park_solved_at) = ({msg.author.id}, now()) where game_id = {game_id}
+                                        '''
                                     )
                                 if not park_found:
                                     titre += "\nSaurez vous trouver son Parc ?"
@@ -492,8 +491,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                                 log.info(f"{ctx.message.author} found park  {coaster['park']['name']}.")
                                 async with self.db_pool.acquire() as con:
                                     await con.execute(
-                                        f'UPDATE cc_games SET (coaster_solver_discordid,  coaster_solved_at) = ({msg.author.id}, now()) where game_id = {game_id}'
-                                        #f'UPDATE cc_games SET coaster_solver_discordid = {msg.author.id} where game_id = {game_id}'
+                                        f'''
+                                        UPDATE cc_games SET (coaster_solver_discordid,  coaster_solved_at) = ({msg.author.id}, now()) where game_id = {game_id}
+                                        '''
                                     )
                                 if not coaster_found:
                                     titre += "\nSaurez vous trouver le coaster ?"

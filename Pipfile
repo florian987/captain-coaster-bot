@@ -20,6 +20,8 @@ pillow = "*"
 aiodns = "*"
 unidecode = "*"
 asyncpg = "*"
+inflect = "*"
+inflectgaa = "*"
 
 [dev-packages]
 pylint = "*"

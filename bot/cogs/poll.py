@@ -2,6 +2,7 @@
 # import re
 # import shlex
 
+import inflect
 import logging
 import random
 
@@ -52,13 +53,18 @@ class Poll(commands.Cog, name='Poll Cog'):
                          e.guild == ctx.guild and not e.managed)]
         allowed_emojis = guild_emojis + self.std_emojis
 
-        # Link emojis to choices
-        while len(argslist):
-            chosen_emoji = random.choice(
-                [e for e in allowed_emojis if e not in used_emojis])
+        p = inflect.engine()
+        for i, choice in enumerate(argslist):
             embed.add_field(
-                name=argslist.pop(0), value=chosen_emoji, inline=False)
-            used_emojis.append(chosen_emoji)
+                name=choice, value=p.number_to_words(i), inline=False)
+
+        # Link emojis to choices
+        # while len(argslist):
+        #     chosen_emoji = random.choice(
+        #         [e for e in allowed_emojis if e not in used_emojis])
+        #     embed.add_field(
+        #         name=argslist.pop(0), value=chosen_emoji, inline=False)
+        #     used_emojis.append(chosen_emoji)
 
         # Send embed
         message = await ctx.send(content='', embed=embed)

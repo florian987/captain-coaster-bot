@@ -17,7 +17,8 @@ from fuzzywuzzy import fuzz
 
 import bot.database as db
 from bot.utils.discord_emojis import emojis as dis_emojis
-from bot.constants import Keys, URLs, CC_TAUNT, Postgres
+from bot.constants import Keys, CC_TAUNT, Postgres
+from bot.constants import URLs.captain_coaster as cc_api
 from bot.utils.embedconverter import build_embed
 from bot.decorators import in_any_channel_guild
 
@@ -113,7 +114,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
         if coaster_json['mainImage'] is not None:
             embed.set_thumbnail(
-                url=f"{URLs.captain_coaster}/images/coasters/{coaster_json.pop('mainImage')['path']}")
+                url=f"{cc_api}/images/coasters/{coaster_json.pop('mainImage')['path']}")
 
         # Fields mapping
         for k, v in coaster_json.items():
@@ -148,9 +149,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         """
         Get coasters list from Captain Coaster
         """
-        if self.is_online(URLs.captain_coaster):
+        if self.is_online(cc_api):
             json_paginator = commands.Paginator(prefix="```json", suffix="```")
-            json_body = await self.json_infos(f'{URLs.captain_coaster}/api/coasters')
+            json_body = await self.json_infos(f'{cc_api}/api/coasters')
             for coaster in json_body['hydra:member']:
                 json_paginator.add_line(json.dumps(coaster))
             for page in json_paginator.pages:
@@ -162,9 +163,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         Search coaster infos from Captain Coaster
         """
 
-        if self.is_online(URLs.captain_coaster):
+        if self.is_online(cc_api):
             json_body = await self.json_infos(
-                f'{URLs.captain_coaster}/api/coasters?name={search}')
+                f'{cc_api}/api/coasters?name={search}')
             if json_body['hydra:totalItems'] == 1:
                 embed = await self.coaster_embed(
                     ctx, json_body['hydra:member'][0])
@@ -209,7 +210,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     await message.delete()
                 else:
                     json_body = await self.json_infos(
-                        f'{URLs.captain_coaster}/api/coasters?id={emojis_association[reaction.emoji]}')
+                        f'{cc_api}/api/coasters?id={emojis_association[reaction.emoji]}')
                     embed = await self.coaster_embed(
                         ctx, json_body['hydra:member'][0])
                     if ctx.guild is not None:
@@ -243,11 +244,6 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
 
         async with self.db_pool.acquire() as con:
-            #r = await con.fetchval(
-            #    f'''
-            #    SELECT park, coaster, sum(difficulty) from cc_games
-            #    '''
-            #)
             park_points = await con.fetchval(
                 f'''
                 SELECT sum(difficulty) from cc_games WHERE park_solver_discordid = {player.id}
@@ -296,7 +292,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
         for k, v in self.lvl_map.items():
             r = await self.json_infos(
-                f'{URLs.captain_coaster}/api/coasters?totalRatings{self.lvl_map[k]}&mainImage[exists]=true')
+                f'{cc_api}/api/coasters?totalRatings{self.lvl_map[k]}&mainImage[exists]=true')
             mbd.add_field(name=k, value=f'{v} ({r["hydra:totalItems"]})', inline=False)
 
         await ctx.send(embed=mbd)
@@ -324,7 +320,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             r = await con.fetch(
                 f'''
                  select discord_uid, sum(difficulty)
-                 from (select coaster_solver_discordid as discord_uid, difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
+                 from (select coaster_solver_discordid as discord_uid,difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
                  as fautmettreunalias group by discord_uid order by sum desc limit {limit};
                 '''
             )
@@ -380,7 +376,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             return 50 <= fuzz.ratio(normalize(m.content), normalize(coaster['name'])) < min_match
 
         # Game
-        if await self.is_online(URLs.captain_coaster):
+        if await self.is_online(cc_api):
 
             if ctx.guild is not None:
                 await ctx.message.delete()
@@ -402,14 +398,14 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 self.games_in_progress.append(ctx.channel.id)
 
                 # Build images list
-                base_infos = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true')
+                base_infos = await self.json_infos(f'{cc_api}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true')
                 if "hydra:last" in base_infos["hydra:view"]:
                     last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
                 else:
                     last_page = 1
-                chosen_page = await self.json_infos(f'{URLs.captain_coaster}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
+                chosen_page = await self.json_infos(f'{cc_api}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
                 coaster = chosen_page["hydra:member"][random.randint(1, len(chosen_page["hydra:member"])) - 1]
-                coaster_imgs = await self.json_infos(f'{URLs.captain_coaster}/api/images?coaster={coaster["id"]}')
+                coaster_imgs = await self.json_infos(f'{cc_api}/api/images?coaster={coaster["id"]}')
                 rdm_image = coaster_imgs["hydra:member"][random.randint(1, len(coaster_imgs["hydra:member"])) - 1]["path"]
 
                 log.info(f"Game started by {ctx.message.author} in {ctx.channel}."
@@ -419,7 +415,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     ctx,
                     title=f"De quel coaster et quel parc s'agit-il ? ({difficulty})",
                     colour='gold',
-                    img=f"{URLs.captain_coaster}/images/coasters/{rdm_image}",
+                    img=f"{cc_api}/images/coasters/{rdm_image}",
                     author_icon=ctx.author.avatar_url,
                     author_name=ctx.author.name
                 )

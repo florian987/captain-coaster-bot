@@ -16,7 +16,7 @@ from discord.ext.commands import Context, group
 from fuzzywuzzy import fuzz
 
 import bot.database as db
-from bot.utils.emojis import emojis as dis_emojis
+from bot.utils.emojis import emojis
 from bot.constants import Keys, CC_TAUNT, Postgres, URLs
 from bot.utils.embedconverter import build_embed
 from bot.decorators import in_any_channel_guild
@@ -50,7 +50,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
     def __init__(self, bot):
         self.bot = bot
-        self.std_emojis = dis_emojis()
+        self.std_emojis = emojis()
         self.bot.loop.create_task(self.init_db())
         self.lvl_map = {
             'easy': '[gt]=50',
@@ -82,7 +82,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     park_solver_discordid bigint,
                     coaster_solver_discordid bigint,
                     park_solved_at timestamp,
-                    coaster_solved_at timestamp);''')
+                    coaster_solved_at timestamp
+                );'''
+            )
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:
@@ -176,6 +178,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                         pass
                 await ctx.send(embed=embed)
 
+            # TODO Rework this part with in emojis
+            #
             elif 1 < json_body['hydra:totalItems'] <= 20:
                 emojis_association = {}
                 # Build emojis list
@@ -297,7 +301,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
     @commands.guild_only()
     @cc_group.command(name="classement", aliases=['leaderboard', 'top'])
-    async def cc_leaderboard(self, ctx, *, limit: int = 10, hardlimit: int = 50):
+    async def cc_leaderboard(self, ctx, *, limit: int = 10, hardlimit: int = 25):
         """Get Leaderboard"""
 
         await ctx.message.delete()
@@ -401,13 +405,15 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
                 else:
                     last_page = 1
-                chosen_page = await self.json_infos(f'{cc_api}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
-                coaster = chosen_page["hydra:member"][random.randint(1, len(chosen_page["hydra:member"])) - 1]
+                page_id = random.randint(1, int(last_page))
+                chosen_page = await self.json_infos(f'{cc_api}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true&page={page_id}')
+                coaster_id = random.randint(1, len(chosen_page["hydra:member"])) - 1
+                coaster = chosen_page["hydra:member"][coaster_id]
                 coaster_imgs = await self.json_infos(f'{cc_api}/api/images?coaster={coaster["id"]}')
                 rdm_image = coaster_imgs["hydra:member"][random.randint(1, len(coaster_imgs["hydra:member"])) - 1]["path"]
 
-                log.info(f"Game started by {ctx.message.author} in {ctx.channel}."
-                         f"Coaster: {coaster['name']}, Parc: {coaster['park']['name']}")
+                log.info(f"Game started by {ctx.message.author} in {ctx.channel}.\n"
+                         f"Coaster: {coaster['name']}, Parc: {coaster['park']['name']} - (Page: {page_id}, CoasterID: {coaster_id})")
 
                 embed_question = await build_embed(
                     ctx,

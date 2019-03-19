@@ -44,8 +44,7 @@ class Poll(commands.Cog, name='Poll Cog'):
         for i, opt in enumerate(argslist):
             embed.add_field(
                 name=f'{intemojis[p.number_to_words(i)]} {opt}',
-                value=" ‏‏‎ ",
-                inline=False)
+                value=" ‏‏‎ ", inline=False)
 
         # Send embed
         message = await ctx.send(content='', embed=embed)
@@ -59,24 +58,24 @@ class Poll(commands.Cog, name='Poll Cog'):
     #
     # ERROR HANDLER
     #
-    @poll.error
-    async def getparam_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            log.error(f"{ctx.author} triied to start a poll on '{ctx.guild}' "
-                      "Guild without arguments")
-            embed = discord.Embed(
-                description="Poll need question and choices",
-                colour=discord.Colour.red()
-            )
-        elif isinstance(error, commands.BadArgument):
-            log.error(f"{ctx.author} failed to start a poll on '{ctx.guild}' "
-                      f"Guild malformed arguments:\n'{ctx.message.content}'")
-            embed = discord.Embed(
-                description=f"Poll - malformed arguments\n"
-                            f"{ctx.message.content}",
-                colour=discord.Colour.red()
-            )
-        await ctx.send(content='', embed=embed)
+    # @poll.error
+    # async def getparam_handler(self, ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument):
+    #         log.error(f"{ctx.author} triied to start a poll on '{ctx.guild}' "
+    #                   "Guild without arguments")
+    #         embed = discord.Embed(
+    #             description="Poll need question and choices",
+    #             colour=discord.Colour.red()
+    #         )
+    #     elif isinstance(error, commands.BadArgument):
+    #         log.error(f"{ctx.author} failed to start a poll on '{ctx.guild}' "
+    #                   f"Guild malformed arguments:\n'{ctx.message.content}'")
+    #         embed = discord.Embed(
+    #             description=f"Poll - malformed arguments\n"
+    #                         f"{ctx.message.content}",
+    #             colour=discord.Colour.red()
+    #         )
+    #     await ctx.send(content='', embed=embed)
 
 
 

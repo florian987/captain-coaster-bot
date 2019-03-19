@@ -1,23 +1,21 @@
-
-# import re
-# import shlex
-
 import logging
 import random
+import inflect
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
-
-from emoji import UNICODE_EMOJI
+import bot.utils.emojis as emojis
 
 log = logging.getLogger(__name__)
+
+p = inflect.engine()
+intemojis = emojis.emojis_numbers()
 
 
 class Poll(commands.Cog, name='Poll Cog'):
     def __init__(self, bot):
         self.bot = bot
-        self.std_emojis = [e for e in UNICODE_EMOJI if len(e) == 1]
 
     @commands.command(name='poll', aliases=['vote'])
     @commands.guild_only()
@@ -26,46 +24,35 @@ class Poll(commands.Cog, name='Poll Cog'):
         /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
         """
 
-        # Delete original message
         await ctx.message.delete()
 
-        # TODO useless transform ?
+        # Transform tuple args to list so we can pop items
         argslist = list(args)
 
-        if len(argslist) < 3:
+        if len(argslist) < 3 or len(argslist) > 11:
             return
 
         embed = discord.Embed(
             title=argslist.pop(0),
-            colour=discord.Colour.dark_gold()
-        )
-
+            colour=discord.Colour.dark_gold())
         embed.set_author(
             icon_url=ctx.author.avatar_url,
             name=ctx.author.name,
-            url=ctx.author.avatar_url
-        )
-
-        # Build emojis list
-        used_emojis = []
-        guild_emojis = [(e for e in self.bot.emojis if
-                         e.guild == ctx.guild and not e.managed)]
-        allowed_emojis = guild_emojis + self.std_emojis
+            url=ctx.author.avatar_url)
 
         # Link emojis to choices
-        while len(argslist):
-            chosen_emoji = random.choice(
-                [e for e in allowed_emojis if e not in used_emojis])
+        for i, opt in enumerate(argslist):
             embed.add_field(
-                name=argslist.pop(0), value=chosen_emoji, inline=False)
-            used_emojis.append(chosen_emoji)
+                name=f'{intemojis[p.number_to_words(i)]} {opt}',
+                value=" ‏‏‎ ",
+                inline=False)
 
         # Send embed
         message = await ctx.send(content='', embed=embed)
 
         # Add reaction to embed
-        while len(used_emojis):
-            await message.add_reaction(used_emojis.pop(0))
+        for i, opt in enumerate(argslist):
+            await message.add_reaction(intemojis[p.number_to_words(i)])
 
         log.info(f"{ctx.author} started a poll: {args}")
 
@@ -89,20 +76,8 @@ class Poll(commands.Cog, name='Poll Cog'):
                             f"{ctx.message.content}",
                 colour=discord.Colour.red()
             )
-        # elif isinstance(error, commands.CommandInvokeError):
-        #    log.error(
-        #       f"{ctx.author} triied to start a poll on '{ctx.guild}' Guild "
-        #            "but it doesn't have enough emojis")
-        #    embed = discord.Embed(
-        #        description="Not enough emojis on this server :(.",
-        #        colour=discord.Colour.red()
-        #    )
-
         await ctx.send(content='', embed=embed)
 
-# Not enough emojis
-# Command raised an exception: IndexError: Cannot choose from an empty sequence
-# <built-in method with_traceback of CommandInvokeError
 
 
 def setup(bot):

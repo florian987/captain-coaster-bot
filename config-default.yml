@@ -5,6 +5,7 @@ bot:
     help_prefix:               "bot."
     token:       !REQUIRED_ENV "BOT_TOKEN"
     activity:          "Commands: /help"
+    loglevel:          "DEBUG" # NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
 
     cooldowns:
         # Per channel, per tag.

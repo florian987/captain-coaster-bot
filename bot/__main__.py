@@ -12,7 +12,8 @@ from bot.constants import Bot as BotConfig, Prefixes
 
 log = logging.getLogger(__name__)
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=BotConfig.loglevel)
+# logging.basicConfig(level=logging.DEBUG)
 
 bot = Bot(
     command_prefix=when_mentioned_or(*Prefixes.guild),

@@ -16,7 +16,7 @@ from discord.ext.commands import Context, group
 from fuzzywuzzy import fuzz
 
 import bot.database as db
-from bot.utils.discord_emojis import emojis as dis_emojis
+from bot.utils.emojis import emojis as dis_emojis
 from bot.constants import Keys, CC_TAUNT, Postgres, URLs
 from bot.utils.embedconverter import build_embed
 from bot.decorators import in_any_channel_guild
@@ -82,9 +82,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     park_solver_discordid bigint,
                     coaster_solver_discordid bigint,
                     park_solved_at timestamp,
-                    coaster_solved_at timestamp
-                );'''
-            )
+                    coaster_solved_at timestamp);''')
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:

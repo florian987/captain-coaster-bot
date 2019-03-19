@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "05aa895c22e8ab76bf8e71de8bdb3d0be10c396ed5b2b48fae4150541169c27c"
+            "sha256": "c7f93e8b1d1548c7fd78364b78a19f466b9ede9cd97127ad9fd1d775961bb526"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -141,14 +141,6 @@
                 "voice"
             ],
             "file": "https://github.com/Rapptz/discord.py/archive/rewrite.zip"
-        },
-        "emoji": {
-            "hashes": [
-                "sha256:1e959336dafc7a5ed2c0256ee587bbd38a7187d772141f0b5ba42de9e08599a8",
-                "sha256:a9e9c08be9907c0042212c86dfbea0f61f78e9897d4df41a1d6307017763ad3e"
-            ],
-            "index": "pypi",
-            "version": "==0.5.1"
         },
         "fuzzywuzzy": {
             "hashes": [

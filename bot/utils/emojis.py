@@ -1,3 +1,19 @@
+def emojis_numbers():
+    return {
+        'zero': '0⃣',
+        'one': '1⃣',
+        'two': '2⃣',
+        'three': '3⃣',
+        'four': '4⃣',
+        'five': '5⃣',
+        'six': '6⃣',
+        'seven': '7⃣',
+        'eight': '8⃣',
+        'nine': '9⃣',
+        'ten': '🔟'
+    }
+
+
 def emojis():
     return [
         '☺',

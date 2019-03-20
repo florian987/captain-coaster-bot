@@ -45,8 +45,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         'rank': "Classement",
         'validDuels': "Duels",
         "totalRatings": "Votes",
-        "score": "Score"
-    }
+        "score": "Score"}
 
     def __init__(self, bot):
         self.bot = bot
@@ -55,19 +54,17 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         self.lvl_map = {
             'easy': '[gt]=50',
             'medium': '[between]=10..50',
-            'hard': '[lt]=10'
-        }
+            'hard': '[lt]=10'}
 
     async def init_db(self):
-        # asyncpg example https://github.com/mikevb1/lagbot/blob/master/lagbot.py
         # Check if DB is up and exists
         self.db_pool = await asyncpg.create_pool(
             host=Postgres.host,
             database=Postgres.database,
             user=Postgres.user,
             password=Postgres.password,
-            command_timeout=60
-        )
+            command_timeout=60)
+
         async with self.db_pool.acquire() as con:
             await con.execute(
                 '''CREATE TABLE IF NOT EXISTS cc_games(
@@ -83,8 +80,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     coaster_solver_discordid bigint,
                     park_solved_at timestamp,
                     coaster_solved_at timestamp
-                );'''
-            )
+                );''')
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:
@@ -110,8 +106,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             title=coaster_json.pop('name'),
             colour='blue',
             author_icon=ctx.author.avatar_url,
-            author_name=ctx.author.name
-        )
+            author_name=ctx.author.name)
 
         if coaster_json['mainImage'] is not None:
             embed.set_thumbnail(
@@ -246,16 +241,14 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             player = ctx.message.author
 
         async with self.db_pool.acquire() as con:
+
             park_points = await con.fetchval(
-                f'''
-                SELECT sum(difficulty) from cc_games WHERE park_solver_discordid = {player.id}
-                '''
-            )
+                f'''SELECT sum(difficulty) from cc_games
+                WHERE park_solver_discordid = {player.id}''')
+
             coaster_points = await con.fetchval(
-                f'''
-                SELECT sum(difficulty) from cc_games WHERE coaster_solver_discordid = {player.id}
-                '''
-            )
+                f'''SELECT sum(difficulty) from cc_games
+                WHERE coaster_solver_discordid = {player.id}''')
 
             if isinstance(park_points, int) and isinstance(coaster_points, int):
                 points = park_points + coaster_points
@@ -271,8 +264,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 title="**Leaderboard**",
                 colour='blue',
                 author_icon=player.avatar_url,
-                author_name=player.name
-            )
+                author_name=player.name)
+
             embed.add_field(name="Points", value=points)
 
         await ctx.send(embed=embed)
@@ -315,8 +308,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             colour='blue',
             author_icon=ctx.author.avatar_url,
             author_name=ctx.author.name,
-            thumbnail='https://image.flaticon.com/icons/png/512/262/262831.png'
-        )
+            thumbnail='https://image.flaticon.com/icons/png/512/262/262831.png')
 
         async with self.db_pool.acquire() as con:
             r = await con.fetch(
@@ -324,13 +316,11 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                  select discord_uid, sum(difficulty)
                  from (select coaster_solver_discordid as discord_uid,difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
                  as fautmettreunalias where discord_uid is not null group by discord_uid order by sum desc limit {limit};
-                '''
-            )
-            print('=' * 12)
+                ''')
 
             count = 0
             while count < len(r):
-                try:
+                try:  # Handle player who left the server
                     nickname = ctx.guild.get_member(r[count]['discord_uid']).display_name
                 except AttributeError:
                     nickname = "Unknown player"
@@ -338,8 +328,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 embed.add_field(
                     name=str(count + 1),
                     value=f"{nickname} ({str(r[count]['sum'])})",
-                    inline=False
-                )
+                    inline=False)
+
                 count += 1
 
         await ctx.send(embed=embed)
@@ -360,8 +350,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         int_lvl_map = {
             'easy': 1,
             'medium': 2,
-            'hard': 3
-        }
+            'hard': 3}
 
         # Check functions
         def normalize(string):
@@ -423,8 +412,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     colour='gold',
                     img=f"{cc_api}/images/coasters/{rdm_image}",
                     author_icon=ctx.author.avatar_url,
-                    author_name=ctx.author.name
-                )
+                    author_name=ctx.author.name)
 
                 # Send image to discord
                 question = await ctx.send(embed=embed_question)
@@ -445,8 +433,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                         datetime.datetime.now(),
                         int_lvl_map[difficulty],
                         coaster['park']['name'],
-                        coaster['name']
-                    )
+                        coaster['name'])
 
                 while not park_found or not coaster_found:
 
@@ -481,10 +468,13 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                                 log.info(f"{ctx.message.author} found coaster {coaster['name']}.")
                                 async with self.db_pool.acquire() as con:
                                     await con.execute(
-                                        f'''
-                                        UPDATE cc_games SET (park_solver_discordid, park_solved_at) = ({msg.author.id}, now()) where game_id = {game_id}
-                                        '''
-                                    )
+                                        f'''UPDATE cc_games SET (
+                                            park_solver_discordid,
+                                            park_solved_at
+                                        ) = (
+                                            {msg.author.id},
+                                            now()
+                                        ) where game_id = {game_id}''')
                                 if not park_found:
                                     titre += "\nSaurez vous trouver son Parc ?"
                                 else:

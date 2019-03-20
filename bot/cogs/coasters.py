@@ -323,9 +323,10 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 f'''
                  select discord_uid, sum(difficulty)
                  from (select coaster_solver_discordid as discord_uid,difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
-                 as fautmettreunalias group by discord_uid order by sum desc limit {limit};
+                 as fautmettreunalias where discord_uid is not null group by discord_uid order by sum desc limit {limit};
                 '''
             )
+            print('=' * 12)
 
             count = 0
             while count < len(r):
@@ -339,6 +340,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     value=f"{nickname} ({str(r[count]['sum'])})",
                     inline=False
                 )
+                count += 1
 
         await ctx.send(embed=embed)
 

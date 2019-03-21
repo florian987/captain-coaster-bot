@@ -16,7 +16,7 @@ from discord.ext.commands import Context, group
 from fuzzywuzzy import fuzz
 
 import bot.database as db
-from bot.utils.discord_emojis import emojis as dis_emojis
+from bot.utils.emojis import emojis
 from bot.constants import Keys, CC_TAUNT, Postgres, URLs
 from bot.utils.embedconverter import build_embed
 from bot.decorators import in_any_channel_guild
@@ -45,29 +45,26 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         'rank': "Classement",
         'validDuels': "Duels",
         "totalRatings": "Votes",
-        "score": "Score"
-    }
+        "score": "Score"}
 
     def __init__(self, bot):
         self.bot = bot
-        self.std_emojis = dis_emojis()
+        self.std_emojis = emojis()
         self.bot.loop.create_task(self.init_db())
         self.lvl_map = {
             'easy': '[gt]=50',
             'medium': '[between]=10..50',
-            'hard': '[lt]=10'
-        }
+            'hard': '[lt]=10'}
 
     async def init_db(self):
-        # asyncpg example https://github.com/mikevb1/lagbot/blob/master/lagbot.py
         # Check if DB is up and exists
         self.db_pool = await asyncpg.create_pool(
             host=Postgres.host,
             database=Postgres.database,
             user=Postgres.user,
             password=Postgres.password,
-            command_timeout=60
-        )
+            command_timeout=60)
+
         async with self.db_pool.acquire() as con:
             await con.execute(
                 '''CREATE TABLE IF NOT EXISTS cc_games(
@@ -83,8 +80,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     coaster_solver_discordid bigint,
                     park_solved_at timestamp,
                     coaster_solved_at timestamp
-                );'''
-            )
+                );''')
 
     async def is_online(self, site):
         async with aiohttp.ClientSession() as session:
@@ -110,8 +106,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             title=coaster_json.pop('name'),
             colour='blue',
             author_icon=ctx.author.avatar_url,
-            author_name=ctx.author.name
-        )
+            author_name=ctx.author.name)
 
         if coaster_json['mainImage'] is not None:
             embed.set_thumbnail(
@@ -178,6 +173,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                         pass
                 await ctx.send(embed=embed)
 
+            # TODO Rework this part with in emojis
+            #
             elif 1 < json_body['hydra:totalItems'] <= 20:
                 emojis_association = {}
                 # Build emojis list
@@ -244,16 +241,14 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             player = ctx.message.author
 
         async with self.db_pool.acquire() as con:
+
             park_points = await con.fetchval(
-                f'''
-                SELECT sum(difficulty) from cc_games WHERE park_solver_discordid = {player.id}
-                '''
-            )
+                f'''SELECT sum(difficulty) from cc_games
+                WHERE park_solver_discordid = {player.id}''')
+
             coaster_points = await con.fetchval(
-                f'''
-                SELECT sum(difficulty) from cc_games WHERE coaster_solver_discordid = {player.id}
-                '''
-            )
+                f'''SELECT sum(difficulty) from cc_games
+                WHERE coaster_solver_discordid = {player.id}''')
 
             if isinstance(park_points, int) and isinstance(coaster_points, int):
                 points = park_points + coaster_points
@@ -269,8 +264,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 title="**Leaderboard**",
                 colour='blue',
                 author_icon=player.avatar_url,
-                author_name=player.name
-            )
+                author_name=player.name)
+
             embed.add_field(name="Points", value=points)
 
         await ctx.send(embed=embed)
@@ -299,7 +294,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
     @commands.guild_only()
     @cc_group.command(name="classement", aliases=['leaderboard', 'top'])
-    async def cc_leaderboard(self, ctx, *, limit: int = 10, hardlimit: int = 50):
+    async def cc_leaderboard(self, ctx, *, limit: int = 10, hardlimit: int = 25):
         """Get Leaderboard"""
 
         await ctx.message.delete()
@@ -313,21 +308,19 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             colour='blue',
             author_icon=ctx.author.avatar_url,
             author_name=ctx.author.name,
-            thumbnail='https://image.flaticon.com/icons/png/512/262/262831.png'
-        )
+            thumbnail='https://image.flaticon.com/icons/png/512/262/262831.png')
 
         async with self.db_pool.acquire() as con:
             r = await con.fetch(
                 f'''
                  select discord_uid, sum(difficulty)
                  from (select coaster_solver_discordid as discord_uid,difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
-                 as fautmettreunalias group by discord_uid order by sum desc limit {limit};
-                '''
-            )
+                 as fautmettreunalias where discord_uid is not null group by discord_uid order by sum desc limit {limit};
+                ''')
 
             count = 0
             while count < len(r):
-                try:
+                try:  # Handle player who left the server
                     nickname = ctx.guild.get_member(r[count]['discord_uid']).display_name
                 except AttributeError:
                     nickname = "Unknown player"
@@ -335,8 +328,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                 embed.add_field(
                     name=str(count + 1),
                     value=f"{nickname} ({str(r[count]['sum'])})",
-                    inline=False
-                )
+                    inline=False)
+
+                count += 1
 
         await ctx.send(embed=embed)
 
@@ -356,8 +350,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         int_lvl_map = {
             'easy': 1,
             'medium': 2,
-            'hard': 3
-        }
+            'hard': 3}
 
         # Check functions
         def normalize(string):
@@ -403,13 +396,15 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     last_page = base_infos["hydra:view"]["hydra:last"].split('=')[-1:][0]
                 else:
                     last_page = 1
-                chosen_page = await self.json_infos(f'{cc_api}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true&page={random.randint(1, int(last_page))}')
-                coaster = chosen_page["hydra:member"][random.randint(1, len(chosen_page["hydra:member"])) - 1]
+                page_id = random.randint(1, int(last_page))
+                chosen_page = await self.json_infos(f'{cc_api}/api/coasters?totalRatings{self.lvl_map[difficulty]}&mainImage[exists]=true&page={page_id}')
+                coaster_id = random.randint(1, len(chosen_page["hydra:member"])) - 1
+                coaster = chosen_page["hydra:member"][coaster_id]
                 coaster_imgs = await self.json_infos(f'{cc_api}/api/images?coaster={coaster["id"]}')
                 rdm_image = coaster_imgs["hydra:member"][random.randint(1, len(coaster_imgs["hydra:member"])) - 1]["path"]
 
-                log.info(f"Game started by {ctx.message.author} in {ctx.channel}."
-                         f"Coaster: {coaster['name']}, Parc: {coaster['park']['name']}")
+                log.info(f"Game started by {ctx.message.author} in {ctx.channel}.\n"
+                         f"Coaster: {coaster['name']}, Parc: {coaster['park']['name']} - (Page: {page_id}, CoasterID: {coaster_id})")
 
                 embed_question = await build_embed(
                     ctx,
@@ -417,8 +412,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     colour='gold',
                     img=f"{cc_api}/images/coasters/{rdm_image}",
                     author_icon=ctx.author.avatar_url,
-                    author_name=ctx.author.name
-                )
+                    author_name=ctx.author.name)
 
                 # Send image to discord
                 question = await ctx.send(embed=embed_question)
@@ -439,8 +433,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                         datetime.datetime.now(),
                         int_lvl_map[difficulty],
                         coaster['park']['name'],
-                        coaster['name']
-                    )
+                        coaster['name'])
 
                 while not park_found or not coaster_found:
 
@@ -475,10 +468,13 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                                 log.info(f"{ctx.message.author} found coaster {coaster['name']}.")
                                 async with self.db_pool.acquire() as con:
                                     await con.execute(
-                                        f'''
-                                        UPDATE cc_games SET (park_solver_discordid, park_solved_at) = ({msg.author.id}, now()) where game_id = {game_id}
-                                        '''
-                                    )
+                                        f'''UPDATE cc_games SET (
+                                            park_solver_discordid,
+                                            park_solved_at
+                                        ) = (
+                                            {msg.author.id},
+                                            now()
+                                        ) where game_id = {game_id}''')
                                 if not park_found:
                                     titre += "\nSaurez vous trouver son Parc ?"
                                 else:

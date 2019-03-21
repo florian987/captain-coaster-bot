@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build and deploy on master branch
-if [ $CI_COMMIT_REF_SLUG == 'master' ] || [ $CI_COMMIT_REF_SLUG == 'dev' ]; then
+if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
     #echo "Connecting to docker hub"
     #echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
@@ -32,17 +32,11 @@ if [ $CI_COMMIT_REF_SLUG == 'master' ] || [ $CI_COMMIT_REF_SLUG == 'dev' ]; then
       echo "Dockerfile.base was not changed, not building"
     fi
 
-    if [[ $CI_COMMIT_REF_SLUG == 'dev' ]]; then
-      docker_tag = "dev"
-    else
-      docker_tag = "latest"
-    fi
-
     echo "Building image"
-    docker build -t $CI_REGISTRY_IMAGE:$docker_tag -f docker/Dockerfile .
+    docker build -t $CI_REGISTRY_IMAGE:latest -f docker/Dockerfile .
 
     echo "Pushing image"
-    docker push $CI_REGISTRY_IMAGE:$docker_tag
+    docker push $CI_REGISTRY_IMAGE:latest
 
 else
     echo "Skipping deploy"

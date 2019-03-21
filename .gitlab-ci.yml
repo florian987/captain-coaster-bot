@@ -43,4 +43,4 @@ test:
 
   stage: build
   script:
-    - sh scripts/deploy.sh
+    - bash scripts/deploy.sh

@@ -46,5 +46,10 @@ build:
     - docker:stable
 
   stage: build
+  before_script:
+    - |
+      apk add --no-cache \
+        docker \
+        git
   script:
     - bash scripts/deploy.sh

@@ -21,8 +21,11 @@ test:
   services:
     - docker:dind
 
-#  before_script:
-#    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  before_script:
+    - |
+      apk add --no-cache \
+        docker \
+        git
 
   script:
     - |
@@ -37,10 +40,9 @@ test:
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 
-👷 build:
-  stage: 👷 build
+build:
   services:
-    - docker:stable
+    - docker:dind
 
   stage: build
   script:

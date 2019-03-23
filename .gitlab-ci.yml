@@ -16,27 +16,7 @@ stages:
 test:
   stage: test
 
-  image: docker:stable
-
-  services:
-    - docker:dind
-
-  before_script:
-    - |
-      apk add --no-cache \
-        docker \
-        git
-
   script:
-    - |
-      apk add --no-cache \
-        docker \
-        python3-dev \
-        build-base \
-        jpeg-dev \
-        libffi-dev \
-        zlib-dev
-    - pip3 install pipenv
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 

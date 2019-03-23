@@ -1,6 +1,7 @@
 FROM python:3.6-alpine3.7
 
 RUN apk add --update docker \
+                     tree \
                      curl \
                      tini \
                      build-base \

@@ -17,7 +17,7 @@ test:
   stage: test
 
   script:
-    - pwd && ls -la
+    - tree .venv -L 3
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 

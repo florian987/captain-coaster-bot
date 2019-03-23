@@ -16,9 +16,6 @@ stages:
 test:
   stage: test
 
-  services:
-    - docker:dind
-
   before_script:
     - |
       apk add --no-cache \
@@ -39,8 +36,6 @@ test:
     - pipenv run lint --exit-zero 
 
 build:
-  services:
-    - docker:dind
 
   stage: build
   script:

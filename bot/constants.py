@@ -264,7 +264,6 @@ class Reddit(metaclass=YAMLGetter):
     subreddits: list
 
 
-
 class Postgres(metaclass=YAMLGetter):
     section = "postgresql"
 

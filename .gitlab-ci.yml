@@ -26,4 +26,4 @@ build:
 
   stage: build
   script:
-    - bash scripts/deploy.sh
+    - sh scripts/deploy.sh

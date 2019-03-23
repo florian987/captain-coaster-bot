@@ -17,6 +17,7 @@ test:
   stage: test
 
   script:
+    - pwd && ls -la
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 

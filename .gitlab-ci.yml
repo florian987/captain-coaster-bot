@@ -17,7 +17,7 @@ test:
   stage: test
 
   script:
-    - python sync -d
+    - pipenv sync -d
     #- pipenv install --deploy --system --ignore-pipfile 
     - python -m flake8 -v
     #- pipenv run lint --exit-zero 

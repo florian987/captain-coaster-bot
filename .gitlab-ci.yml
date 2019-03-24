@@ -17,7 +17,7 @@ test:
   stage: test
 
   script:
-    - tree .venv -L 3
+    - python --version
     - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 

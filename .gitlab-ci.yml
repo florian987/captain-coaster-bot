@@ -18,8 +18,9 @@ test:
 
   script:
     - python --version
-    - pipenv install --dev --deploy
-    - pipenv run lint --exit-zero 
+    - pipenv install --dev --deploy --system
+    - python -m flake8
+    #- pipenv run lint --exit-zero 
 
 build:
   services:

@@ -19,7 +19,7 @@ test:
   script:
     - python --version
     - pipenv install --dev --deploy --system
-    - python -m flake8
+    - python -m flake8 -v
     #- pipenv run lint --exit-zero 
 
 build:

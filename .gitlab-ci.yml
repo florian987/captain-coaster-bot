@@ -18,7 +18,7 @@ test:
 
   script:
     - tree .venv -L 3
-    - pipenv install --dev --deploy --system
+    - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 
 build:

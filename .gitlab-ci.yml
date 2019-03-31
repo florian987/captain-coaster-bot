@@ -27,4 +27,5 @@ build:
   stage: build
   script:
     - export DOCKER_HOST=tcp://docker:2375/
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - sh scripts/deploy.sh

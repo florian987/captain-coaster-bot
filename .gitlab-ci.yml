@@ -26,4 +26,5 @@ build:
 
   stage: build
   script:
+    - export DOCKER_HOST=tcp://docker:2375/
     - sh scripts/deploy.sh

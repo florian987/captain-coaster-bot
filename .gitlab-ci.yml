@@ -18,7 +18,7 @@ test:
 
   script:
     - pipenv lock
-    - pipenv install --dev --deploy
+    - pipenv install --dev --deploy --python $(which python3.6)
     - pipenv run lint --exit-zero 
 
 build:

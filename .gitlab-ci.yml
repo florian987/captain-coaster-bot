@@ -17,9 +17,8 @@ test:
   stage: test
 
   script:
-    - python --version
-    - pipenv run python --version
-    - pipenv install --dev --deploy --system
+    - pipenv lock
+    - pipenv install --dev --deploy
     - pipenv run lint --exit-zero 
 
 build:

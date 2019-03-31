@@ -17,7 +17,7 @@ test:
   stage: test
 
   script:
-    - pipenv install --dev --deploy
+    - pipenv install --dev --deploy --python $(which python3.6)
     - pipenv run lint --exit-zero 
 
 build:
@@ -26,4 +26,4 @@ build:
 
   stage: build
   script:
-    - bash scripts/deploy.sh
+    - sh scripts/deploy.sh

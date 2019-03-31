@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "CI_COMMIT_REF_SLUG: ${CI_COMMIT_REF_SLUG}"
+
 # Build and deploy on master branch
 if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
     #echo "Connecting to docker hub"

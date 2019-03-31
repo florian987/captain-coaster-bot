@@ -17,7 +17,7 @@ test:
   stage: test
 
   script:
-    - pipenv lock
+    - pipenv lock --python $(which python3.6)
     - pipenv install --dev --deploy --python $(which python3.6)
     - pipenv run lint --exit-zero 
 

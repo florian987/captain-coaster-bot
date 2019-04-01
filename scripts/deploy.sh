@@ -1,11 +1,7 @@
 #!/bin/bash
 
-echo "CI_COMMIT_REF_SLUG: ${CI_COMMIT_REF_SLUG}"
-
 # Build and deploy on master branch
 if [[ $CI_COMMIT_REF_SLUG == 'master' ]]; then
-    #echo "Connecting to docker hub"
-    #echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
     ci_changed_lines=$(git diff HEAD~1 HEAD docker/ci.Dockerfile | wc -l)
     base_changed_lines=$(git diff HEAD~1 HEAD docker/Dockerfile.base | wc -l)

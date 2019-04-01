@@ -261,7 +261,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
             embed = await build_embed(
                 ctx,
-                title="**Leaderboard**",
+                title="**Score**",
                 colour='blue',
                 author_icon=player.avatar_url,
                 author_name=player.name)
@@ -313,9 +313,11 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         async with self.db_pool.acquire() as con:
             r = await con.fetch(
                 f'''
-                 select discord_uid, sum(difficulty)
-                 from (select coaster_solver_discordid as discord_uid,difficulty from cc_games union select park_solver_discordid as discord_uid, difficulty from cc_games)
-                 as fautmettreunalias where discord_uid is not null group by discord_uid order by sum desc limit {limit};
+                select discord_uid, sum(dif) as score
+                from (select coaster_solver_discordid as discord_uid,sum(difficulty) as dif from cc_games group by discord_uid
+                union
+                select park_solver_discordid as discord_uid, sum(difficulty) as dif from cc_games group by discord_uid)
+                as alias where discord_uid is not null group by discord_uid order by score desc limit {limit};
                 ''')
 
             count = 0
@@ -326,8 +328,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     nickname = "Unknown player"
 
                 embed.add_field(
-                    name=str(count + 1),
-                    value=f"{nickname} ({str(r[count]['sum'])})",
+                    name=f"{str(count + 1)} - {nickname} ({str(r[count]['score'])})",
+                    value="‌‌ ",
                     inline=False)
 
                 count += 1
@@ -422,10 +424,10 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
                 async with self.db_pool.acquire() as con:
                     await con.execute(
-                        '''INSERT INTO cc_games(
-                            game_id, guild_id, channel_id, time, creation_date, difficulty, park, coaster
-                        )
-                        VALUES($1, $2, $3, $4, $5, $6, $7, $8)''',
+                            '''INSERT INTO cc_games(
+                                game_id, guild_id, channel_id, time, creation_date, difficulty, park, coaster
+                            )
+                            VALUES($1, $2, $3, $4, $5, $6, $7, $8)''',
                         game_id,
                         ctx.guild.id,
                         ctx.channel.id,

@@ -328,7 +328,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     nickname = "Unknown player"
 
                 embed.add_field(
-                    name=f"{str(count + 1)} - {nickname} ({str(r[count]['sum'])})",
+                    name=f"{str(count + 1)} - {nickname} ({str(r[count]['score'])})",
                     value="‌‌ ",
                     inline=False)
 

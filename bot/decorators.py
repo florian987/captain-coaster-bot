@@ -9,6 +9,7 @@ from discord.ext import commands
 from discord.ext.commands import Context  # , Embed
 
 from bot.constants import ERROR_REPLIES
+from bot.utils.checks import with_role_check, without_role_check
 
 
 log = logging.getLogger(__name__)

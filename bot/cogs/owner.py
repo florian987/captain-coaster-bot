@@ -16,7 +16,7 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
     # Hidden means it won't show up on the default help.
     @commands.command(name='load', hidden=True)
     @commands.is_owner()
-    async def cog_load(self, ctx, *, cog: str):
+    async def load_cog(self, ctx, *, cog: str):
         """
         Command which Loads a Module.
         Remember to use dot path. e.g: cogs.owner
@@ -24,6 +24,7 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
 
         if not cog.startswith("cogs"):
             cog = 'cogs.' + cog
+
         try:
             self.bot.load_extension('bot.' + cog)
         except Exception as e:
@@ -63,13 +64,6 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
                 value=f'```\n{ctx.message.content}\n```'
             )
 
-            # if e.original:
-            #    owner_embed.add_field(
-            #        name='original',
-            #        value=f"```py\n{e.original}\n```",
-            #        inline=False
-            #    )
-
             await self.bot.appinfo.owner.send(content="", embed=owner_embed)
 
             for line in traceback_msg.splitlines():  # Create traceback pages
@@ -85,12 +79,12 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
             embed = discord.Embed(
                 description=f"Cog `{cog.replace('cogs.', '')}` loaded.",
                 colour=discord.Colour.green())
-            # await ctx.send('**`SUCCESS`**')
+
         await ctx.send(content='', embed=embed)
 
     @commands.command(name='unload', hidden=True)
     @commands.is_owner()
-    async def cog_unload(self, ctx, *, cog: str):
+    async def unload_cog(self, ctx, *, cog: str):
         """Command which Unloads a Module.
         Remember to use dot path. e.g: cogs.owner"""
 
@@ -100,8 +94,6 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
             self.bot.unload_extension('bot.' + cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to unload {cog}.")
-            # await ctx.send(
-            # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to unload {cog} cog.",
                 description=f'{type(e).__name__} - {e}',
@@ -117,7 +109,7 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
 
     @commands.command(name='reload', hidden=True)
     @commands.is_owner()
-    async def cog_reload(self, ctx, *, cog: str):
+    async def reload_cog(self, ctx, *, cog: str):
         """
         Command which Reloads a Module.
         Remember to use dot path. e.g: cogs.owner
@@ -140,12 +132,12 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
             embed = discord.Embed(
                 description='Cog reloaded.',
                 colour=discord.Colour.green())
-            # await ctx.send('**`SUCCESS`**')
+
         await ctx.send(content='', embed=embed)
 
     @commands.command(name='listcogs', hidden=True, aliases=['cogslist'])
     @commands.is_owner()
-    async def cog_list(self, ctx):
+    async def list_cogs(self, ctx):
         """
         Command which List loaded Modules.
         """

@@ -191,7 +191,7 @@ class Reddit(commands.Cog, name='Reddit Cog'):
 
                     await self.reddit_channel.send(embed=embed)
 
-                log.trace(
+                log.info(
                     f"Sent {len(new_posts)} new {subreddit} posts to channel "
                     f"{self.reddit_channel.id}.")
 
@@ -311,4 +311,3 @@ class Reddit(commands.Cog, name='Reddit Cog'):
 
 def setup(bot):
     bot.add_cog(Reddit(bot))
-    log.info("Cog loaded: Reddit")

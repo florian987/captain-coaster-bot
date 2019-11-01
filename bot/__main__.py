@@ -6,7 +6,7 @@ import socket
 import discord
 from aiohttp import AsyncResolver, ClientSession, TCPConnector
 from discord import Game
-from discord.ext.commands import Bot, when_mentioned_or
+from discord.ext.commands import Bot, when_mentioned_or, errors
 from bot.constants import Bot as BotConfig, Prefixes
 
 
@@ -43,6 +43,8 @@ if __name__ == '__main__':
 
         try:
             bot.load_extension('bot.' + extension)
+        except errors.ExtensionAlreadyLoaded as e:
+            print(f'Extension already loaded: {extension}.', file=sys.stderr)
         except Exception as e:
             print(f'Failed to load extension {extension}.', file=sys.stderr)
             traceback.print_exc()

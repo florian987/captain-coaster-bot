@@ -277,6 +277,7 @@ class URLs(metaclass=YAMLGetter):
     section = "urls"
 
     bot_avatar: str
+    captain_coaster: str
     deploy: str
     gitlab_bot_repo: str
     omdb: str

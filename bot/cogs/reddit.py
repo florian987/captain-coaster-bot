@@ -311,4 +311,3 @@ class Reddit(commands.Cog, name='Reddit Cog'):
 
 def setup(bot):
     bot.add_cog(Reddit(bot))
-    log.info("Cog loaded: Reddit")

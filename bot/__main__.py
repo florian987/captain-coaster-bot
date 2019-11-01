@@ -48,6 +48,8 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'Failed to load extension {extension}.', file=sys.stderr)
             traceback.print_exc()
+        else:
+            log.info(f"Cog loaded: {extension}")
 
 
 @bot.event
@@ -87,4 +89,4 @@ bot.run(
 )
 
 
-bot.http_session.close()
+await bot.http_session.close()

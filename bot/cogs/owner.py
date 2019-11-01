@@ -94,8 +94,6 @@ class OwnerCog(commands.Cog, name='Owner Cog'):
             self.bot.unload_extension('bot.' + cog)
         except Exception as e:
             log.error(f"{ctx.author} failed to unload {cog}.")
-            # await ctx.send(
-            # '**`ERROR:`** {} - {}'.format(type(e).__name__, e))
             embed = discord.Embed(
                 title=f"Failed to unload {cog} cog.",
                 description=f'{type(e).__name__} - {e}',

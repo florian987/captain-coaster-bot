@@ -390,3 +390,9 @@ CC_TAUNT = [
     "A chaque coaster non trouvé, un chaton meurt dans le monde. Ou le parking de Disney augmente de 5€. Au choix.",
     "Toujours pas trouvé ? Votre cerveau est plus mou que le launch de Blue Fire"
 ]
+
+WINNER = [
+    "Par dessus la troisième corde!",
+    "Génial, magnifique!",
+    "We have a winner"
+]

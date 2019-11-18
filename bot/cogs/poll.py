@@ -23,8 +23,10 @@ class Poll(commands.Cog, name='Poll Cog'):
         """
         /poll "Question ?" "Choice 1" "Choice 2" "Choice 3"
         """
-
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except Exception as e:
+            log.info("No permission to delete messages")
 
         # Transform tuple args to list so we can pop items
         argslist = list(args)

@@ -1,6 +1,10 @@
 #image: $CI_REGISTRY_IMAGE:ci
 image: registry.gitlab.com/jffz/discordbot:ci
 
+include:
+  template: Dependency-Scanning.gitlab-ci.yml
+
+
 variables:
   PIPENV_CACHE_DIR: "$CI_PROJECT_DIR/pipenv-cache"
 

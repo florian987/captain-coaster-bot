@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiohttp = "==3.3.2"
+aiohttp = ">=3.6.0"
 "bs4" = "==0.0.1"
 "discord.py" = {extras = ["voice"]}
 yarl = "==1.2.6"

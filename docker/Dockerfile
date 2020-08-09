@@ -1,9 +1,39 @@
-FROM registry.gitlab.com/jffz/discordbot:base
+FROM python:3.6-slim-stretch
 
+# Add Tini
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
+RUN chmod +x /sbin/tini
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libffi-dev \
+        zlib1g \
+        libxml2 libxml2-dev libxslt1-dev \
+        freetype2-demos libfreetype6 libfreetype6-dev \
+        opus-tools \
+        ffmpeg \
+        chromium chromedriver \
+    && rm -rf /var/lib/apt/lists/* 
+
+RUN pip install pipenv
+
+# RUN mkdir /bot
+# COPY Pipfile /bot
+# COPY Pipfile.lock /bot
+# WORKDIR /bot
+
+ENV LIBRARY_PATH=/lib:/usr/lib
 ENV PIPENV_VENV_IN_PROJECT=1
 ENV PIPENV_IGNORE_VIRTUALENVS=1
 ENV PIPENV_NOSPIN=1
 ENV PIPENV_HIDE_EMOJIS=1
+
+#FROM registry.gitlab.com/jffz/discordbot:base
+
+# ENV PIPENV_VENV_IN_PROJECT=1
+# ENV PIPENV_IGNORE_VIRTUALENVS=1
+# ENV PIPENV_NOSPIN=1
+# ENV PIPENV_HIDE_EMOJIS=1
 #ENV PATH /bot/scrapper:${PATH}
 
 # RUN pip install pipenv
@@ -11,6 +41,7 @@ ENV PIPENV_HIDE_EMOJIS=1
 COPY . /bot
 WORKDIR /bot
 
+# RUN pipenv install
 RUN pipenv install --deploy --system --ignore-pipfile
 #RUN pipenv install --system
 #RUN pipenv sync

@@ -14,3 +14,5 @@ Vagrantfile
 .travis.yml
 *.log
 docker
+.git
+pgdata

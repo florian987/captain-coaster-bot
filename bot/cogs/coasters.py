@@ -58,12 +58,18 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
     async def init_db(self):
         # Check if DB is up and exists
-        self.db_pool = await asyncpg.create_pool(
-            host=Postgres.host,
-            database=Postgres.database,
-            user=Postgres.user,
-            password=Postgres.password,
-            command_timeout=60)
+        for _ in range(3):
+            try:
+                self.db_pool = await asyncpg.create_pool(
+                    host=Postgres.host,
+                    database=Postgres.database,
+                    user=Postgres.user,
+                    password=Postgres.password,
+                    command_timeout=60)
+                log.debug("DB pool created")
+            except ConnectionRefusedError as e:
+                log.debug("Waiting for 5 seconds before retrying again")
+                await asyncio.sleep(5)
 
         async with self.db_pool.acquire() as con:
             await con.execute(

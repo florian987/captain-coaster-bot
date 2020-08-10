@@ -19,3 +19,6 @@ selenium/
 settings.json
 share/
 yt_dls/
+.env
+pgdata
+docker-compose.yml

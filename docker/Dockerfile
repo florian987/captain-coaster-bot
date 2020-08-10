@@ -22,11 +22,11 @@ RUN pip install pipenv
 # COPY Pipfile.lock /bot
 # WORKDIR /bot
 
-ENV LIBRARY_PATH=/lib:/usr/lib
-ENV PIPENV_VENV_IN_PROJECT=1
-ENV PIPENV_IGNORE_VIRTUALENVS=1
-ENV PIPENV_NOSPIN=1
-ENV PIPENV_HIDE_EMOJIS=1
+ENV LIBRARY_PATH=/lib:/usr/lib \
+    PIPENV_VENV_IN_PROJECT=1 \
+    PIPENV_IGNORE_VIRTUALENVS=1 \
+    PIPENV_NOSPIN=1 \
+    PIPENV_HIDE_EMOJIS=1
 
 #FROM registry.gitlab.com/jffz/discordbot:base
 

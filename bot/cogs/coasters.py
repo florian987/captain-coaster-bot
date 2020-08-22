@@ -53,8 +53,8 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         self.bot.loop.create_task(self.init_db())
         self.lvl_map = {
             'easy': '[gt]=50',
-            'medium': '[between]=10..50',
-            'hard': '[lt]=10'}
+            'medium': '[between]=15..75',
+            'hard': '[lt]=15'}
 
     async def init_db(self):
         # Check if DB is up and exists

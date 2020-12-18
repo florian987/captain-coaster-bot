@@ -320,9 +320,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             r = await con.fetch(
                 f'''
                 select discord_uid, sum(dif) as score
-                from (select coaster_solver_discordid as discord_uid,sum(difficulty) as dif from cc_games group by discord_uid
+                from (select coaster_solver_discordid as discord_uid, sum(difficulty) as dif from cc_games where coaster_solved_at > 'now'::timestamp - '1 month'::interval group by discord_uid
                 union
-                select park_solver_discordid as discord_uid, sum(difficulty) as dif from cc_games group by discord_uid)
+                select park_solver_discordid as discord_uid, sum(difficulty) as dif from cc_games where park_solved_at > 'now'::timestamp - '1 month'::interval group by discord_uid)
                 as alias where discord_uid is not null group by discord_uid order by score desc limit {limit};
                 ''')
 

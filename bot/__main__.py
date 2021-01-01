@@ -19,7 +19,8 @@ bot = Bot(
     command_prefix=when_mentioned_or(*Prefixes.guild),
     activity=Game(name=BotConfig.activity),
     case_insensitive=True,
-    max_messages=10_000
+    max_messages=10_000,
+    fetch_offline_members=True
 )
 
 # Global aiohttp session for all cogs
@@ -35,6 +36,7 @@ bot.http_session = ClientSession(
 
 # Here we load our extensions(cogs) listed above in BotConfig.cogs.
 if __name__ == '__main__':
+    log.info(f"Cog list: {BotConfig.cogs}")
     for extension in BotConfig.cogs:
 
         # Add '.cogs' prefix

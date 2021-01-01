@@ -18,6 +18,7 @@ bot:
     cogs:
         - owner
         - default
+        - coasters
 
 postgresql:
     host: "postgres"
@@ -210,6 +211,7 @@ keys:
     omdb:        !ENV "OMDB_API_KEY"
     site_api:    !ENV "BOT_API_KEY"
     youtube:     !ENV "YOUTUBE_API_KEY"
+    captaincoaster: !ENV "CAPTAIN_API_KEY"
 
 
 rabbitmq:
@@ -255,6 +257,8 @@ urls:
     gitlab_bot_repo: "https://gitlab.com/python-discord/projects/bot"
     omdb:            "http://omdbapi.com"
     paste_service:   "https://paste.pydis.com/{key}"
+
+    captain_coaster: !ENV "CAPTAIN_URL"
 
 
 anti_spam:

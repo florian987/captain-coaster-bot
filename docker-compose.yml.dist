@@ -5,16 +5,10 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     image: florian987/captainbot
-    # configs:
-    #   - source: botcfg
-    #     target: /bot/config.yml
     ports:
       - "5000:5000"
     env_file:
       .env
-    # volumes:
-      # - .:/bot
-      # - ./config-default.yml:/bot/config.yml
     depends_on:
       - "postgres"
   postgres:
@@ -24,6 +18,3 @@ services:
       POSTGRES_USER: discordbot
     volumes:
       - ./pgdata:/var/lib/postgresql/data
-# configs:
-#   botcfg:
-#     file: ./config.yml

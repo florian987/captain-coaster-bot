@@ -330,7 +330,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             while count < len(r):
                 try:  # Handle player who left the server
                     nickname = ctx.guild.get_member(r[count]['discord_uid']).display_name
-                except AttributeError:
+                except AttributeError as e:
+                    log.debug("Error leaderboard")
+                    log.debug(e)
                     nickname = "Unknown player"
 
                 embed.add_field(

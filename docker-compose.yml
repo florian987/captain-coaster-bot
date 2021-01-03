@@ -9,13 +9,12 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      .env
+      .env.discordbot
     depends_on:
       - "postgres"
   postgres:
     image: postgres:12
-    environment:
-      POSTGRES_PASSWORD: discordbot
-      POSTGRES_USER: discordbot
+    env_file:
+      .env.postgres
     volumes:
       - ./pgdata:/var/lib/postgresql/data

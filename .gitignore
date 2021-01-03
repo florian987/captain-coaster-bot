@@ -6,8 +6,6 @@ bot/scrapper/downloads/
 bot/scrapper/logs/
 config.yml
 data.json
-docker/docker-compose.yml
-docker/postgres/
 downloads/*
 include
 lib
@@ -20,5 +18,5 @@ settings.json
 share/
 yt_dls/
 .env
+.env.*
 pgdata
-docker-compose.yml

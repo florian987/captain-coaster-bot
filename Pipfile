@@ -33,13 +33,3 @@ pep8 = "*"
 
 [requires]
 python_version = "3.6"
-
-[scripts]
-start = "python -m bot"
-lint = "python -m flake8"
-build = "docker build -t registry.gitlab.com/jffz/discordbot:latest -f docker/Dockerfile ."
-push = "docker push registry.gitlab.com/jffz/discordbot:latest"
-buildbase = "docker build -t registry.gitlab.com/jffz/discordbot:base -f docker/Dockerfile.base ."
-pushbase = "docker push registry.gitlab.com/jffz/discordbot:base"
-buildci = "docker build -t registry.gitlab.com/jffz/discordbot:ci -f docker/ci.Dockerfile ."
-pushci = "docker push registry.gitlab.com/jffz/discordbot:ci"

@@ -1,0 +1,7 @@
+# prod compose file
+version: "3.7"
+services:
+  discordbot:
+    restart: always
+  postgres:
+    restart: always

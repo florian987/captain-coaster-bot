@@ -1,9 +1,7 @@
+# base compose file
 version: "3.7"
 services:
   discordbot:
-    build: 
-      context: .
-      dockerfile: docker/Dockerfile
     image: florian987/captainbot
     init: true
     ports:

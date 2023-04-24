@@ -1,14 +1,14 @@
-FROM python:3.6-slim-stretch
+FROM python:3.6-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        libffi-dev \
-        zlib1g \
-        libxml2 libxml2-dev libxslt1-dev \
-        freetype2-demos libfreetype6 libfreetype6-dev \
-        opus-tools \
-        ffmpeg \
-        chromium chromedriver \
-    && rm -rf /var/lib/apt/lists/* 
+    libffi-dev \
+    zlib1g \
+    libxml2 libxml2-dev libxslt1-dev \
+    freetype2-demos libfreetype6 libfreetype6-dev \
+    opus-tools \
+    ffmpeg \
+    chromium \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip install pipenv
 

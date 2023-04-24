@@ -278,33 +278,7 @@ class URLs(metaclass=YAMLGetter):
 
     bot_avatar: str
     captain_coaster: str
-    deploy: str
-    gitlab_bot_repo: str
-    omdb: str
-    site: str
-    site_api: str
-    site_facts_api: str
-    site_clean_api: str
-    site_hiphopify_api: str
-    site_idioms_api: str
-    site_logs_api: str
-    site_logs_view: str
-    site_names_api: str
-    site_quiz_api: str
-    site_schema: str
-    site_settings_api: str
-    site_special_api: str
-    site_tags_api: str
-    site_user_api: str
-    site_user_complete_api: str
-    site_infractions: str
-    site_infractions_user: str
-    site_infractions_type: str
-    site_infractions_by_id: str
-    site_infractions_user_type_current: str
-    site_infractions_user_type: str
-    status: str
-    paste_service: str
+    captain_cdn: str
 
 
 # Paths
@@ -312,57 +286,6 @@ BOT_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.join(BOT_DIR, os.pardir))
 
 DEBUG_MODE = True if 'local' in os.environ.get("SITE_URL", "local") else False
-
-# Bot replies
-NEGATIVE_REPLIES = [
-    "Noooooo!!",
-    "Nope.",
-    "I'm sorry Dave, I'm afraid I can't do that.",
-    "I don't think so.",
-    "Not gonna happen.",
-    "Out of the question.",
-    "Huh? No.",
-    "Nah.",
-    "Naw.",
-    "Not likely.",
-    "No way, José.",
-    "Not in a million years.",
-    "Fat chance.",
-    "Certainly not.",
-    "NEGATORY."
-]
-
-POSITIVE_REPLIES = [
-    "Yep.",
-    "Absolutely!",
-    "Can do!",
-    "Affirmative!",
-    "Yeah okay.",
-    "Sure.",
-    "Sure thing!",
-    "You're the boss!",
-    "Okay.",
-    "No problem.",
-    "I got you.",
-    "Alright.",
-    "You got it!",
-    "ROGER THAT",
-    "Of course!",
-    "Aye aye, cap'n!",
-    "I'll allow it."
-]
-
-ERROR_REPLIES = [
-    "Please don't do that.",
-    "You have to stop.",
-    "Do you mind?",
-    "In the future, don't do that.",
-    "That was a mistake.",
-    "You blew it.",
-    "You're bad at computers.",
-    "Are you trying to kill me?",
-    "Noooooo!!"
-]
 
 CC_TAUNT = [
     "On est chez les disney fans ici ?",
@@ -389,10 +312,4 @@ CC_TAUNT = [
     "Le bon parc était Quanching... Xuixing... Quiching... Oh, et puis merde, de toute façon, les chinois c'est tous les mêmes.",
     "A chaque coaster non trouvé, un chaton meurt dans le monde. Ou le parking de Disney augmente de 5€. Au choix.",
     "Toujours pas trouvé ? Votre cerveau est plus mou que le launch de Blue Fire"
-]
-
-WINNER = [
-    "Par dessus la troisième corde!",
-    "Génial, magnifique!",
-    "We have a winner"
 ]

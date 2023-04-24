@@ -67,12 +67,6 @@ async def on_ready():
         Version: {discord.__version__}\n
         """))
 
-    # Changes our bots Playing Status. t
-    # ype=1(streaming) for a standard game you could remove type and url.
-    # if config['activity']:
-    #     await bot.change_presence(
-    #         activity=discord.Game(name=config['activity']))
-
     print('Successfully logged in and booted...!')
 
 

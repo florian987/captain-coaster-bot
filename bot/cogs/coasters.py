@@ -15,7 +15,6 @@ from discord.ext import commands
 from discord.ext.commands import Context, group
 from fuzzywuzzy import fuzz
 
-import bot.database as db
 from bot.utils.emojis import emojis
 from bot.constants import Keys, CC_TAUNT, Postgres, URLs
 from bot.utils.embedconverter import build_embed
@@ -26,12 +25,13 @@ log = logging.getLogger(__name__)
 
 
 cc_api = URLs.captain_coaster
+cc_cdn = URLs.captain_cdn
 
 
 class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
-    """Interract with Captain Coaster API"""
+    """Interact with Captain Coaster API"""
 
-    HEADERS = {'X-AUTH-TOKEN': Keys.captaincoaster}
+    HEADERS = {'Authorization': Keys.captaincoaster}
     games_in_progress = []
     mapping = {
         'materialType': 'Type',
@@ -52,9 +52,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
         self.std_emojis = emojis()
         self.bot.loop.create_task(self.init_db())
         self.lvl_map = {
-            'easy': '[gt]=50',
-            'medium': '[between]=15..75',
-            'hard': '[lt]=15'}
+            'easy': '[gt]=100',
+            'medium': '[between]=30..100',
+            'hard': '[lt]=30'}
 
     async def init_db(self):
         # Check if DB is up and exists
@@ -116,7 +116,9 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
 
         if coaster_json['mainImage'] is not None:
             embed.set_thumbnail(
-                url=f"{cc_api}/images/coasters/{coaster_json.pop('mainImage')['path']}")
+                url=f"{cc_cdn}/1440x1440/{coaster_json.pop('mainImage')['path']}")
+
+        log.info(url);
 
         # Fields mapping
         for k, v in coaster_json.items():
@@ -387,7 +389,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
             if ctx.channel.id in self.games_in_progress:
                 log.info(f"{ctx.message.author} tried to start a game in {ctx.channel} but a game is already running.")
                 try:
-                    await ctx.message.author.send(content="Une partie est déjà en cours mon mignon.")
+                    await ctx.message.author.send(content="Une partie est déjà en cours !")
                 except errors.Forbidden:
                     pass
                 finally:
@@ -420,7 +422,7 @@ class RollerCoasters(commands.Cog, name='RollerCoasters Cog'):
                     ctx,
                     title=f"De quel coaster et quel parc s'agit-il ? ({difficulty})",
                     colour='gold',
-                    img=f"{cc_api}/images/coasters/{rdm_image}",
+                    img=f"{cc_cdn}/1440x1440/{rdm_image}",
                     author_icon=ctx.author.avatar_url,
                     author_name=ctx.author.name)
 

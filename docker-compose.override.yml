@@ -1,9 +1,0 @@
-# overrides for dev
-version: "3.7"
-services:
-  discordbot:
-    build: 
-      context: .
-      dockerfile: docker/Dockerfile
-    volumes:
-      - .:/bot

@@ -20,3 +20,6 @@ yt_dls/
 .env
 .env.*
 pgdata
+
+# Database files
+data/

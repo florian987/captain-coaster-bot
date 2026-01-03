@@ -1,18 +1,41 @@
-.venv
-scripts
-htmlcov
-__pycache__
-.vagrant
-.pytest_cache
-.github
-.gitlab
-.cache
-Vagrantfile
-.coverage
-.coveragerc
-.gitignore
-.travis.yml
-*.log
-docker
+# Git
 .git
-pgdata
+.gitignore
+
+# Documentation
+README.md
+
+# Development files
+.env
+.env.example
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Virtual environments
+.venv
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Old project structure (if still present)
+bot/
+docker/
+config-default.yml
+requirements.txt
+docker-compose.override.yml
+docker-compose.prod.yml
+
+# Database (will be mounted as volume)
+data/

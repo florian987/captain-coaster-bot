@@ -1,18 +1,9 @@
-# base compose file
-version: "3.7"
 services:
-  discordbot:
-    image: florian987/captainbot
-    init: true
-    ports:
-      - "5000:5000"
-    env_file:
-      .env.discordbot
-    depends_on:
-      - "postgres"
-  postgres:
-    image: postgres:12
-    env_file:
-      .env.postgres
+  bot:
+    build: .
+    env_file: .env
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./data:/app/data
+    restart: unless-stopped
+    environment:
+      - DB_PATH=/app/data/coasterbot.db

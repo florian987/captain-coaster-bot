@@ -61,19 +61,7 @@ class CoasterBot:
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         
         async with aiosqlite.connect(self.db_path) as db:
-            # Check if response time columns exist
-            cursor = await db.execute("PRAGMA table_info(games)")
-            columns = await cursor.fetchall()
-            column_names = [col[1] for col in columns]
-            
-            if 'park_response_time' not in column_names:
-                log.info("Migrating database to add response time columns...")
-                # Add response time columns
-                await db.execute('ALTER TABLE games ADD COLUMN park_response_time REAL')
-                await db.execute('ALTER TABLE games ADD COLUMN coaster_response_time REAL')
-                log.info("Database migration completed")
-            
-            # Create table if it doesn't exist
+            # Create table with all columns
             await db.execute('''
                 CREATE TABLE IF NOT EXISTS games (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

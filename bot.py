@@ -335,14 +335,14 @@ class CoasterBot:
             
             basic_stats = await cursor.fetchone()
             
-            # Difficulty breakdown
+            # Difficulty breakdown - only show user's actual participation
             cursor = await db.execute('''
                 SELECT 
                     difficulty,
-                    COUNT(CASE WHEN park_solver_id = ? OR coaster_solver_id = ? THEN 1 END) as wins,
-                    COUNT(*) as total
+                    COUNT(*) as wins
                 FROM games 
                 WHERE created_at > datetime('now', '-30 days')
+                AND (park_solver_id = ? OR coaster_solver_id = ?)
                 GROUP BY difficulty
             ''', (user_id, user_id))
             
@@ -446,8 +446,13 @@ async def periodic_cleanup():
             await asyncio.sleep(60 * 60)  # Wait 1 hour before retrying
 
 @bot.command(name='game', aliases=['play', 'jeu'])
-async def play_game(ctx, difficulty='easy'):
+async def play_game(ctx, difficulty=None):
     """Start a coaster guessing game"""
+    # If no difficulty specified, choose random
+    if difficulty is None:
+        difficulty = random.choice(list(config.DIFFICULTY_LEVELS.keys()))
+        log.info(f"No difficulty specified, randomly selected: {difficulty}")
+    
     # Validate difficulty
     if difficulty not in config.DIFFICULTY_LEVELS:
         await ctx.send(f"Difficulté invalide. Utilisez: {', '.join(config.DIFFICULTY_LEVELS.keys())}")
@@ -566,9 +571,9 @@ async def play_game(ctx, difficulty='easy'):
                         
                         # Speed bonus message
                         speed_msg = ""
-                        if response_time < 30:
+                        if response_time < 10:
                             speed_msg = " ⚡ Lightning fast!"
-                        elif response_time < 60:
+                        elif response_time < 30:
                             speed_msg = " 🚀 Quick thinking!"
                         
                         title = f"Bravo {msg.author.display_name}, tu as trouvé le parc!{speed_msg}"
@@ -592,9 +597,9 @@ async def play_game(ctx, difficulty='easy'):
                         
                         # Speed bonus message
                         speed_msg = ""
-                        if response_time < 30:
+                        if response_time < 10:
                             speed_msg = " ⚡ Lightning fast!"
-                        elif response_time < 60:
+                        elif response_time < 30:
                             speed_msg = " 🚀 Quick thinking!"
                         
                         title = f"Bravo {msg.author.display_name}, tu as trouvé le coaster!{speed_msg}"
@@ -722,10 +727,9 @@ async def show_score(ctx, user: discord.User = None):
         difficulty_text = ""
         difficulty_names = {1: "Easy", 2: "Medium", 3: "Hard"}
         for diff_stat in stats['difficulty']:
-            difficulty, wins, total = diff_stat
-            if total > 0:  # Only show difficulties that have been played
-                rate = (wins / total * 100) if total > 0 else 0
-                difficulty_text += f"**{difficulty_names.get(difficulty, 'Unknown')}**: {wins}/{total} ({rate:.0f}%)\n"
+            difficulty, wins = diff_stat
+            if wins > 0:  # Only show difficulties where user has wins
+                difficulty_text += f"**{difficulty_names.get(difficulty, 'Unknown')}**: {wins} wins\n"
         
         if difficulty_text:
             embed.add_field(name="🎲 Difficulty", value=difficulty_text, inline=True)

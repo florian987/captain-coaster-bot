@@ -120,7 +120,7 @@ class CoasterBot:
     async def get_coaster_data(self, difficulty='easy'):
         """Fetch random coaster data from Captain Coaster API"""
         difficulty_filter = config.DIFFICULTY_LEVELS[difficulty]['filter']
-        url = f"{config.CAPTAIN_URL}/api/coasters?totalRatings{difficulty_filter}&mainImage[exists]=true"
+        url = f"{config.CAPTAIN_URL}/api/coasters?totalRatings{difficulty_filter}&exists[mainImage]=true"
         
         log.info(f"Fetching coasters from: {url}")
         
